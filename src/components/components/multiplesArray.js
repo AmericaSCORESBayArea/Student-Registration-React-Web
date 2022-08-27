@@ -483,8 +483,8 @@ export const relationshipArray = [
     value: "Grandparent",
   },
   {
-    label: "Siblig/Other relative",
-    value: "Siblig/Other relative",
+    label: "Sibling/Other relative",
+    value: "Sibling/Other relative",
   },
 ];
 export const parent_Home_Lang_Array = [
