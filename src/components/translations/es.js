@@ -22,4 +22,16 @@ export const esLanguages = {
   button_continue: "CONTINUAR",
   button_back: "VOLVER",
   button_submit: "ENVIAR",
+  logout_modal: {
+    modal_title: "¿Estás seguro que deseas cerrar sesión?",
+    modal_text: "Cualquier cambio realizado no será guardadado.",
+    modal_cancel_button: "CANCELAR",
+    modal_confirm_button: "CERRAR SESIÓN",
+  },
+  register_modal_success: {
+    modal_title: "Registro exitoso",
+    modal_text: "El estudiante ha sido registrado con éxito.",
+    modal_cancel_button: "AGREGAR OTRO ESTUDIANTE",
+    modal_confirm_button: "FINALIZAR",
+  },
 };

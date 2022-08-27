@@ -22,4 +22,16 @@ export const enLanguages = {
   button_continue: "CONTINUE",
   button_back: "BACK",
   button_submit: "SUBMIT",
+  logout_modal: {
+    modal_title: "Are you sure you want to log out?",
+    modal_text: "Any changes made will not be saved.",
+    modal_cancel_button: "CANCEL",
+    modal_confirm_button: "LOG OUT",
+  },
+  register_modal_success: {
+    modal_title: "Successful registration",
+    modal_text: "The student has been successfully registered.",
+    modal_cancel_button: "ADD OTHER STUDENT",
+    modal_confirm_button: "DONE",
+  },
 };

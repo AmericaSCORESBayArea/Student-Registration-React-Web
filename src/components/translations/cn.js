@@ -18,4 +18,16 @@ export const cnLanguages = {
   button_continue: "继续",
   button_back: "背部",
   button_submit: "提交",
+  logout_modal: {
+    modal_title: "您确定要退出吗?",
+    modal_text: "所做的任何更改都不会保存.",
+    modal_cancel_button: "取消",
+    modal_confirm_button: "登出",
+  },
+  register_modal_success: {
+    modal_title: "注册成功",
+    modal_text: "该学生已成功注册",
+    modal_cancel_button: "添加其他学生",
+    modal_confirm_button: "完毕",
+  },
 };
