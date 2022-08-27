@@ -25,4 +25,5 @@ function ModalwithConfirmation(
     }
   });
 }
+
 export { ModalwithConfirmation };
