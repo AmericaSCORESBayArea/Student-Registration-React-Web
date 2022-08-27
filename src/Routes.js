@@ -63,7 +63,7 @@ export default function RoutesWeb() {
   return (
     <div>
       <NavBar
-        traslations={auxTranslation}
+        translations={auxTranslation}
         selected={
           localStorage.getItem("language") === null ||
           localStorage.getItem("language") === undefined
@@ -79,7 +79,7 @@ export default function RoutesWeb() {
             path="/"
             element={
               <PrivateRoute>
-                <HomeScreen traslations={auxTranslation} />
+                <HomeScreen translations={auxTranslation} />
               </PrivateRoute>
             }
           />

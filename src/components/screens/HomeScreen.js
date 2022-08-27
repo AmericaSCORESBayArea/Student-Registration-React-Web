@@ -9,9 +9,9 @@ import Registration from "./../components/Registration_Status";
 import Form from "./../components/Form";
 export default function HomeScreen(props) {
   const steps = [
-    props.traslations.steps_1,
-    props.traslations.steps_2,
-    props.traslations.steps_3,
+    props.translations.steps_1,
+    props.translations.steps_2,
+    props.translations.steps_3,
   ];
   //const history = useNavigate();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -34,7 +34,6 @@ export default function HomeScreen(props) {
   };
 
   const handleNext = (props) => {
-    console.log(props);
     const newActiveStep =
       isLastStep() && !allStepsCompleted()
         ? // It's the last step, but not all steps have been completed,
@@ -49,37 +48,36 @@ export default function HomeScreen(props) {
   };
 
   const handleStep = (step) => () => {
-    console.log(step);
     setActiveStep(step);
   };
 
-  /*const handleReset = () => {
+  const handleReset = () => {
     setActiveStep(0);
     setCompleted({});
-  };*/
+  };
 
   const getScreen = () => {
     switch (activeStep) {
       case 0:
         return (
           <RoleType
-            props={props.traslations.parent_coach_option}
-            parentOption={props.traslations.parent_option}
-            coachOption={props.traslations.coach_option}
-            title={props.traslations.parent_coach_title}
-            continueButton={props.traslations.button_continue}
+            props={props.translations.parent_coach_option}
+            parentOption={props.translations.parent_option}
+            coachOption={props.translations.coach_option}
+            title={props.translations.parent_coach_title}
+            continueButton={props.translations.button_continue}
             function={handleNext}
           />
         );
       case 1:
         return (
           <Registration
-            props={props.traslations.new_returning_option}
-            newOption={props.traslations.new_option}
-            returningOption={props.traslations.returning_option}
-            title={props.traslations.new_returning_title}
-            continueButton={props.traslations.button_continue}
-            backButton={props.traslations.button_back}
+            props={props.translations.new_returning_option}
+            newOption={props.translations.new_option}
+            returningOption={props.translations.returning_option}
+            title={props.translations.new_returning_title}
+            continueButton={props.translations.button_continue}
+            backButton={props.translations.button_back}
             function={handleNext}
             function_back={handleBack}
           />
@@ -87,9 +85,11 @@ export default function HomeScreen(props) {
       case 2:
         return (
           <Form
-            backButton={props.traslations.button_back}
-            submitButton={props.traslations.button_submit}
+            backButton={props.translations.button_back}
+            submitButton={props.translations.button_submit}
             function_back={handleBack}
+            modalTranslations={props.translations.register_modal_success}
+            handleReset={handleReset}
           />
         );
       default:

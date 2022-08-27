@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
 import LogoutIcon from "@mui/icons-material/Logout";
 import firebase from "../firebase/firebaseConfig";
+import { ModalwithConfirmation } from "./utils/Modal";
 
 function NavbarComponent(props) {
   const [selected, setSelected] = useState(props.selected);
@@ -25,6 +26,20 @@ function NavbarComponent(props) {
     localStorage.setItem("language", code);
     const event = new CustomEvent("languageChanged");
     document.dispatchEvent(event);
+  };
+
+  const confirmedLogout = () => {
+    firebase.auth().signOut();
+    localStorage.setItem("user", false);
+    history({ pathname: "/Login" });
+  };
+
+  const showLogoutModal = () => {
+    ModalwithConfirmation(
+      props.translations.logout_modal,
+      confirmedLogout,
+      "warning"
+    );
   };
   return (
     <Navbar>
@@ -49,9 +64,9 @@ function NavbarComponent(props) {
             showOptionLabel={width < 720 ? false : true}
             countries={["US", "ES", "CN"]}
             customLabels={{
-              US: props.traslations.US,
-              ES: props.traslations.ES,
-              CN: props.traslations.CN,
+              US: props.translations.US,
+              ES: props.translations.ES,
+              CN: props.translations.CN,
             }}
             onSelect={(code) => handleLanguageChange(code)}
           />
@@ -62,9 +77,7 @@ function NavbarComponent(props) {
               aria-label="LogOut"
               style={{ marginLeft: "10px" }}
               onClick={() => {
-                firebase.auth().signOut();
-                localStorage.setItem("user", false);
-                history({ pathname: "/Login" });
+                showLogoutModal();
               }}
             >
               <LogoutIcon fontSize="large" />
