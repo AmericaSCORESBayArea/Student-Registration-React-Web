@@ -22,11 +22,13 @@
     "react-dom": "^18.2.0",
     "react-flags-select": "^2.2.3",
     "react-router-dom": "^6.3.0",
-    "react-scripts": "5.0.1",
     "react-select": "^5.4.0",
     "react-toastify": "^9.0.8",
     "web-vitals": "^2.1.4",
     "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "react-scripts": "5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
