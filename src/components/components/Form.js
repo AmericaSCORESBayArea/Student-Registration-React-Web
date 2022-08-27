@@ -6,6 +6,7 @@ import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
+import { ModalwithConfirmation } from "../utils/Modal";
 import "../styles/RadioButton.css";
 import {
   regionsArray,
@@ -71,6 +72,7 @@ export default function Form(props) {
   const classes = useStyles();
   const history = useNavigate();
   const date = new Date();
+  date.setDate(date.getDate() - 1);
   const ethnicityOptions = ethnicityArray.sort((a, b) =>
     a.label.localeCompare(b.label)
   );
@@ -129,7 +131,10 @@ export default function Form(props) {
   const [rectEmergencyName, refEmergencyName] = useClientRect();
   const [rectEmergencyRelationship, refEmergencyRelationship] = useClientRect();
   const [rectEmergencyPhone, refEmergencyPhone] = useClientRect();
-  console.log(rectGrade, rectLName);
+  const confirmedRegistration = () => {
+    window.open("https://scoresu.org/family", "_blank").focus();
+    props.handleReset();
+  };
   const formFieldsRef = {
     firstName_field: rect,
     lastName_field: rectLName,
@@ -148,7 +153,6 @@ export default function Form(props) {
     emergency_Contact_Relationship_field: rectEmergencyRelationship,
     emergency_Contact_Phone1_field: rectEmergencyPhone,
   };
-  console.log(formFieldsRef);
   return (
     <Grid
       container
@@ -193,7 +197,6 @@ export default function Form(props) {
               relationship: "",
               parentPhone1: "",
               parentPhone2: "",
-              StartDate: new Date(date.getDate() - 1),
               mailingStreet: "",
               mailingCity: "",
               mailingState: "",
@@ -219,14 +222,14 @@ export default function Form(props) {
                 schoolname: Yup.string().required("Field is required (*)"),
               }),
               studentEmail: Yup.string().email("Email is not valid"),
-              studentphoneNumber: Yup.string().matches(
-                phoneRegExp,
-                "Phone number is not valid"
-              ),
+              studentphoneNumber: Yup.string()
+                .matches(phoneRegExp, "Phone number is not valid")
+                .min(10, "Phone number is not valid")
+                .max(10, "Phone number is not valid"),
               StartDate: Yup.date(),
               birthdate: Yup.date()
                 .required("Field is required (*)")
-                .max(Yup.ref("StartDate"), "Field is required (*)"),
+                .max(date, "Field is required (*)"),
               gender: Yup.string().required("Field is required (*)"),
               grade: Yup.string().required("Field is required (*)"),
               ethnicity: Yup.string().required("Field is required (*)"),
@@ -237,11 +240,13 @@ export default function Form(props) {
               reducedPriceLunch: Yup.string().required("Field is required (*)"),
               parentPhone1: Yup.string()
                 .matches(phoneRegExp, "Phone number is not valid")
+                .min(10, "Phone number is not valid")
+                .max(10, "Phone number is not valid")
                 .required("Field is required (*)"),
-              parentPhone2: Yup.string().matches(
-                phoneRegExp,
-                "Phone number is not valid"
-              ),
+              parentPhone2: Yup.string()
+                .matches(phoneRegExp, "Phone number is not valid")
+                .min(10, "Phone number is not valid")
+                .max(10, "Phone number is not valid"),
               parentHomeLang: Yup.string().required("Field is required (*)"),
               otherLang: Yup.string().when("parentHomeLang", {
                 is: "Other",
@@ -256,21 +261,27 @@ export default function Form(props) {
               emergency_Contact_Phone1: Yup.string()
                 .matches(phoneRegExp, "Phone number is not valid")
                 .required("Field is required (*)"),
-              emergency_Contact_Phone2: Yup.string().matches(
-                phoneRegExp,
-                "Phone number is not valid"
-              ),
-              second_Emergency_Contact_Phone1: Yup.string().matches(
-                phoneRegExp,
-                "Phone number is not valid"
-              ),
-              second_Emergency_Contact_Phone2: Yup.string().matches(
-                phoneRegExp,
-                "Phone number is not valid"
-              ),
+              emergency_Contact_Phone2: Yup.string()
+                .matches(phoneRegExp, "Phone number is not valid")
+                .min(10, "Phone number is not valid")
+                .max(10, "Phone number is not valid"),
+              second_Emergency_Contact_Phone1: Yup.string()
+                .matches(phoneRegExp, "Phone number is not valid")
+                .min(10, "Phone number is not valid")
+                .max(10, "Phone number is not valid"),
+              second_Emergency_Contact_Phone2: Yup.string()
+                .matches(phoneRegExp, "Phone number is not valid")
+                .min(10, "Phone number is not valid")
+                .max(10, "Phone number is not valid"),
             })}
-            onSubmit={(data) => {
+            onSubmit={(data, { resetForm }) => {
               console.log(data);
+              ModalwithConfirmation(
+                props.modalTranslations,
+                confirmedRegistration,
+                "success",
+                props.handleReset
+              );
             }}
           >
             {({
