@@ -16,20 +16,25 @@ function PrivateRoute(props) {
     });
   };
   const user = localStorage.getItem("user");
+  const firstTimeUser = sessionStorage.getItem("firstTime");
   if (JSON.parse(user) !== true) {
-    var code = localStorage.getItem("language");
-    if (code === "US") {
-      import("../../components/translations/en.js").then((language) =>
-        showToast(language.enLanguages.login_warning)
-      );
-    } else if (code === "ES") {
-      import("../../components/translations/es.js").then((language) =>
-        showToast(language.esLanguages.login_warning)
-      );
-    } else if (code === "CN") {
-      import("../../components/translations/cn.js").then((language) =>
-        showToast(language.cnLanguages.login_warning)
-      );
+    if (JSON.parse(firstTimeUser) !== null) {
+      var code = localStorage.getItem("language");
+      if (code === "US") {
+        import("../../components/translations/en.js").then((language) =>
+          showToast(language.enLanguages.login_warning)
+        );
+      } else if (code === "ES") {
+        import("../../components/translations/es.js").then((language) =>
+          showToast(language.esLanguages.login_warning)
+        );
+      } else if (code === "CN") {
+        import("../../components/translations/cn.js").then((language) =>
+          showToast(language.cnLanguages.login_warning)
+        );
+      }
+    } else {
+      sessionStorage.setItem("firstTime", false);
     }
     return <Navigate to="/Login" />;
   }
