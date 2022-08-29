@@ -7,6 +7,7 @@ import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { ModalwithConfirmation } from "../utils/Modal";
+import { WaiverModal } from "../utils/WaiverModal";
 import "../styles/RadioButton.css";
 import {
   regionsArray,
@@ -131,6 +132,7 @@ export default function Form(props) {
   const [rectEmergencyName, refEmergencyName] = useClientRect();
   const [rectEmergencyRelationship, refEmergencyRelationship] = useClientRect();
   const [rectEmergencyPhone, refEmergencyPhone] = useClientRect();
+  const [show, setShow] = useState(false);
   const confirmedRegistration = () => {
     window.open("https://scoresu.org/family", "_blank").focus();
     props.handleReset();
@@ -213,6 +215,7 @@ export default function Form(props) {
               second_Emergency_Contact_Relationship: "",
               second_Emergency_Contact_Phone1: "",
               second_Emergency_Contact_Phone2: "",
+              waiver: false,
             }}
             validationSchema={Yup.object().shape({
               firstName: Yup.string().required("Field is required (*)"),
@@ -273,9 +276,12 @@ export default function Form(props) {
                 .matches(phoneRegExp, "Phone number is not valid")
                 .min(10, "Phone number is not valid")
                 .max(10, "Phone number is not valid"),
+              waiver: Yup.bool().oneOf(
+                [true],
+                "You need to review and accept waiver (*)"
+              ),
             })}
             onSubmit={(data, { resetForm }) => {
-              console.log(data);
               ModalwithConfirmation(
                 props.modalTranslations,
                 confirmedRegistration,
@@ -1294,7 +1300,7 @@ export default function Form(props) {
                     </div>
                     <div
                       className="form-group"
-                      style={{ marginBottom: "40px" }}
+                      style={{ marginBottom: "20px" }}
                     >
                       <div className={classes.label}>
                         <label htmlFor="second_Emergency_Contact_Phone2">
@@ -1320,10 +1326,48 @@ export default function Form(props) {
                         className="invalid-feedback"
                       />
                     </div>
+                    <div
+                      className="form-group"
+                      style={{ marginBottom: "40px" }}
+                    >
+                      <div className={classes.label}>
+                        <label htmlFor="waiver">Waiver</label>
+                      </div>
+                      <label
+                        style={{
+                          textAlign: "left",
+                          display: "flex",
+                          justifyContent: "flex-start",
+                        }}
+                      >
+                        <Field type="checkbox" name="waiver" id="cb1" />
+                        <Button size={"small"} onClick={() => setShow(true)}>
+                          Show waiver
+                        </Button>
+                      </label>
+                      {errors.waiver && touched.waiver ? (
+                        <div
+                          style={{
+                            textAlign: "center",
+                            color: "#dc3545",
+                            fontSize: ".875em",
+                            marginTop: ".25rem",
+                          }}
+                        >
+                          {errors.waiver}
+                        </div>
+                      ) : null}
+                    </div>
                     <MissingFieldsValidation
                       values={values}
                       fieldsRef={formFieldsRef}
                     />
+                    {show === true ? (
+                      <WaiverModal
+                        function={() => setShow(false)}
+                        checkboxFunction={setFieldValue}
+                      />
+                    ) : null}
                     <div
                       className="form-group"
                       style={{

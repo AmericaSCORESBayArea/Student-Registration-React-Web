@@ -33,3 +33,10 @@ ul li::marker {
   text-align-last: start !important;
   font-size: 1.5em;
 }
+#cb1 {
+  width: 18px;
+  height: 18px;
+  accent-color: #1976d2;
+  margin-top: 5px;
+  margin-right: 10px;
+}
