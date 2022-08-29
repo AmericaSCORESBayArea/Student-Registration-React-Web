@@ -108,7 +108,6 @@ function MissingFieldsValidation(props) {
             <li
               style={{ cursor: "pointer" }}
               onClick={() => {
-                console.log(props.fieldsRef.grade_field);
                 window.scrollTo(0, value.position);
               }}
             >
