@@ -379,7 +379,7 @@ function WaiverModal(props) {
             backgroundColor: "#5c6370",
           }}
         >
-          Dismiss
+          {props.deniedButton}
         </Button>
         <Button
           size={"medium"}
@@ -390,7 +390,7 @@ function WaiverModal(props) {
             props.checkboxFunction("waiver", true);
           }}
         >
-          Accept
+          {props.confirmButton}
         </Button>
       </Modal.Footer>
     </Modal>
