@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
 }));
 export default function RoleType(props) {
   const classes = useStyles();
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState(props.registration_status);
   const [width, setWidth] = useState(window.innerWidth);
   const updateDimensions = () => {
     setWidth(window.innerWidth);
@@ -134,7 +134,7 @@ export default function RoleType(props) {
           </Grid>
         ))}
       </Grid>
-      {selected.length !== 0 ? (
+      {selected !== undefined ? (
         <div
           style={{
             display: "flex",
@@ -154,7 +154,7 @@ export default function RoleType(props) {
           <Button
             size={"large"}
             variant="contained"
-            onClick={() => props.function()}
+            onClick={() => props.function("registration_status", selected)}
           >
             {props.continueButton}
           </Button>
