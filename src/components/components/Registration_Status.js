@@ -26,9 +26,9 @@ const useStyles = makeStyles(() => ({
   },
 }));
 export default function RoleType(props) {
-  const classes = useStyles();
   const [selected, setSelected] = useState(props.registration_status);
   const [width, setWidth] = useState(window.innerWidth);
+  const classes = useStyles();
   const updateDimensions = () => {
     setWidth(window.innerWidth);
   };
