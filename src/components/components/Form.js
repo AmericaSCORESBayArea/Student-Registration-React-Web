@@ -1,23 +1,14 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
-import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { ModalwithConfirmation } from "../utils/Modal";
 import { WaiverModal } from "../utils/WaiverModal";
 import "../styles/RadioButton.css";
-import {
-  regionsArray,
-  schoolsName,
-  genderArray,
-  gradesArray,
-  ethnicityArray,
-  relationshipArray,
-  parent_Home_Lang_Array,
-} from "./multiplesArray";
+import { regionsArray, schoolsName, gradesArray } from "./multiplesArray";
 import { MissingFieldsValidation } from "./MissingFieldsValidation";
 import Select from "react-select";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
@@ -71,15 +62,21 @@ const CustomInputComponent = (props) => (
 
 export default function Form(props) {
   const classes = useStyles();
-  const history = useNavigate();
   const date = new Date();
   date.setDate(date.getDate() - 1);
-  const ethnicityOptions = ethnicityArray.sort((a, b) =>
+  const ethnicityOptions = props.formTranslations.ethnicityArray.sort((a, b) =>
     a.label.localeCompare(b.label)
   );
-  const relationshipOptions = relationshipArray.sort((a, b) =>
+  const relationshipOptions = props.formTranslations.relationshipArray.sort(
+    (a, b) => a.label.localeCompare(b.label)
+  );
+  const genderOptions = props.formTranslations.genderArray.sort((a, b) =>
     a.label.localeCompare(b.label)
   );
+  const parent_Home_Lang_Options =
+    props.formTranslations.parent_Home_Lang_Array.sort((a, b) =>
+      a.label.localeCompare(b.label)
+    );
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const [width, setWidth] = useState(window.innerWidth);
@@ -218,67 +215,120 @@ export default function Form(props) {
               waiver: false,
             }}
             validationSchema={Yup.object().shape({
-              firstName: Yup.string().required("Field is required (*)"),
-              lastName: Yup.string().required("Field is required (*)"),
+              firstName: Yup.string().required(
+                props.formTranslations.required_fields
+              ),
+              lastName: Yup.string().required(
+                props.formTranslations.required_fields
+              ),
               schoolName: Yup.object({
-                region: Yup.string().required("Field is required (*)"),
-                schoolname: Yup.string().required("Field is required (*)"),
+                region: Yup.string().required(
+                  props.formTranslations.required_fields
+                ),
+                schoolname: Yup.string().required(
+                  props.formTranslations.required_fields
+                ),
               }),
-              studentEmail: Yup.string().email("Email is not valid"),
+              studentEmail: Yup.string().email(
+                props.formTranslations.invalid_email
+              ),
               studentphoneNumber: Yup.string()
-                .matches(phoneRegExp, "Phone number is not valid")
-                .min(10, "Phone number is not valid")
-                .max(10, "Phone number is not valid"),
+                .matches(
+                  phoneRegExp,
+                  props.formTranslations.invalid_phone_number
+                )
+                .min(10, props.formTranslations.invalid_phone_number)
+                .max(10, props.formTranslations.invalid_phone_number),
               StartDate: Yup.date(),
               birthdate: Yup.date()
-                .required("Field is required (*)")
-                .max(date, "Field is required (*)"),
-              gender: Yup.string().required("Field is required (*)"),
-              grade: Yup.string().required("Field is required (*)"),
-              ethnicity: Yup.string().required("Field is required (*)"),
-              parentFName: Yup.string().required("Field is required (*)"),
-              parentLName: Yup.string().required("Field is required (*)"),
-              parentEmail: Yup.string().email("Email is not valid"),
-              relationship: Yup.string().required("Field is required (*)"),
-              reducedPriceLunch: Yup.string().required("Field is required (*)"),
+                .required(props.formTranslations.required_fields)
+                .max(date, props.formTranslations.required_fields),
+              gender: Yup.string().required(
+                props.formTranslations.required_fields
+              ),
+              grade: Yup.string().required(
+                props.formTranslations.required_fields
+              ),
+              ethnicity: Yup.string().required(
+                props.formTranslations.required_fields
+              ),
+              parentFName: Yup.string().required(
+                props.formTranslations.required_fields
+              ),
+              parentLName: Yup.string().required(
+                props.formTranslations.required_fields
+              ),
+              parentEmail: Yup.string().email(
+                props.formTranslations.invalid_email
+              ),
+              relationship: Yup.string().required(
+                props.formTranslations.required_fields
+              ),
+              reducedPriceLunch: Yup.string().required(
+                props.formTranslations.required_fields
+              ),
               parentPhone1: Yup.string()
-                .matches(phoneRegExp, "Phone number is not valid")
-                .min(10, "Phone number is not valid")
-                .max(10, "Phone number is not valid")
-                .required("Field is required (*)"),
+                .matches(
+                  phoneRegExp,
+                  props.formTranslations.invalid_phone_number
+                )
+                .min(10, props.formTranslations.invalid_phone_number)
+                .max(10, props.formTranslations.invalid_phone_number)
+                .required(props.formTranslations.required_fields),
               parentPhone2: Yup.string()
-                .matches(phoneRegExp, "Phone number is not valid")
-                .min(10, "Phone number is not valid")
-                .max(10, "Phone number is not valid"),
-              parentHomeLang: Yup.string().required("Field is required (*)"),
+                .matches(
+                  phoneRegExp,
+                  props.formTranslations.invalid_phone_number
+                )
+                .min(10, props.formTranslations.invalid_phone_number)
+                .max(10, props.formTranslations.invalid_phone_number),
+              parentHomeLang: Yup.string().required(
+                props.formTranslations.required_fields
+              ),
               otherLang: Yup.string().when("parentHomeLang", {
                 is: "Other",
-                then: Yup.string().required("Field is required (*)"),
+                then: Yup.string().required(
+                  props.formTranslations.required_fields
+                ),
               }),
               emergency_Contact_Name: Yup.string().required(
-                "Field is required (*)"
+                props.formTranslations.required_fields
               ),
               emergency_Contact_Relationship: Yup.string().required(
-                "Field is required (*)"
+                props.formTranslations.required_fields
               ),
               emergency_Contact_Phone1: Yup.string()
-                .matches(phoneRegExp, "Phone number is not valid")
-                .required("Field is required (*)"),
+                .required(props.formTranslations.required_fields)
+                .matches(
+                  phoneRegExp,
+                  props.formTranslations.invalid_phone_number
+                )
+                .min(10, props.formTranslations.invalid_phone_number)
+                .max(10, props.formTranslations.invalid_phone_number),
               emergency_Contact_Phone2: Yup.string()
-                .matches(phoneRegExp, "Phone number is not valid")
-                .min(10, "Phone number is not valid")
-                .max(10, "Phone number is not valid"),
+                .matches(
+                  phoneRegExp,
+                  props.formTranslations.invalid_phone_number
+                )
+                .min(10, props.formTranslations.invalid_phone_number)
+                .max(10, props.formTranslations.invalid_phone_number),
               second_Emergency_Contact_Phone1: Yup.string()
-                .matches(phoneRegExp, "Phone number is not valid")
-                .min(10, "Phone number is not valid")
-                .max(10, "Phone number is not valid"),
+                .matches(
+                  phoneRegExp,
+                  props.formTranslations.invalid_phone_number
+                )
+                .min(10, props.formTranslations.invalid_phone_number)
+                .max(10, props.formTranslations.invalid_phone_number),
               second_Emergency_Contact_Phone2: Yup.string()
-                .matches(phoneRegExp, "Phone number is not valid")
-                .min(10, "Phone number is not valid")
-                .max(10, "Phone number is not valid"),
+                .matches(
+                  phoneRegExp,
+                  props.formTranslations.invalid_phone_number
+                )
+                .min(10, props.formTranslations.invalid_phone_number)
+                .max(10, props.formTranslations.invalid_phone_number),
               waiver: Yup.bool().oneOf(
                 [true],
-                "You need to review and accept waiver (*)"
+                props.formTranslations.required_waiver
               ),
             })}
             onSubmit={(data, { resetForm }) => {
@@ -303,7 +353,7 @@ export default function Form(props) {
             }) => (
               <form autoComplete="off" onSubmit={handleSubmit}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <FormTitles title={"Students details"} />
+                  <FormTitles title={props.formTranslations.formTitle1} />
                   <div className={classes.inputForm}>
                     <div
                       className="form-group"
@@ -311,13 +361,17 @@ export default function Form(props) {
                       ref={ref}
                     >
                       <div className={classes.label}>
-                        <label htmlFor="firstName">First Name*</label>
+                        <label htmlFor="firstName">
+                          {props.formTranslations.firstName_field}
+                        </label>
                       </div>
                       <Field
                         name="firstName"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter first name"
+                        placeholder={
+                          props.formTranslations.firstName_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.firstName && touched.firstName
@@ -336,13 +390,17 @@ export default function Form(props) {
                       style={{ marginBottom: "20px" }}
                     >
                       <div className={classes.label}>
-                        <label htmlFor="middleName">Middle Name</label>
+                        <label htmlFor="middleName">
+                          {props.formTranslations.middleName_field}
+                        </label>
                       </div>
                       <Field
                         name="middleName"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter middle name"
+                        placeholder={
+                          props.formTranslations.middleName_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.middleName && touched.middleName
@@ -357,13 +415,17 @@ export default function Form(props) {
                       ref={refLName_field}
                     >
                       <div className={classes.label}>
-                        <label htmlFor="lastName">Last Name*</label>
+                        <label htmlFor="lastName">
+                          {props.formTranslations.lastName_field}
+                        </label>
                       </div>
                       <Field
                         name="lastName"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter last name"
+                        placeholder={
+                          props.formTranslations.lastName_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.lastName && touched.lastName
@@ -382,7 +444,9 @@ export default function Form(props) {
                       style={{ marginBottom: "20px" }}
                     >
                       <div className={classes.label} ref={refRegion}>
-                        <label htmlFor="schoolName">School Name*</label>
+                        <label htmlFor="schoolName">
+                          {props.formTranslations.schoolName_field}
+                        </label>
                       </div>
                       <div
                         className="form-group"
@@ -394,13 +458,18 @@ export default function Form(props) {
                         }}
                       >
                         <div className={classes.label}>
-                          <label htmlFor="schoolName.region">Region*</label>
+                          <label htmlFor="schoolName.region">
+                            {props.formTranslations.schoolName_region_field}
+                          </label>
                         </div>
                         <Select
                           styles={customStyles}
                           menuPlacement="auto"
                           name="schoolName.region"
-                          placeholder="Select..."
+                          placeholder={
+                            props.formTranslations
+                              .schoolName_region_field_placeholder
+                          }
                           options={regionsArray}
                           className={
                             "form-control" +
@@ -438,7 +507,7 @@ export default function Form(props) {
                           ref={refSchoolName}
                         >
                           <label htmlFor="schoolName.schoolname">
-                            School Name*
+                            {props.formTranslations.schoolName_schoolname_field}
                           </label>
                           <Select
                             isDisabled={
@@ -448,7 +517,10 @@ export default function Form(props) {
                             }
                             styles={customStyles}
                             menuPlacement="auto"
-                            placeholder="Select..."
+                            placeholder={
+                              props.formTranslations
+                                .schoolName_schoolname_field_placeholder
+                            }
                             name="schoolName.schoolname"
                             options={options}
                             className={
@@ -478,13 +550,17 @@ export default function Form(props) {
                       style={{ marginBottom: "20px" }}
                     >
                       <div className={classes.label}>
-                        <label htmlFor="studentEmail">Student Email</label>
+                        <label htmlFor="studentEmail">
+                          {props.formTranslations.studentEmail_field}
+                        </label>
                       </div>
                       <Field
                         name="studentEmail"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter student email"
+                        placeholder={
+                          props.formTranslations.studentEmail_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.studentEmail && touched.studentEmail
@@ -504,14 +580,16 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="studentphoneNumber">
-                          Student Phone
+                          {props.formTranslations.studentphoneNumber_field}
                         </label>
                       </div>
                       <Field
                         name="studentphoneNumber"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter student phone"
+                        placeholder={
+                          props.formTranslations.studentphoneNumber_field
+                        }
                         className={
                           "form-control" +
                           (errors.studentphoneNumber &&
@@ -535,7 +613,7 @@ export default function Form(props) {
                           htmlFor="birthdate"
                           style={{ marginBottom: "10px" }}
                         >
-                          Birthdate*
+                          {props.formTranslations.birthdate_field}
                         </label>
                       </div>
                       <MobileDatePicker
@@ -543,7 +621,9 @@ export default function Form(props) {
                         InputProps={{
                           disableUnderline: true,
                         }}
-                        label={"Birthdate"}
+                        label={
+                          props.formTranslations.birthdate_field_placeholder
+                        }
                         name="birthdate"
                         value={values.birthdate}
                         onChange={(newValue) =>
@@ -583,14 +663,18 @@ export default function Form(props) {
                       ref={refGender}
                     >
                       <div className={classes.label}>
-                        <label htmlFor="gender">Gender*</label>
+                        <label htmlFor="gender">
+                          {props.formTranslations.gender_field}
+                        </label>
                       </div>
                       <Select
                         styles={customStyles}
                         menuPlacement="auto"
-                        placeholder="Select..."
+                        placeholder={
+                          props.formTranslations.gender_field_placeholder
+                        }
                         name="gender"
-                        options={genderArray}
+                        options={genderOptions}
                         className={
                           "form-control" +
                           (errors.gender && touched.gender ? " is-invalid" : "")
@@ -611,12 +695,16 @@ export default function Form(props) {
                       ref={refGrade}
                     >
                       <div className={classes.label}>
-                        <label htmlFor="grade">Grade*</label>
+                        <label htmlFor="grade">
+                          {props.formTranslations.grade_field}
+                        </label>
                       </div>
                       <Select
                         styles={customStyles}
                         menuPlacement="auto"
-                        placeholder="Select..."
+                        placeholder={
+                          props.formTranslations.grade_field_placeholder
+                        }
                         name="grade"
                         options={gradesArray}
                         className={
@@ -639,13 +727,15 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="ethnicity" ref={refEthnicity}>
-                          Ethnicity*
+                          {props.formTranslations.ethnicity_field}
                         </label>
                       </div>
                       <Select
                         styles={customStyles}
                         menuPlacement="auto"
-                        placeholder="Select..."
+                        placeholder={
+                          props.formTranslations.ethnicity_field_placeholder
+                        }
                         name="ethnicity"
                         options={ethnicityOptions}
                         className={
@@ -673,7 +763,7 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="reducedPriceLunch">
-                          Does your child receive Free or Reduced Price Lunch?*
+                          {props.formTranslations.reducedPriceLunch_field}
                         </label>
                       </div>
                       <label id="radioLabel">
@@ -683,7 +773,10 @@ export default function Form(props) {
                           name="reducedPriceLunch"
                           value="yes"
                         />
-                        Yes
+                        {
+                          props.formTranslations
+                            .reducedPriceLunch_field_placeholder_confirm
+                        }
                       </label>
                       <label id="radioLabel">
                         <Field
@@ -692,7 +785,10 @@ export default function Form(props) {
                           name="reducedPriceLunch"
                           value="no"
                         />
-                        No
+                        {
+                          props.formTranslations
+                            .reducedPriceLunch_field_placeholder_denied
+                        }
                       </label>
                       {errors.reducedPriceLunch && touched.reducedPriceLunch ? (
                         <div
@@ -713,14 +809,16 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="allergies">
-                          Allergies/Medical Conditions
+                          {props.formTranslations.allergies_field}
                         </label>
                       </div>
                       <Field
                         name="allergies"
                         as={CustomInputComponent}
                         autoComplete="off"
-                        placeholder="Enter allergies/medical conditions"
+                        placeholder={
+                          props.formTranslations.allergies_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.allergies && touched.allergies
@@ -729,7 +827,7 @@ export default function Form(props) {
                         }
                       />
                     </div>
-                    <FormTitles title="Parent/Guardian Information" />
+                    <FormTitles title={props.formTranslations.formTitle2} />
                     <div
                       className="form-group"
                       style={{ marginBottom: "20px", marginTop: "5px" }}
@@ -737,14 +835,16 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="parentFName">
-                          Parent/Guardian First Name*
+                          {props.formTranslations.parentFName_field}
                         </label>
                       </div>
                       <Field
                         name="parentFName"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter parent/guardian first name"
+                        placeholder={
+                          props.formTranslations.parentFName_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.parentFName && touched.parentFName
@@ -765,14 +865,16 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="parentLName">
-                          Parent/Guardian Last Name*
+                          {props.formTranslations.parentLName_field}
                         </label>
                       </div>
                       <Field
                         name="parentLName"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter parent/guardian last name"
+                        placeholder={
+                          props.formTranslations.parentLName_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.parentLName && touched.parentLName
@@ -792,14 +894,16 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="parentEmail">
-                          Parent/Guardian Email
+                          {props.formTranslations.parentEmail_field}
                         </label>
                       </div>
                       <Field
                         name="parentEmail"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter parent/guardian email"
+                        placeholder={
+                          props.formTranslations.parentEmail_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.parentEmail && touched.parentEmail
@@ -820,13 +924,15 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="relationship">
-                          Relationship to Child*
+                          {props.formTranslations.relationship_field}
                         </label>
                       </div>
                       <Select
                         styles={customStyles}
                         menuPlacement="auto"
-                        placeholder="Select..."
+                        placeholder={
+                          props.formTranslations.relationship_field_placeholder
+                        }
                         name="relationship"
                         options={relationshipOptions}
                         className={
@@ -852,14 +958,16 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="parentPhone1">
-                          Parent/Guardian Phone 1*
+                          {props.formTranslations.parentPhone1_field}
                         </label>
                       </div>
                       <Field
                         name="parentPhone1"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter parent/guardian phone 1"
+                        placeholder={
+                          props.formTranslations.parentPhone1_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.parentPhone1 && touched.parentPhone1
@@ -879,14 +987,16 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="parentPhone2">
-                          Parent/Guardian Phone 2
+                          {props.formTranslations.parentPhone2_field}
                         </label>
                       </div>
                       <Field
                         name="parentPhone2"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter parent/guardian phone 2"
+                        placeholder={
+                          props.formTranslations.parentPhone2_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.parentPhone2 && touched.parentPhone2
@@ -900,13 +1010,17 @@ export default function Form(props) {
                       style={{ marginBottom: "20px" }}
                     >
                       <div className={classes.label}>
-                        <label htmlFor="mailingStreet">Mailing Street </label>
+                        <label htmlFor="mailingStreet">
+                          {props.formTranslations.mailingStreet_field}
+                        </label>
                       </div>
                       <Field
                         name="mailingStreet"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter mailing street"
+                        placeholder={
+                          props.formTranslations.mailingStreet_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.mailingStreet && touched.mailingStreet
@@ -920,13 +1034,17 @@ export default function Form(props) {
                       style={{ marginBottom: "20px" }}
                     >
                       <div className={classes.label}>
-                        <label htmlFor="mailingCity">Mailing City </label>
+                        <label htmlFor="mailingCity">
+                          {props.formTranslations.mailingCity_field}
+                        </label>
                       </div>
                       <Field
                         name="mailingCity"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter mailing city"
+                        placeholder={
+                          props.formTranslations.mailingCity_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.mailingCity && touched.mailingCity
@@ -941,14 +1059,16 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="mailingState">
-                          Mailing State/Province
+                          {props.formTranslations.mailingState_field}
                         </label>
                       </div>
                       <Field
                         name="mailingState"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter mailing state/province"
+                        placeholder={
+                          props.formTranslations.mailingState_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.mailingState && touched.mailingState
@@ -962,13 +1082,17 @@ export default function Form(props) {
                       style={{ marginBottom: "20px" }}
                     >
                       <div className={classes.label}>
-                        <label htmlFor="mailingZip">Mailing Zip</label>
+                        <label htmlFor="mailingZip">
+                          {props.formTranslations.mailingZip_field}
+                        </label>
                       </div>
                       <input
                         name="mailingZip"
                         type="number"
                         autoComplete="off"
-                        placeholder="Enter mailing zip"
+                        placeholder={
+                          props.formTranslations.mailingZip_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.mailingZip && touched.mailingZip
@@ -982,7 +1106,9 @@ export default function Form(props) {
                       style={{ marginBottom: "20px" }}
                     >
                       <div className={classes.label}>
-                        <label htmlFor="mailingCountry">Mailing Country</label>
+                        <label htmlFor="mailingCountry">
+                          {props.formTranslations.mailingCountry_field}
+                        </label>
                       </div>
                       <Field
                         name="mailingCountry"
@@ -1004,15 +1130,18 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="parentHomeLang">
-                          Parent/Guardian Home Language*
+                          {props.formTranslations.parentHomeLang_field}
                         </label>
                       </div>
                       <Select
                         styles={customStyles}
                         menuPlacement="auto"
-                        placeholder="Select..."
+                        placeholder={
+                          props.formTranslations
+                            .parentHomeLang_field_placeholder
+                        }
                         name="parentHomeLang"
-                        options={parent_Home_Lang_Array}
+                        options={parent_Home_Lang_Options}
                         className={
                           "form-control" +
                           (errors.parentHomeLang && touched.parentHomeLang
@@ -1036,13 +1165,17 @@ export default function Form(props) {
                       >
                         <div className={classes.label}>
                           <label htmlFor="otherLang">
-                            Parent/Guardian Home Language*
+                            {props.formTranslations.parentHomeLang_field}
                           </label>
                         </div>
                         <Field
                           name="otherLang"
                           type="text"
                           autoComplete="off"
+                          placeholder={
+                            props.formTranslations
+                              .parentHomeLang_field_input_placeholder
+                          }
                           className={
                             "form-control" +
                             (errors.otherLang && touched.otherLang
@@ -1065,7 +1198,7 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="volunteer">
-                          Volunteer for this program? (Parent/Guardian)
+                          {props.formTranslations.volunteer_field}
                         </label>
                       </div>
                       <label id="radioLabel">
@@ -1075,7 +1208,10 @@ export default function Form(props) {
                           name="volunteer"
                           value="yes"
                         />
-                        Yes
+                        {
+                          props.formTranslations
+                            .volunteer_field_placeholder_confirm
+                        }
                       </label>
                       <label id="radioLabel">
                         <Field
@@ -1084,7 +1220,10 @@ export default function Form(props) {
                           name="volunteer"
                           value="no"
                         />
-                        No
+                        {
+                          props.formTranslations
+                            .volunteer_field_placeholder_denied
+                        }
                       </label>
                       <ErrorMessage
                         name="volunteer"
@@ -1092,7 +1231,7 @@ export default function Form(props) {
                         className="invalid-feedback"
                       />
                     </div>
-                    <FormTitles title="Emergency Contact (Other than Parent/Guardian)" />
+                    <FormTitles title={props.formTranslations.formTitle3} />
                     <div
                       className="form-group"
                       style={{ marginBottom: "20px" }}
@@ -1100,15 +1239,17 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="emergency_Contact_Name">
-                          Primary Emergency Contact (Other than Parent/Guardian
-                          and Primary Emergency Contact)*
+                          {props.formTranslations.emergency_Contact_Name_field}
                         </label>
                       </div>
                       <Field
                         name="emergency_Contact_Name"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter emergency contact name"
+                        placeholder={
+                          props.formTranslations
+                            .emergency_Contact_Name_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.emergency_Contact_Name &&
@@ -1130,13 +1271,19 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="emergency_Contact_Relationship">
-                          Emergency Relationship to Child*
+                          {
+                            props.formTranslations
+                              .emergency_Contact_Relationship_field
+                          }
                         </label>
                       </div>
                       <Select
                         styles={customStyles}
                         menuPlacement="auto"
-                        placeholder="Select..."
+                        placeholder={
+                          props.formTranslations
+                            .emergency_Contact_Relationship_field_placeholder
+                        }
                         name="emergency_Contact_Relationship"
                         options={relationshipOptions}
                         className={
@@ -1166,14 +1313,20 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="emergency_Contact_Phone1">
-                          Emergency Contact Phone 1*
+                          {
+                            props.formTranslations
+                              .emergency_Contact_Phone1_field
+                          }
                         </label>
                       </div>
                       <Field
                         name="emergency_Contact_Phone1"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter emergency contact phone 1"
+                        placeholder={
+                          props.formTranslations
+                            .emergency_Contact_Phone1_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.emergency_Contact_Phone1 &&
@@ -1194,14 +1347,20 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="emergency_Contact_Phone2">
-                          Emergency Contact Phone 2
+                          {
+                            props.formTranslations
+                              .emergency_Contact_Phone2_field
+                          }
                         </label>
                       </div>
                       <Field
                         name="emergency_Contact_Phone2"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter emergency contact phone 2"
+                        placeholder={
+                          props.formTranslations
+                            .emergency_Contact_Phone2_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.emergency_Contact_Phone2 &&
@@ -1216,21 +1375,27 @@ export default function Form(props) {
                         className="invalid-feedback"
                       />
                     </div>
-                    <FormTitles title="Second Emergency Contact (Other than Parent/Guardian and Primary Emergency Contact)" />
+                    <FormTitles title={props.formTranslations.formTitle4} />
                     <div
                       className="form-group"
                       style={{ marginBottom: "20px" }}
                     >
                       <div className={classes.label}>
                         <label htmlFor="second_Emergency_Contact_Name">
-                          Secondary Emergency Contact Name
+                          {
+                            props.formTranslations
+                              .second_Emergency_Contact_Name_field
+                          }
                         </label>
                       </div>
                       <Field
                         name="second_Emergency_Contact_Name"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter secondary emergency contact name"
+                        placeholder={
+                          props.formTranslations
+                            .second_Emergency_Contact_Name_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.second_Emergency_Contact_Name &&
@@ -1246,13 +1411,19 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="second_Emergency_Contact_Relationship">
-                          Secondary Emergency Relationship to Child
+                          {
+                            props.formTranslations
+                              .second_Emergency_Contact_Relationship_field
+                          }
                         </label>
                       </div>
                       <Select
                         styles={customStyles}
                         menuPlacement="auto"
-                        placeholder="Select..."
+                        placeholder={
+                          props.formTranslations
+                            .second_Emergency_Contact_Relationship_field_placeholder
+                        }
                         name="second_Emergency_Contact_Relationship"
                         options={relationshipOptions}
                         className={
@@ -1276,14 +1447,20 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="second_Emergency_Contact_Phone1">
-                          Secondary Emergency Phone 1
+                          {
+                            props.formTranslations
+                              .second_Emergency_Contact_Phone1_field
+                          }
                         </label>
                       </div>
                       <Field
                         name="second_Emergency_Contact_Phone1"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter secondary emergency contact phone 1"
+                        placeholder={
+                          props.formTranslations
+                            .second_Emergency_Contact_Phone1_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.second_Emergency_Contact_Phone1 &&
@@ -1304,14 +1481,20 @@ export default function Form(props) {
                     >
                       <div className={classes.label}>
                         <label htmlFor="second_Emergency_Contact_Phone2">
-                          Secondary Emergency Phone 2
+                          {
+                            props.formTranslations
+                              .second_Emergency_Contact_Phone2_field
+                          }
                         </label>
                       </div>
                       <Field
                         name="second_Emergency_Contact_Phone2"
                         type="text"
                         autoComplete="off"
-                        placeholder="Enter secondary emergency contact phone 2"
+                        placeholder={
+                          props.formTranslations
+                            .second_Emergency_Contact_Phone2_field_placeholder
+                        }
                         className={
                           "form-control" +
                           (errors.second_Emergency_Contact_Phone2 &&
@@ -1331,7 +1514,9 @@ export default function Form(props) {
                       style={{ marginBottom: "40px" }}
                     >
                       <div className={classes.label}>
-                        <label htmlFor="waiver">Waiver</label>
+                        <label htmlFor="waiver">
+                          {props.formTranslations.waiver_field}
+                        </label>
                       </div>
                       <label
                         style={{
@@ -1342,7 +1527,7 @@ export default function Form(props) {
                       >
                         <Field type="checkbox" name="waiver" id="cb1" />
                         <Button size={"small"} onClick={() => setShow(true)}>
-                          Show waiver
+                          {props.formTranslations.waiver_field_button}
                         </Button>
                       </label>
                       {errors.waiver && touched.waiver ? (
@@ -1361,9 +1546,14 @@ export default function Form(props) {
                     <MissingFieldsValidation
                       values={values}
                       fieldsRef={formFieldsRef}
+                      formTranslations={props.formTranslations}
                     />
                     {show === true ? (
                       <WaiverModal
+                        confirmButton={
+                          props.formTranslations.waiverModal_confirm
+                        }
+                        deniedButton={props.formTranslations.waiverModal_denied}
                         function={() => setShow(false)}
                         checkboxFunction={setFieldValue}
                       />
