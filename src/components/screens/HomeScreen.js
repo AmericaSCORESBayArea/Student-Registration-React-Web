@@ -16,7 +16,8 @@ export default function HomeScreen(props) {
   //const history = useNavigate();
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
-
+  const [roleType, setRoleType] = React.useState();
+  const [regStatus, setRegStatus] = React.useState();
   const totalSteps = () => {
     return steps.length;
   };
@@ -33,7 +34,7 @@ export default function HomeScreen(props) {
     return completedSteps() === totalSteps();
   };
 
-  const handleNext = (props) => {
+  const handleNext = (step, selected) => {
     const newActiveStep =
       isLastStep() && !allStepsCompleted()
         ? // It's the last step, but not all steps have been completed,
@@ -41,6 +42,11 @@ export default function HomeScreen(props) {
           steps.findIndex((step, i) => !(i in completed))
         : activeStep + 1;
     setActiveStep(newActiveStep);
+    if (step === "role_type") {
+      setRoleType(selected);
+    } else if (step === "registration_status") {
+      setRegStatus(selected);
+    }
   };
 
   const handleBack = () => {
@@ -54,6 +60,8 @@ export default function HomeScreen(props) {
   const handleReset = () => {
     setActiveStep(0);
     setCompleted({});
+    setRoleType("");
+    setRegStatus("");
   };
 
   const getScreen = () => {
@@ -67,6 +75,7 @@ export default function HomeScreen(props) {
             title={props.translations.parent_coach_title}
             continueButton={props.translations.button_continue}
             function={handleNext}
+            roleType={roleType}
           />
         );
       case 1:
@@ -80,6 +89,7 @@ export default function HomeScreen(props) {
             backButton={props.translations.button_back}
             function={handleNext}
             function_back={handleBack}
+            registration_status={regStatus}
           />
         );
       case 2:
@@ -90,6 +100,7 @@ export default function HomeScreen(props) {
             function_back={handleBack}
             modalTranslations={props.translations.register_modal_success}
             handleReset={handleReset}
+            formTranslations={props.translations.form}
           />
         );
       default:
