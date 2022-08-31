@@ -27,7 +27,8 @@ const useStyles = makeStyles(() => ({
 }));
 export default function RoleType(props) {
   const classes = useStyles();
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState(props.roleType);
+
   const icons = (name) => {
     if (name === selected) {
       switch (name) {
@@ -134,7 +135,7 @@ export default function RoleType(props) {
           </Grid>
         ))}
       </Grid>
-      {selected.length !== 0 ? (
+      {selected !== undefined ? (
         <div
           style={{
             display: "flex",
@@ -146,7 +147,7 @@ export default function RoleType(props) {
           <Button
             size={"large"}
             variant="contained"
-            onClick={() => props.function(selected)}
+            onClick={() => props.function("role_type", selected)}
           >
             {props.continueButton}
           </Button>
