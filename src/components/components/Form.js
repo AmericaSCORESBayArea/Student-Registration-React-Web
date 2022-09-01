@@ -1525,7 +1525,12 @@ export default function Form(props) {
                           justifyContent: "flex-start",
                         }}
                       >
-                        <Field type="checkbox" name="waiver" id="cb1" />
+                        <Field
+                          type="checkbox"
+                          name="waiver"
+                          id="cb1"
+                          disabled
+                        />
                         <Button size={"small"} onClick={() => setShow(true)}>
                           {props.formTranslations.waiver_field_button}
                         </Button>
