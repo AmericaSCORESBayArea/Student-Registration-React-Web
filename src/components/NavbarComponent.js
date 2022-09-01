@@ -49,7 +49,7 @@ function NavbarComponent(props) {
             src={logo}
             style={{
               width: "100%",
-              maxWidth: "300px",
+              maxWidth: "250px",
             }}
             className="d-inline-block align-top"
             alt=""
