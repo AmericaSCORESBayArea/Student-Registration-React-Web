@@ -125,6 +125,7 @@ export default function Form(props) {
   const [rectParentFName, refParentFName] = useClientRect();
   const [rectParentLName, refParentLName] = useClientRect();
   const [rectParentPhone, refParentPhone] = useClientRect();
+  const [reactParentHomeLang, refParentHomeLang] = useClientRect();
   const [rectRelationship, refRelationship] = useClientRect();
   const [rectEmergencyName, refEmergencyName] = useClientRect();
   const [rectEmergencyRelationship, refEmergencyRelationship] = useClientRect();
@@ -147,6 +148,7 @@ export default function Form(props) {
     parentFName_field: rectParentFName,
     parentLName_field: rectParentLName,
     parentPhone_field: rectParentPhone,
+    parent_Home_Lang_field: reactParentHomeLang,
     relationship_field: rectRelationship,
     emergency_Contact_Name_field: rectEmergencyName,
     emergency_Contact_Relationship_field: rectEmergencyRelationship,
@@ -1127,6 +1129,7 @@ export default function Form(props) {
                     <div
                       className="form-group"
                       style={{ marginBottom: "20px" }}
+                      ref={refParentHomeLang}
                     >
                       <div className={classes.label}>
                         <label htmlFor="parentHomeLang">
