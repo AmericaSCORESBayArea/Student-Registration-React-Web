@@ -1,0 +1,2 @@
+local testing change "scripts" --> "start" to "react-scripts start".
+production change "scripts" --> "start" to "serve -s build"
