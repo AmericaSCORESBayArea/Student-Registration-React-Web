@@ -1529,7 +1529,7 @@ export default function Form(props) {
                           type="checkbox"
                           name="waiver"
                           id="cb1"
-                          disabled
+                          disabled={values.waiver === false ? true : false}
                         />
                         <Button size={"small"} onClick={() => setShow(true)}>
                           {props.formTranslations.waiver_field_button}
