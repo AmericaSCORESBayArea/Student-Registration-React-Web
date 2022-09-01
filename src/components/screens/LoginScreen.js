@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import firebase from "../../firebase/firebaseConfig";
+import { useNavigate } from "react-router-dom";
+
 const uiConfig = {
   signInSuccessUrl: "/",
   signInOptions: [
@@ -12,6 +14,11 @@ const uiConfig = {
   tosUrl: "https://scoresu.org/privacy-policy",
 };
 export default function LogInScreen() {
+  const history = useNavigate();
+  const user = localStorage.getItem("user");
+  if (JSON.parse(user) === true) {
+    history({ pathname: "/" });
+  }
   const [widget, setWidget] = useState(null);
   useEffect(() => {
     setWidget(
