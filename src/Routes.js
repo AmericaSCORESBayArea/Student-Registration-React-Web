@@ -51,9 +51,9 @@ export default function RoutesWeb() {
         localStorage.setItem("language", "ES");
       } else if (lang === "zh-CN") {
         setAuxTranslation(cnLanguages);
-        localStorage.setItem("language", "US");
-      } else {
         localStorage.setItem("language", "CN");
+      } else {
+        localStorage.setItem("language", "US");
         setAuxTranslation(enLanguages);
       }
     } else {
