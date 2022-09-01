@@ -24,7 +24,6 @@ const auth = firebase.auth();
 
 auth.onAuthStateChanged((user) => {
   if (user) {
-    console.log("true");
     localStorage.setItem("user", true);
   } else {
     localStorage.setItem("user", false);
