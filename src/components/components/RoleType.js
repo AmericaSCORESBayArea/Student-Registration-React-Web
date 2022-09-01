@@ -117,7 +117,10 @@ export default function RoleType(props) {
                       borderColor: "#1976d2",
                     }
               }
-              onClick={() => setSelected(category.name)}
+              onClick={() => {
+                setSelected(category.name);
+                props.function("role_type", category.name);
+              }}
             >
               {icons(category.name)}
             </Button>
@@ -135,24 +138,6 @@ export default function RoleType(props) {
           </Grid>
         ))}
       </Grid>
-      {selected !== undefined ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "8%",
-            textAlign: "center",
-          }}
-        >
-          <Button
-            size={"large"}
-            variant="contained"
-            onClick={() => props.function("role_type", selected)}
-          >
-            {props.continueButton}
-          </Button>
-        </div>
-      ) : null}
     </div>
   );
 }
