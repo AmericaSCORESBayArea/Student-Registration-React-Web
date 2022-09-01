@@ -69,6 +69,11 @@ function MissingFieldsValidation(props) {
       position: props.fieldsRef.parentPhone_field,
     },
     {
+      label: props.formTranslations.parentHomeLang_field,
+      value: props.values.parentHomeLang,
+      position: props.fieldsRef.parent_Home_Lang_field,
+    },
+    {
       label: props.formTranslations.relationship_field,
       value: props.values.relationship,
       position: props.fieldsRef.relationship_field,
@@ -89,33 +94,38 @@ function MissingFieldsValidation(props) {
       position: props.fieldsRef.emergency_Contact_Phone1_field,
     },
   ];
+
   return (
-    <div
-      className="form-group"
-      style={{
-        marginBottom: "20px",
-        backgroundColor: "#f78b95",
-        borderRadius: 5,
-        textAlign: "left",
-        padding: "15px",
-      }}
-    >
-      <p>{props.formTranslations.requiredFieldsTitle}</p>
-      <ul>
-        {requiredFields.map((value) =>
-          value.value === "" ? (
-            <li
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                window.scrollTo(0, value.position);
-              }}
-            >
-              {value.label}
-            </li>
-          ) : null
-        )}
-      </ul>
-    </div>
+    <React.Fragment>
+      {requiredFields.every((element) => element.value !== "") === false ? (
+        <div
+          className="form-group"
+          style={{
+            marginBottom: "20px",
+            backgroundColor: "#f78b95",
+            borderRadius: 5,
+            textAlign: "left",
+            padding: "15px",
+          }}
+        >
+          <p>{props.formTranslations.requiredFieldsTitle}</p>
+          <ul>
+            {requiredFields.map((value) =>
+              value.value === "" ? (
+                <li
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    window.scrollTo(0, value.position);
+                  }}
+                >
+                  {value.label}
+                </li>
+              ) : null
+            )}
+          </ul>
+        </div>
+      ) : null}
+    </React.Fragment>
   );
 }
 
