@@ -373,6 +373,7 @@ function WaiverModal(props) {
           onClick={() => {
             setShow(false);
             props.function();
+            props.checkboxFunction("waiver", false);
           }}
           style={{
             marginRight: "2%",
