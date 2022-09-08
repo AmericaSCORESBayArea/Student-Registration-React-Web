@@ -3,7 +3,11 @@ import { BrowserRouter } from "react-router-dom";
 import Route from "./Routes";
 
 const baseTheme = createTheme();
-
+if (`${process.env.REACT_APP_NODE_ENV}` === "production") {
+  console.log = () => {};
+  console.error = () => {};
+  console.debug = () => {};
+}
 const App = () => (
   <BrowserRouter>
     <ThemeProvider theme={baseTheme}>
