@@ -18,7 +18,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import InputAdornment from "@mui/material/InputAdornment";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { FormTitles } from "../utils/FormTitles";
-
+import { submitForm } from "../controller/api";
 const useStyles = makeStyles((theme) => ({
   paper: {
     //display: "flex",
@@ -134,6 +134,14 @@ export default function Form(props) {
   const confirmedRegistration = () => {
     window.open("https://scoresu.org/family", "_blank").focus();
     props.handleReset();
+  };
+  const showSuccessModal = () => {
+    ModalwithConfirmation(
+      props.modalTranslations,
+      confirmedRegistration,
+      "success",
+      props.handleReset
+    );
   };
   const formFieldsRef = {
     firstName_field: rect,
@@ -334,12 +342,7 @@ export default function Form(props) {
               ),
             })}
             onSubmit={(data, { resetForm }) => {
-              ModalwithConfirmation(
-                props.modalTranslations,
-                confirmedRegistration,
-                "success",
-                props.handleReset
-              );
+              submitForm(data, showSuccessModal);
             }}
           >
             {({
