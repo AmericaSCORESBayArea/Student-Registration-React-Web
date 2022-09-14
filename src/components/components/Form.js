@@ -19,6 +19,9 @@ import InputAdornment from "@mui/material/InputAdornment";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { FormTitles } from "../utils/FormTitles";
 import { submitForm } from "../controller/api";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import { blue } from "@mui/material/colors";
 const useStyles = makeStyles((theme) => ({
   paper: {
     //display: "flex",
@@ -62,6 +65,7 @@ const CustomInputComponent = (props) => (
 
 export default function Form(props) {
   const classes = useStyles();
+  const [loading, setLoading] = React.useState(false);
   const date = new Date();
   date.setDate(date.getDate() - 1);
   const ethnicityOptions = props.formTranslations.ethnicityArray.sort((a, b) =>
@@ -342,7 +346,9 @@ export default function Form(props) {
               ),
             })}
             onSubmit={(data, { resetForm }) => {
+              setLoading(true);
               submitForm(data, showSuccessModal);
+              setLoading(false);
             }}
           >
             {({
@@ -1589,13 +1595,29 @@ export default function Form(props) {
                       >
                         {props.backButton}
                       </Button>
-                      <Button
-                        size={"medium"}
-                        variant="contained"
-                        onClick={() => handleSubmit()}
-                      >
-                        {props.submitButton}
-                      </Button>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Button
+                          size={"medium"}
+                          variant="contained"
+                          disabled={loading}
+                          onClick={() => handleSubmit()}
+                        >
+                          {props.submitButton}
+                        </Button>
+                        {loading && (
+                          <CircularProgress
+                            size={24}
+                            sx={{
+                              color: blue[500],
+                              position: "absolute",
+                              top: "50%",
+                              left: "50%",
+                              marginTop: "-12px",
+                              marginLeft: "-12px",
+                            }}
+                          />
+                        )}
+                      </Box>
                     </div>
                   </div>
                 </LocalizationProvider>
