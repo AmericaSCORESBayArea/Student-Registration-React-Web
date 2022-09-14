@@ -216,7 +216,7 @@ export const enLanguages = {
       },
       {
         label: "Chinese",
-        value: "Chinese",
+        value: "Chinese (incl. Cantonese, Mandarin, other Chinese languages)",
       },
       {
         label: "English",
@@ -224,7 +224,7 @@ export const enLanguages = {
       },
       {
         label: "French",
-        value: "French",
+        value: "French and French Creole",
       },
       {
         label: "German",

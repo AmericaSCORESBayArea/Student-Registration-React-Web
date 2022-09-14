@@ -212,7 +212,7 @@ export const cnLanguages = {
       },
       {
         label: "Chinese",
-        value: "Chinese",
+        value: "Chinese (incl. Cantonese, Mandarin, other Chinese languages)",
       },
       {
         label: "English",
@@ -220,7 +220,7 @@ export const cnLanguages = {
       },
       {
         label: "French",
-        value: "French",
+        value: "French and French Creole",
       },
       {
         label: "German",
