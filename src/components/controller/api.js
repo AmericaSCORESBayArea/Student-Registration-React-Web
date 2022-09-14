@@ -1,4 +1,3 @@
-import axios from "axios";
 import moment from "moment";
 
 const schoolIdMapping = require("../utils/school_site_id_mapping.json");
@@ -17,7 +16,7 @@ export async function submitForm(data, showSuccessModal) {
     LastName: data.lastName,
     PersonalEmail: data.studentEmail,
     HomePhone: data.studentphoneNumber,
-    Birthdate: moment(data.birthdate).format("MM-DD-YYYY"),
+    Birthdate: moment(data.birthdate).format("YYYY-MM-DD"),
     Gender: data.gender,
     Grade: data.grade,
     Ethnicity: data.ethnicity,
@@ -67,25 +66,24 @@ export async function submitForm(data, showSuccessModal) {
   };
   const id = `${process.env.REACT_APP_CLIENT_ID}`;
   const secret = `${process.env.REACT_APP_CLIENT_SECRET}`;
-  axios.defaults.headers.common["client_id"] = id;
-  axios.defaults.headers.common["client_secret"] = secret;
-  console.log(student);
 
-  await axios
-    .post(`${process.env.REACT_APP_BASEURL}`, student, {
-      mode: "cors",
-      headers: {
-        "Access-control-Allow-Origin": true,
-      },
+  var myHeaders = new Headers();
+  myHeaders.append("client_id", id);
+  myHeaders.append("client_secret", secret);
+  myHeaders.append("Content-Type", "application/json");
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    redirect: "follow",
+    body: JSON.stringify(student),
+  };
+
+  fetch(`${process.env.REACT_APP_BASEURL}`, requestOptions)
+    .then((response) => response.text())
+    .then((result) => {
+      showSuccessModal();
+      console.log(result);
     })
-    .then(
-      (response) => {
-        console.log(`Request Complete!`);
-        showSuccessModal();
-      },
-      (error) => {
-        console.error(`Request ERRORS!`);
-        console.error(error);
-      }
-    );
+    .catch((error) => console.log("error", error));
 }
