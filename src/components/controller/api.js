@@ -1,3 +1,4 @@
+import axios from "axios";
 import moment from "moment";
 
 const schoolIdMapping = require("../utils/school_site_id_mapping.json");
@@ -66,6 +67,8 @@ export async function submitForm(data, showSuccessModal) {
   };
   const id = `${process.env.REACT_APP_CLIENT_ID}`;
   const secret = `${process.env.REACT_APP_CLIENT_SECRET}`;
+  axios.defaults.headers.common["client_id"] = id;
+  axios.defaults.headers.common["client_secret"] = secret;
 
   var myHeaders = new Headers();
   myHeaders.append("client_id", id);
@@ -79,7 +82,10 @@ export async function submitForm(data, showSuccessModal) {
     body: JSON.stringify(student),
   };
 
-  fetch(`${process.env.REACT_APP_BASEURL}`, requestOptions)
+  fetch(
+    "https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/contacts",
+    requestOptions
+  )
     .then((response) => response.text())
     .then((result) => {
       showSuccessModal();
