@@ -34,6 +34,19 @@ export const esLanguages = {
     modal_cancel_button: "AGREGAR OTRO ESTUDIANTE",
     modal_confirm_button: "FINALIZAR",
   },
+  error_modal: {
+    error_500: {
+      modal_title: "Error del servidor [500]",
+      modal_text:
+        "Hay un problema con nuestro servidor. Si esto persiste, por favor contáctenos " +
+        '<a href="https://scoresu.org/contact" target="_blank">aquí</a> ',
+    },
+    error_409: {
+      modal_title: "Error del servidor [409]",
+      modal_text:
+        "El estudiante ya se encuentra registrado en el sistema, comuníquese con su entrenador o administrador.",
+    },
+  },
   form: {
     required_fields: "El campo es obligatorio(*)",
     invalid_phone_number: "El número de teléfono no es válido",
@@ -42,7 +55,7 @@ export const esLanguages = {
     firstName_field: "Primer Nombre*",
     firstName_field_placeholder: "Ingrese primer nombre",
     middleName_field: "Segundo Nombre",
-    middleName_field_placeholder: "Ingrese",
+    middleName_field_placeholder: "Ingrese segundo nombre",
     lastName_field: "Apellido/s*",
     lastName_field_placeholder: "Ingrese apellido/s",
     schoolName_field: "Escuela*",

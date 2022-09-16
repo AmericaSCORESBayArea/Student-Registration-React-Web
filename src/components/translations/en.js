@@ -34,6 +34,19 @@ export const enLanguages = {
     modal_cancel_button: "ADD OTHER STUDENT",
     modal_confirm_button: "DONE",
   },
+  error_modal: {
+    error_500: {
+      modal_title: "Server error [500]",
+      modal_text:
+        "There is an issue with our server. If this persists, please contact us " +
+        '<a href="https://scoresu.org/contact" target="_blank">here</a> ',
+    },
+    error_409: {
+      modal_title: "Server error [409]",
+      modal_text:
+        "This Student is already in the system please contact your Coach or Administrator.",
+    },
+  },
   form: {
     required_fields: "Field is required (*)",
     invalid_phone_number: "Phone number is not valid",

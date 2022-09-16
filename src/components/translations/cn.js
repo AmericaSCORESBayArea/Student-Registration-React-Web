@@ -30,6 +30,18 @@ export const cnLanguages = {
     modal_cancel_button: "添加其他学生",
     modal_confirm_button: "完毕",
   },
+  error_modal: {
+    error_500: {
+      modal_title: "服务器错误 [500]",
+      modal_text:
+        "我们的服务器有问题. 如果这种情况持续存在，请联系我们 " +
+        '<a href="https://scoresu.org/contact" target="_blank">这里</a> ',
+    },
+    error_409: {
+      modal_title: "服务器错误 [409]",
+      modal_text: "该学生已经在系统中，请联系您的教练或管理员.",
+    },
+  },
   form: {
     required_fields: "Field is required (*)",
     invalid_phone_number: "Phone number is not valid",
