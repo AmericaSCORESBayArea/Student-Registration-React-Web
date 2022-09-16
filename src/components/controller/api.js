@@ -5,12 +5,12 @@ const schoolIdMapping = require("../utils/school_site_id_mapping.json");
 
 const getSiteIdFromSchoolName = (schoolName) => {
   const results = schoolIdMapping.find(
-    (school) => (school.schoolName = schoolName)
+    (school) => JSON.stringify(school.schoolName) === JSON.stringify(schoolName)
   );
   return results.siteId;
 };
 
-export async function submitForm(data, showSuccessModal) {
+export async function submitForm(data, showSuccessModal, showErrorModal) {
   const student = {
     FirstName: data.firstName,
     MiddleName: data.middleName,
@@ -69,7 +69,6 @@ export async function submitForm(data, showSuccessModal) {
   const secret = `${process.env.REACT_APP_CLIENT_SECRET}`;
   axios.defaults.headers.common["client_id"] = id;
   axios.defaults.headers.common["client_secret"] = secret;
-
   var myHeaders = new Headers();
   myHeaders.append("client_id", id);
   myHeaders.append("client_secret", secret);
@@ -86,9 +85,17 @@ export async function submitForm(data, showSuccessModal) {
     "https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/contacts",
     requestOptions
   )
-    .then((response) => response.text())
+    .then((response) => {
+      if (response.status === 200) {
+        showSuccessModal();
+      } else if (response.status === 500) {
+        showErrorModal(500);
+      } else if (response.status === 409) {
+        showErrorModal(409);
+      }
+      response.text();
+    })
     .then((result) => {
-      showSuccessModal();
       console.log(result);
     })
     .catch((error) => console.log("error", error));
