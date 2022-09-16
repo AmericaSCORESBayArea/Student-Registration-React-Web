@@ -99,6 +99,7 @@ export default function HomeScreen(props) {
             submitButton={props.translations.button_submit}
             function_back={handleBack}
             modalTranslations={props.translations.register_modal_success}
+            modalErrorTranslations={props.translations.error_modal}
             handleReset={handleReset}
             formTranslations={props.translations.form}
           />
