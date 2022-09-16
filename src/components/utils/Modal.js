@@ -26,3 +26,13 @@ function ModalwithConfirmation(
 }
 
 export { ModalwithConfirmation };
+
+function ErrorModal(translations, iconType) {
+  return Swal.fire({
+    title: translations.modal_title,
+    html: translations.modal_text,
+    icon: iconType,
+    confirmButtonColor: "#1976d2",
+  });
+}
+export { ErrorModal };

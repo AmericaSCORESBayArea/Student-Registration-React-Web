@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import Button from "@mui/material/Button";
-import { ModalwithConfirmation } from "../utils/Modal";
+import { ModalwithConfirmation, ErrorModal } from "../utils/Modal";
 import { WaiverModal } from "../utils/WaiverModal";
 import "../styles/RadioButton.css";
 import { regionsArray, schoolsName, gradesArray } from "./multiplesArray";
@@ -22,6 +22,8 @@ import { submitForm } from "../controller/api";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { blue } from "@mui/material/colors";
+import Loading from "../components/Loading";
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     //display: "flex",
@@ -140,12 +142,21 @@ export default function Form(props) {
     props.handleReset();
   };
   const showSuccessModal = () => {
+    setLoading(false);
     ModalwithConfirmation(
       props.modalTranslations,
       confirmedRegistration,
       "success",
       props.handleReset
     );
+  };
+  const showErrorModal = (status) => {
+    setLoading(false);
+    if (status === 500) {
+      ErrorModal(props.modalErrorTranslations.error_500, "error");
+    } else if (status === 409) {
+      ErrorModal(props.modalErrorTranslations.error_409, "error");
+    }
   };
   const formFieldsRef = {
     firstName_field: rect,
@@ -174,6 +185,7 @@ export default function Form(props) {
       alignItems="center"
       spacing={{ xs: 0, sm: 0, md: 10, lg: 10 }}
     >
+      <Loading open={loading} />
       <CssBaseline />
       <Grid
         align="center"
@@ -345,10 +357,9 @@ export default function Form(props) {
                 props.formTranslations.required_waiver
               ),
             })}
-            onSubmit={(data, { resetForm }) => {
+            onSubmit={(data) => {
               setLoading(true);
-              submitForm(data, showSuccessModal);
-              setLoading(false);
+              submitForm(data, showSuccessModal, showErrorModal);
             }}
           >
             {({
@@ -629,6 +640,7 @@ export default function Form(props) {
                       </div>
                       <MobileDatePicker
                         inputVariant="outlined"
+                        disableFuture={true}
                         InputProps={{
                           disableUnderline: true,
                         }}
