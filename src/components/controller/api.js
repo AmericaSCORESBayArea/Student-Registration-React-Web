@@ -58,8 +58,6 @@ export async function submitForm(data, showSuccessModal, showErrorModal) {
     LiabilityWaiver: data.waiver,
     DataReleaseWaiver: data.waiver,
     MediaReleaseWaiver: data.waiver,
-    ContactType: `${process.env.REACT_APP_REACT_APP_CONTACTRECORDTYPE}`,
-    ContactRecordType: `${process.env.REACT_APP_CONTACTRECORDID}`,
     SchoolName: data.schoolName.schoolname,
     SchoolSiteId: data.schoolName.schoolname
       ? getSiteIdFromSchoolName(data.schoolName.schoolname)
