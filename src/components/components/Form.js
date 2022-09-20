@@ -68,6 +68,7 @@ const CustomInputComponent = (props) => (
 export default function Form(props) {
   const classes = useStyles();
   const [loading, setLoading] = React.useState(false);
+  const [datepicker, setDatePicker] = useState(false);
   const date = new Date();
   date.setDate(date.getDate() - 1);
   const ethnicityOptions = props.formTranslations.ethnicityArray.sort((a, b) =>
@@ -641,6 +642,9 @@ export default function Form(props) {
                       <MobileDatePicker
                         inputVariant="outlined"
                         disableFuture={true}
+                        open={datepicker}
+                        onClose={() => setDatePicker(false)}
+                        onOpen={() => setDatePicker(true)}
                         InputProps={{
                           disableUnderline: true,
                         }}
@@ -654,12 +658,16 @@ export default function Form(props) {
                         }
                         renderInput={(params) => (
                           <TextField
+                            style={{ cursor: "pointer" }}
                             size="small"
                             variant="outlined"
                             {...params}
                             InputProps={{
                               endAdornment: (
-                                <InputAdornment position="end">
+                                <InputAdornment
+                                  position="end"
+                                  onClick={() => setDatePicker(!datepicker)}
+                                >
                                   <CalendarMonthIcon />
                                 </InputAdornment>
                               ),
