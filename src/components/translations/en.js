@@ -40,11 +40,13 @@ export const enLanguages = {
       modal_text:
         "There is an issue with our server. If this persists, please contact us " +
         '<a href="https://scoresu.org/contact" target="_blank">here</a> ',
+      modal_close_button: "OK",
     },
     error_409: {
       modal_title: "Server error [409]",
       modal_text:
         "This Student is already in the system please contact your Coach or Administrator.",
+      modal_close_button: "OK",
     },
   },
   form: {
