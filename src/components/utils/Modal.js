@@ -33,6 +33,7 @@ function ErrorModal(translations, iconType) {
     html: translations.modal_text,
     icon: iconType,
     confirmButtonColor: "#1976d2",
+    confirmButtonText: translations.modal_close_button,
   });
 }
 export { ErrorModal };
