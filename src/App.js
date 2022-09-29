@@ -7,6 +7,7 @@ if (`${process.env.REACT_APP_NODE_ENV}` === "production") {
   console.log = () => {};
   console.error = () => {};
   console.debug = () => {};
+  console.warn = () => {};
 }
 const App = () => (
   <BrowserRouter>
