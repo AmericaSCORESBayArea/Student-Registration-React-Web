@@ -5,6 +5,8 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
 import SportsIcon from "@mui/icons-material/Sports";
+import firebase from "../../firebase/firebaseConfig";
+
 const useStyles = makeStyles(() => ({
   homeScreenContainer: {
     backgroundColor: "#FFFFFF",
@@ -119,6 +121,9 @@ export default function RoleType(props) {
               }
               onClick={() => {
                 setSelected(category.name);
+                firebase.analytics().logEvent("user_roleType", {
+                  role: category.name,
+                });
                 props.function("role_type", category.name);
               }}
             >
