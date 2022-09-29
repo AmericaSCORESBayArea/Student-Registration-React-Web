@@ -18,6 +18,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { enLanguages } from "./components/translations/en";
 import { esLanguages } from "./components/translations/es";
 import { cnLanguages } from "./components/translations/cn";
+import firebase from "./firebase/firebaseConfig";
 
 export default function RoutesWeb() {
   const lang = navigator.language || navigator.userLanguage;
@@ -49,12 +50,21 @@ export default function RoutesWeb() {
       if (lang === "es-ES" || lang === "es") {
         setAuxTranslation(esLanguages);
         localStorage.setItem("language", "ES");
+        firebase.analytics().logEvent("selected_language", {
+          selected: "spanish",
+        });
       } else if (lang === "zh-CN") {
         setAuxTranslation(cnLanguages);
         localStorage.setItem("language", "CN");
+        firebase.analytics().logEvent("selected_language", {
+          selected: "chinese",
+        });
       } else {
         localStorage.setItem("language", "US");
         setAuxTranslation(enLanguages);
+        firebase.analytics().logEvent("selected_language", {
+          selected: "english",
+        });
       }
     } else {
       checkLocalstorageLanguage();
