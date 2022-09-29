@@ -5,6 +5,8 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import PersonAddIcon from "@mui/icons-material/PersonAddAlt1";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import firebase from "../../firebase/firebaseConfig";
+
 const useStyles = makeStyles(() => ({
   homeScreenContainer: {
     backgroundColor: "#FFFFFF",
@@ -118,6 +120,9 @@ export default function RoleType(props) {
               }
               onClick={() => {
                 setSelected(category.name);
+                firebase.analytics().logEvent("student_status", {
+                  status: category.name,
+                });
                 props.function("registration_status", category.name);
               }}
             >
