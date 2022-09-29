@@ -3,6 +3,7 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import "firebase/compat/functions";
 import "firebase/compat/storage";
+import "firebase/compat/analytics";
 
 var firebaseConfig = {
   apiKey: `${process.env.REACT_APP_FIREBASE_API_KEY}`,
@@ -12,6 +13,7 @@ var firebaseConfig = {
   storageBucket: `${process.env.FIREBASE_STORAGE_BUCKET}`,
   messagingSenderId: `${process.env.FIREBASE_MESSAGE_SENDER_ID}`,
   appId: `${process.env.FIREBASE_APP_ID}`,
+  measurementId: `${process.env.REACT_APP_FIREBASE_MEASUREMENT_ID}`,
 };
 
 if (!firebase.apps.length) {
@@ -31,5 +33,6 @@ auth.onAuthStateChanged((user) => {
 });
 
 export const db = firebase.firestore();
+firebase.analytics();
 
 export { firebase as default };
