@@ -22,6 +22,19 @@ function NavbarComponent(props) {
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
   const handleLanguageChange = (code) => {
+    if (code === "US") {
+      firebase.analytics().logEvent("selected_language", {
+        selected: "english",
+      });
+    } else if (code === "ES") {
+      firebase.analytics().logEvent("selected_language", {
+        selected: "spanish",
+      });
+    } else if (code === "CN") {
+      firebase.analytics().logEvent("selected_language", {
+        selected: "chinese",
+      });
+    }
     setSelected(code);
     localStorage.setItem("language", code);
     const event = new CustomEvent("languageChanged");
