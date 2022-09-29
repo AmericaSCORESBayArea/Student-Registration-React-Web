@@ -1,5 +1,6 @@
 import axios from "axios";
 import moment from "moment";
+import firebase from "../../firebase/firebaseConfig";
 
 const schoolIdMapping = require("../utils/school_site_id_mapping.json");
 
@@ -11,6 +12,10 @@ const getSiteIdFromSchoolName = (schoolName) => {
 };
 
 export async function submitForm(data, showSuccessModal, showErrorModal) {
+  firebase.analytics().logEvent("selected_school", {
+    regionName: data.schoolName.region,
+    schoolName: data.schoolName.schoolname,
+  });
   const student = {
     FirstName: data.firstName,
     MiddleName: data.middleName,
@@ -85,10 +90,19 @@ export async function submitForm(data, showSuccessModal, showErrorModal) {
   )
     .then((response) => {
       if (response.status === 200) {
+        firebase.analytics().logEvent("form_complete", {
+          completed: true,
+        });
         showSuccessModal();
       } else if (response.status === 500) {
+        firebase.analytics().logEvent("form_complete", {
+          completed: false,
+        });
         showErrorModal(500);
       } else if (response.status === 409) {
+        firebase.analytics().logEvent("form_complete", {
+          completed: false,
+        });
         showErrorModal(409);
       }
       response.text();
