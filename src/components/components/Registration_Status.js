@@ -121,6 +121,7 @@ export default function RoleType(props) {
               onClick={() => {
                 setSelected(category.name);
                 firebase.analytics().logEvent("student_status", {
+                  app: "web_registration",
                   status: category.name,
                 });
                 props.function("registration_status", category.name);

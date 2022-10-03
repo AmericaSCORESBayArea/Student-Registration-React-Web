@@ -24,14 +24,17 @@ function NavbarComponent(props) {
   const handleLanguageChange = (code) => {
     if (code === "US") {
       firebase.analytics().logEvent("selected_language", {
+        app: "web_registration",
         selected: "english",
       });
     } else if (code === "ES") {
       firebase.analytics().logEvent("selected_language", {
+        app: "web_registration",
         selected: "spanish",
       });
     } else if (code === "CN") {
       firebase.analytics().logEvent("selected_language", {
+        app: "web_registration",
         selected: "chinese",
       });
     }

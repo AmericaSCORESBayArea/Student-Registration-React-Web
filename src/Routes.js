@@ -51,18 +51,21 @@ export default function RoutesWeb() {
         setAuxTranslation(esLanguages);
         localStorage.setItem("language", "ES");
         firebase.analytics().logEvent("selected_language", {
+          app: "web_registration",
           selected: "spanish",
         });
       } else if (lang === "zh-CN") {
         setAuxTranslation(cnLanguages);
         localStorage.setItem("language", "CN");
         firebase.analytics().logEvent("selected_language", {
+          app: "web_registration",
           selected: "chinese",
         });
       } else {
         localStorage.setItem("language", "US");
         setAuxTranslation(enLanguages);
         firebase.analytics().logEvent("selected_language", {
+          app: "web_registration",
           selected: "english",
         });
       }
