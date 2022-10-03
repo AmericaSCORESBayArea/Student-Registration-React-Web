@@ -92,16 +92,22 @@ export async function submitForm(data, showSuccessModal, showErrorModal) {
       if (response.status === 200) {
         firebase.analytics().logEvent("form_complete", {
           completed: true,
+          status: 200,
+          message: "success",
         });
         showSuccessModal();
       } else if (response.status === 500) {
         firebase.analytics().logEvent("form_complete", {
           completed: false,
+          status: 500,
+          message: "server error",
         });
         showErrorModal(500);
       } else if (response.status === 409) {
         firebase.analytics().logEvent("form_complete", {
           completed: false,
+          status: 409,
+          message: "duplicate student",
         });
         showErrorModal(409);
       }
