@@ -14,6 +14,7 @@ export default function HomeScreen(props) {
     props.translations.steps_3,
   ];
   //const history = useNavigate();
+  const [student, setStudent] = useState("");
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
   const [roleType, setRoleType] = React.useState();
@@ -32,6 +33,10 @@ export default function HomeScreen(props) {
 
   const allStepsCompleted = () => {
     return completedSteps() === totalSteps();
+  };
+
+  const setStudentProps = (props) => {
+    setStudent(props);
   };
 
   const handleNext = (step, selected) => {
@@ -58,10 +63,10 @@ export default function HomeScreen(props) {
   };
 
   const handleReset = () => {
-    setActiveStep(0);
+    setActiveStep(1);
     setCompleted({});
-    setRoleType("");
     setRegStatus("");
+    setStudent("");
   };
 
   const getScreen = () => {
@@ -81,15 +86,20 @@ export default function HomeScreen(props) {
       case 1:
         return (
           <Registration
+            roleType={roleType}
             props={props.translations.new_returning_option}
             newOption={props.translations.new_option}
             returningOption={props.translations.returning_option}
             title={props.translations.new_returning_title}
             continueButton={props.translations.button_continue}
             backButton={props.translations.button_back}
+            students={props.translations.searchStudent}
+            error_students={props.translations.error_students}
             function={handleNext}
             function_back={handleBack}
             registration_status={regStatus}
+            empty={props.translations.resultOption}
+            studentProps={setStudentProps}
           />
         );
       case 2:
@@ -100,8 +110,10 @@ export default function HomeScreen(props) {
             function_back={handleBack}
             modalTranslations={props.translations.register_modal_success}
             modalErrorTranslations={props.translations.error_modal}
+            modalEditTranslations={props.translations.edit_modal_success}
             handleReset={handleReset}
             formTranslations={props.translations.form}
+            studentProps={student}
           />
         );
       default:
