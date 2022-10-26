@@ -18,7 +18,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import InputAdornment from "@mui/material/InputAdornment";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { FormTitles } from "../utils/FormTitles";
-import { submitForm } from "../controller/api";
+import { submitForm, submitEditedForm } from "../controller/api";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { blue } from "@mui/material/colors";
@@ -66,9 +66,13 @@ const CustomInputComponent = (props) => (
 );
 
 export default function Form(props) {
+  const schoolIdMapping = require("../utils/school_site_id_mapping.json");
   const classes = useStyles();
   const [loading, setLoading] = React.useState(false);
   const [datepicker, setDatePicker] = useState(false);
+  const [regionProps, setRegionProps] = useState("");
+  const [schoolProps, setSchoolProps] = useState("");
+  const [myvalue, setMyValue] = useState(false);
   const date = new Date();
   date.setDate(date.getDate() - 1);
   const ethnicityOptions = props.formTranslations.ethnicityArray.sort((a, b) =>
@@ -93,6 +97,34 @@ export default function Form(props) {
   };
   const options = schoolsArray;
   useEffect(() => {
+    setRegionProps("");
+    setSchoolProps("");
+    if (props.studentProps !== null) {
+      getSchoolNameFromSiteId(props.studentProps.SchoolSiteId).then(
+        (result) => {
+          regionsArray.map((val, index) => {
+            let aux = schoolsName[val.value];
+            let finds = aux.schools.find((element) => element.value === result);
+            if (finds !== undefined) {
+              setRegionProps(index);
+              const indexx = schoolsName[
+                regionsArray[index].value
+              ].schools.findIndex((object) => {
+                return object.value === finds.value;
+              });
+              setSchoolProps(indexx);
+            }
+          });
+        }
+      );
+    }
+    async function getSchoolNameFromSiteId(siteId) {
+      const results = schoolIdMapping.find(
+        (school) => JSON.stringify(school.siteId) === JSON.stringify(siteId)
+      );
+      return results.schoolName;
+    }
+    setMyValue(true);
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
@@ -124,6 +156,7 @@ export default function Form(props) {
   const [rectLName, refLName_field] = useClientRect();
   const [rectRegion, refRegion] = useClientRect();
   const [rectSchoolName, refSchoolName] = useClientRect();
+  const [rectSchoolAttending, refSchoolAttending] = useClientRect();
   const [rectBirthdate, refBirthdate] = useClientRect();
   const [rectGender, refGender] = useClientRect();
   const [rectGrade, refGrade] = useClientRect();
@@ -151,6 +184,15 @@ export default function Form(props) {
       props.handleReset
     );
   };
+  const showSuccessModalUpdate = () => {
+    setLoading(false);
+    ModalwithConfirmation(
+      props.modalEditTranslations,
+      confirmedRegistration,
+      "success",
+      props.handleReset
+    );
+  };
   const showErrorModal = (status) => {
     setLoading(false);
     if (status === 500) {
@@ -164,6 +206,7 @@ export default function Form(props) {
     lastName_field: rectLName,
     region_field: rectRegion,
     schoolName_field: rectSchoolName,
+    schoolAttending_field: rectSchoolAttending,
     birthdate_field: rectBirthdate,
     gender_field: rectGender,
     grade_field: rectGrade,
@@ -178,7 +221,7 @@ export default function Form(props) {
     emergency_Contact_Relationship_field: rectEmergencyRelationship,
     emergency_Contact_Phone1_field: rectEmergencyPhone,
   };
-  return (
+  return myvalue === false ? null : (
     <Grid
       container
       component="main"
@@ -205,40 +248,142 @@ export default function Form(props) {
         >
           <Formik
             initialValues={{
-              firstName: "",
-              middleName: "",
-              lastName: "",
-              schoolName: { region: "", schoolname: "" },
-              studentEmail: "",
-              studentphoneNumber: "",
-              birthdate: new Date(),
-              gender: "",
-              grade: "",
-              ethnicity: "",
-              reducedPriceLunch: "",
-              allergies: "",
-              parentFName: "",
-              parentLName: "",
-              parentEmail: "",
-              relationship: "",
-              parentPhone1: "",
-              parentPhone2: "",
-              mailingStreet: "",
-              mailingCity: "",
-              mailingState: "",
-              mailingZip: 0,
+              firstName:
+                props.studentProps !== null ? props.studentProps.FirstName : "",
+              middleName:
+                props.studentProps !== null
+                  ? props.studentProps.MiddleName
+                  : "",
+              lastName:
+                props.studentProps !== null ? props.studentProps.LastName : "",
+              attendingSchool:
+                props.studentProps !== null
+                  ? props.studentProps.SchoolName
+                  : "",
+              schoolName: {
+                region:
+                  props.studentProps !== null
+                    ? regionProps !== ""
+                      ? regionsArray[Number(regionProps)].value
+                      : ""
+                    : "",
+                schoolname:
+                  props.studentProps !== null
+                    ? regionProps !== ""
+                      ? schoolsName[regionsArray[Number(regionProps)].value]
+                          .schools[Number(schoolProps)].value
+                      : ""
+                    : "",
+              },
+              studentEmail:
+                props.studentProps !== null
+                  ? props.studentProps.PersonalEmail
+                  : "",
+              studentphoneNumber:
+                props.studentProps !== null ? props.studentProps.HomePhone : "",
+              birthdate:
+                props.studentProps !== null
+                  ? new Date(props.studentProps.Birthdate).toLocaleDateString(
+                      "en-US"
+                    )
+                  : new Date(),
+              gender:
+                props.studentProps !== null ? props.studentProps.Gender : "",
+              grade:
+                props.studentProps !== null ? props.studentProps.Grade : "",
+              ethnicity:
+                props.studentProps !== null ? props.studentProps.Ethnicity : "",
+              reducedPriceLunch:
+                props.studentProps !== null
+                  ? props.studentProps.ReducedPriceLunch.replace(/^./, (str) =>
+                      str.toUpperCase()
+                    )
+                  : "",
+              allergies:
+                props.studentProps !== null ? props.studentProps.Allergies : "",
+              parentFName:
+                props.studentProps !== null
+                  ? props.studentProps.ParentFName
+                  : "",
+              parentLName:
+                props.studentProps !== null
+                  ? props.studentProps.ParentLName
+                  : "",
+              parentEmail:
+                props.studentProps !== null
+                  ? props.studentProps.ParentEmail
+                  : "",
+              relationship:
+                props.studentProps !== null
+                  ? props.studentProps.Relationship
+                  : "",
+              parentPhone1:
+                props.studentProps !== null
+                  ? props.studentProps.ParentPhone1
+                  : "",
+              parentPhone2:
+                props.studentProps !== null
+                  ? props.studentProps.ParentPhone2
+                  : "",
+              mailingStreet:
+                props.studentProps !== null
+                  ? props.studentProps.MailingStreet
+                  : "",
+              mailingCity:
+                props.studentProps !== null
+                  ? props.studentProps.MailingCity
+                  : "",
+              mailingState:
+                props.studentProps !== null
+                  ? props.studentProps.MailingState
+                  : "",
+              mailingZip:
+                props.studentProps !== null ? props.studentProps.MailingZip : 0,
               mailingCountry: "US",
-              parentHomeLang: "",
-              otherLang: "",
-              volunteer: "",
-              emergency_Contact_Name: "",
-              emergency_Contact_Relationship: "",
-              emergency_Contact_Phone1: "",
-              emergency_Contact_Phone2: "",
-              second_Emergency_Contact_Name: "",
-              second_Emergency_Contact_Relationship: "",
-              second_Emergency_Contact_Phone1: "",
-              second_Emergency_Contact_Phone2: "",
+              parentHomeLang:
+                props.studentProps !== null
+                  ? props.studentProps.ParentHomeLang
+                  : "",
+              otherLang:
+                props.studentProps !== null ? props.studentProps.OtherLang : "",
+              volunteer:
+                props.studentProps !== null
+                  ? props.studentProps.Volunteer.replace(/^./, (str) =>
+                      str.toUpperCase()
+                    )
+                  : "",
+              emergency_Contact_Name:
+                props.studentProps !== null
+                  ? props.studentProps.Emergency_Contact_Name
+                  : "",
+              emergency_Contact_Relationship:
+                props.studentProps !== null
+                  ? props.studentProps.Emergency_Contact_Relationship
+                  : "",
+              emergency_Contact_Phone1:
+                props.studentProps !== null
+                  ? props.studentProps.Emergency_Contact_Phone1
+                  : "",
+              emergency_Contact_Phone2:
+                props.studentProps !== null
+                  ? props.studentProps.Emergency_Contact_Phone2
+                  : "",
+              second_Emergency_Contact_Name:
+                props.studentProps !== null
+                  ? props.studentProps.Second_Emergency_Contact_Name
+                  : "",
+              second_Emergency_Contact_Relationship:
+                props.studentProps !== null
+                  ? props.studentProps.Second_Emergency_Contact_Relationship
+                  : "",
+              second_Emergency_Contact_Phone1:
+                props.studentProps !== null
+                  ? props.studentProps.Second_Emergency_Contact_Phone1
+                  : "",
+              second_Emergency_Contact_Phone2:
+                props.studentProps !== null
+                  ? props.studentProps.Second_Emergency_Contact_Phone2
+                  : "",
               waiver: false,
             }}
             validationSchema={Yup.object().shape({
@@ -274,6 +419,9 @@ export default function Form(props) {
                 props.formTranslations.required_fields
               ),
               grade: Yup.string().required(
+                props.formTranslations.required_fields
+              ),
+              attendingSchool: Yup.string().required(
                 props.formTranslations.required_fields
               ),
               ethnicity: Yup.string().required(
@@ -360,7 +508,16 @@ export default function Form(props) {
             })}
             onSubmit={(data) => {
               setLoading(true);
-              submitForm(data, showSuccessModal, showErrorModal);
+              if (props.studentProps === null) {
+                submitForm(data, showSuccessModal, showErrorModal);
+              } else {
+                submitEditedForm(
+                  data,
+                  showSuccessModalUpdate,
+                  showErrorModal,
+                  props.studentProps.Id
+                );
+              }
             }}
           >
             {({
@@ -488,6 +645,11 @@ export default function Form(props) {
                         <Select
                           styles={customStyles}
                           menuPlacement="auto"
+                          defaultValue={
+                            regionProps !== ""
+                              ? regionsArray[Number(regionProps)]
+                              : ""
+                          }
                           name="schoolName.region"
                           placeholder={
                             props.formTranslations
@@ -538,6 +700,13 @@ export default function Form(props) {
                                 ? true
                                 : false
                             }
+                            defaultValue={
+                              regionProps !== ""
+                                ? schoolsName[
+                                    regionsArray[Number(regionProps)].value
+                                  ].schools[Number(schoolProps)]
+                                : ""
+                            }
                             styles={customStyles}
                             menuPlacement="auto"
                             placeholder={
@@ -567,6 +736,36 @@ export default function Form(props) {
                           className="invalid-feedback"
                         />
                       </div>
+                    </div>
+                    <div
+                      className="form-group"
+                      style={{ marginBottom: "20px" }}
+                    >
+                      <div className={classes.label} ref={refSchoolAttending}>
+                        <label htmlFor="attendingSchool">
+                          {props.formTranslations.attendingSchool_field}
+                        </label>
+                      </div>
+                      <Field
+                        name="attendingSchool"
+                        type="text"
+                        autoComplete="off"
+                        placeholder={
+                          props.formTranslations
+                            .attendingSchool_field_placeholder
+                        }
+                        className={
+                          "form-control" +
+                          (errors.attendingSchool && touched.attendingSchool
+                            ? " is-invalid"
+                            : "")
+                        }
+                      />
+                      <ErrorMessage
+                        name="attendingSchool"
+                        component="div"
+                        className="invalid-feedback"
+                      />
                     </div>
                     <div
                       className="form-group"
@@ -653,9 +852,9 @@ export default function Form(props) {
                         }
                         name="birthdate"
                         value={values.birthdate}
-                        onChange={(newValue) =>
-                          setFieldValue("birthdate", newValue)
-                        }
+                        onChange={(newValue) => {
+                          setFieldValue("birthdate", newValue.$d);
+                        }}
                         renderInput={(params) => (
                           <TextField
                             style={{ cursor: "pointer" }}
@@ -700,6 +899,14 @@ export default function Form(props) {
                       </div>
                       <Select
                         styles={customStyles}
+                        defaultValue={
+                          props.studentProps !== null
+                            ? genderOptions.filter(
+                                (option) =>
+                                  option.value === props.studentProps.Gender
+                              )
+                            : ""
+                        }
                         menuPlacement="auto"
                         placeholder={
                           props.formTranslations.gender_field_placeholder
@@ -733,6 +940,14 @@ export default function Form(props) {
                       <Select
                         styles={customStyles}
                         menuPlacement="auto"
+                        defaultValue={
+                          props.studentProps !== null
+                            ? gradesArray.filter(
+                                (option) =>
+                                  option.value === props.studentProps.Grade
+                              )
+                            : ""
+                        }
                         placeholder={
                           props.formTranslations.grade_field_placeholder
                         }
@@ -764,6 +979,14 @@ export default function Form(props) {
                       <Select
                         styles={customStyles}
                         menuPlacement="auto"
+                        defaultValue={
+                          props.studentProps !== null
+                            ? ethnicityOptions.filter(
+                                (option) =>
+                                  option.value === props.studentProps.Ethnicity
+                              )
+                            : ""
+                        }
                         placeholder={
                           props.formTranslations.ethnicity_field_placeholder
                         }
@@ -802,7 +1025,7 @@ export default function Form(props) {
                           id="input"
                           type="radio"
                           name="reducedPriceLunch"
-                          value="yes"
+                          value="Yes"
                         />
                         {
                           props.formTranslations
@@ -814,7 +1037,7 @@ export default function Form(props) {
                           id="input"
                           type="radio"
                           name="reducedPriceLunch"
-                          value="no"
+                          value="No"
                         />
                         {
                           props.formTranslations
@@ -961,6 +1184,15 @@ export default function Form(props) {
                       <Select
                         styles={customStyles}
                         menuPlacement="auto"
+                        defaultValue={
+                          props.studentProps !== null
+                            ? relationshipOptions.filter(
+                                (option) =>
+                                  option.value ===
+                                  props.studentProps.Relationship
+                              )
+                            : ""
+                        }
                         placeholder={
                           props.formTranslations.relationship_field_placeholder
                         }
@@ -1168,6 +1400,15 @@ export default function Form(props) {
                       <Select
                         styles={customStyles}
                         menuPlacement="auto"
+                        defaultValue={
+                          props.studentProps !== null
+                            ? parent_Home_Lang_Options.filter(
+                                (option) =>
+                                  option.value ===
+                                  props.studentProps.ParentHomeLang
+                              )
+                            : ""
+                        }
                         placeholder={
                           props.formTranslations
                             .parentHomeLang_field_placeholder
@@ -1238,7 +1479,7 @@ export default function Form(props) {
                           id="input"
                           type="radio"
                           name="volunteer"
-                          value="yes"
+                          value="Yes"
                         />
                         {
                           props.formTranslations
@@ -1250,7 +1491,7 @@ export default function Form(props) {
                           id="input"
                           type="radio"
                           name="volunteer"
-                          value="no"
+                          value="No"
                         />
                         {
                           props.formTranslations
@@ -1312,6 +1553,16 @@ export default function Form(props) {
                       <Select
                         styles={customStyles}
                         menuPlacement="auto"
+                        defaultValue={
+                          props.studentProps !== null
+                            ? relationshipOptions.filter(
+                                (option) =>
+                                  option.value ===
+                                  props.studentProps
+                                    .Emergency_Contact_Relationship
+                              )
+                            : ""
+                        }
                         placeholder={
                           props.formTranslations
                             .emergency_Contact_Relationship_field_placeholder
@@ -1452,6 +1703,16 @@ export default function Form(props) {
                       <Select
                         styles={customStyles}
                         menuPlacement="auto"
+                        defaultValue={
+                          props.studentProps !== null
+                            ? relationshipOptions.filter(
+                                (option) =>
+                                  option.value ===
+                                  props.studentProps
+                                    .Second_Emergency_Contact_Relationship
+                              )
+                            : ""
+                        }
                         placeholder={
                           props.formTranslations
                             .second_Emergency_Contact_Relationship_field_placeholder
