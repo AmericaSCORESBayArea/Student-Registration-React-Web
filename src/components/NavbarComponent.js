@@ -9,6 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import LogoutIcon from "@mui/icons-material/Logout";
 import firebase from "../firebase/firebaseConfig";
 import { ModalwithConfirmation } from "./utils/Modal";
+import ls from "localstorage-slim";
 
 function NavbarComponent(props) {
   const [selected, setSelected] = useState(props.selected);
@@ -45,6 +46,7 @@ function NavbarComponent(props) {
   };
 
   const confirmedLogout = () => {
+    ls.remove("Parent_ContactId");
     firebase.auth().signOut();
     localStorage.setItem("user", false);
     history({ pathname: "/Login" });
