@@ -2,21 +2,23 @@ export const esLanguages = {
   US: "Inglés",
   ES: "Español",
   CN: "Chino (simplificado)",
+  resultOption:
+    "No encontramos ningún estudiante que coincida con tu búsqueda.Verifique la ortografía o intente crear un nuevo estudiante.",
   login_warning:
     "Es necesario iniciar sesión para acceder al formulario de registro de estudiantes.",
   error_404: "Error 404. Página no encontrada",
-  parent_coach_title:
-    "Seleccione si es un padre/tutor de un estudiante de scores o un entrenador.",
-  parent_coach_option:
-    "¿Está enviando este formulario como padre/tutor o entrenador?",
+  error_students:
+    "No pudimos encontrar un registro de estudiante asociado con su número de teléfono. Le recomendamos que cree un nuevo registro para su estudiante. Puede enviarnos un correo electrónico sobre este problema.",
+  parent_coach_title: "Verificando su identidad. Espere por favor",
+  parent_coach_option: "Verificando su identidad. Espere por favor",
   parent_option: "Padre/Tutor",
   coach_option: "Entrenador",
   new_option: "Nuevo",
   returning_option: "Existente",
-  new_returning_option: "¿Nuevo o existente?",
+  new_returning_option: "¿Está registrando un nuevo o existente estudiante?",
   new_returning_title:
     "Seleccione si está iniciando un nuevo registro de estudiante o actualizando el registro de un estudiante existente.",
-  steps_1: "Seleccione su rol",
+  steps_1: "Verificación de su rol",
   steps_2: "Seleccione nuevo o existente",
   steps_3: "Complete el formulario",
   button_continue: "CONTINUAR",
@@ -32,6 +34,12 @@ export const esLanguages = {
     modal_title: "Registro exitoso",
     modal_text: "El estudiante ha sido registrado con éxito.",
     modal_cancel_button: "AGREGAR OTRO ESTUDIANTE",
+    modal_confirm_button: "FINALIZAR",
+  },
+  edit_modal_success: {
+    modal_title: "Edición exitosa",
+    modal_text: "El estudiante ha sido editado con éxito.",
+    modal_cancel_button: "AGREGAR/EDITAR OTRO ESTUDIANTE",
     modal_confirm_button: "FINALIZAR",
   },
   error_modal: {
@@ -60,11 +68,13 @@ export const esLanguages = {
     middleName_field_placeholder: "Ingrese segundo nombre",
     lastName_field: "Apellido/s*",
     lastName_field_placeholder: "Ingrese apellido/s",
-    schoolName_field: "Escuela*",
+    schoolName_field: "Sitio del Programa SCORES*",
     schoolName_region_field: "Región*",
     schoolName_region_field_placeholder: "Seleccione...",
     schoolName_schoolname_field: "Nombre de Escuela*",
     schoolName_schoolname_field_placeholder: "Seleccione...",
+    attendingSchool_field: "Escuela que asiste*",
+    attendingSchool_field_placeholder: "Ingrese escuela que asiste",
     studentEmail_field: "Email del Estudiante",
     studentEmail_field_placeholder: "Ingrese email del estudiante",
     studentphoneNumber_field: "Teléfono del Estudiante",
@@ -331,5 +341,22 @@ export const esLanguages = {
     ],
     waiverModal_confirm: "Aceptar",
     waiverModal_denied: "Rechazar",
+  },
+  searchStudent: {
+    title_parents: "Selecciona un estudiante para editar su información.",
+    modal_title: "Eliminar Estudiante",
+    modal_text:
+      "Comuníquese con su administrador de Scores para obtener ayuda para eliminar el registro de un estudiante",
+    modal_close_button: "Ok",
+    title: "Buscar estudiante por Nombre/Apellido",
+    inputProps: "buscar estudiante",
+    inputPlaceholder: "Buscar...",
+    tableOptions: {
+      firstName: "Primer nombre",
+      lastName: "Apellido",
+      birthdate: "Fecha de Nacimiento",
+      schoolName: "Escuela",
+      actions: "Acciones",
+    },
   },
 };

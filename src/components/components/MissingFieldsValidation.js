@@ -2,6 +2,7 @@ import React from "react";
 
 function MissingFieldsValidation(props) {
   function isAfterToday(date) {
+    date = new Date(date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return date < today;
@@ -27,6 +28,11 @@ function MissingFieldsValidation(props) {
       label: props.formTranslations.schoolName_schoolname_field,
       value: props.values.schoolName.schoolname,
       position: props.fieldsRef.schoolName_field,
+    },
+    {
+      label: props.formTranslations.attendingSchool_field,
+      value: props.values.attendingSchool,
+      position: props.fieldsRef.schoolAttending_field,
     },
     {
       label: props.formTranslations.birthdate_field,

@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import { categoriesArray } from "./categoriesArray";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
 import SportsIcon from "@mui/icons-material/Sports";
+import {
+  getContactInfo,
+  getContactRecordType,
+} from "../../components/controller/api";
 import firebase from "../../firebase/firebaseConfig";
+import ls from "localstorage-slim";
 
 const useStyles = makeStyles(() => ({
   homeScreenContainer: {
@@ -29,8 +34,40 @@ const useStyles = makeStyles(() => ({
 }));
 export default function RoleType(props) {
   const classes = useStyles();
-  const [selected, setSelected] = useState(props.roleType);
-
+  const [selected, setSelected] = useState();
+  useEffect(() => {
+    let data = localStorage.getItem("phoneNumber");
+    async function fetchData() {
+      await getContactInfo(data).then((result) => {
+        console.log(result);
+        if (result.ContactId === null) {
+          setRType("Parent", result.ContactId);
+        } else {
+          getContactRecordType(result.ContactId).then((value) => {
+            if (value[0].ContactRecordType === "01250000000VBbWAAW") {
+              setRType("Coach");
+            } else {
+              setRType("Parent", result.ContactId);
+            }
+          });
+        }
+      });
+    }
+    fetchData();
+  }, []);
+  const setRType = (role, contactId) => {
+    setSelected(role);
+    if (role === "Parent") {
+      ls.set("Parent_ContactId", contactId, { encrypt: true });
+    }
+    setTimeout(() => {
+      firebase.analytics().logEvent("user_roleType", {
+        app: "web_registration",
+        role: role,
+      });
+      props.function("role_type", role);
+    }, 3000);
+  };
   const icons = (name) => {
     if (name === selected) {
       switch (name) {
@@ -79,7 +116,12 @@ export default function RoleType(props) {
           textAlign: "center",
         }}
       >
-        <h6>{props.props}</h6>
+        <h5>
+          {props.props}
+          <span class="one">.</span>
+          <span class="two">.</span>
+          <span class="three">.</span>​
+        </h5>
       </div>
       <Grid
         container
@@ -119,14 +161,6 @@ export default function RoleType(props) {
                       borderColor: "#1976d2",
                     }
               }
-              onClick={() => {
-                setSelected(category.name);
-                firebase.analytics().logEvent("user_roleType", {
-                  app: "web_registration",
-                  role: category.name,
-                });
-                props.function("role_type", category.name);
-              }}
             >
               {icons(category.name)}
             </Button>
