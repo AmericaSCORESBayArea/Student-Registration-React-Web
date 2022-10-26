@@ -26,9 +26,11 @@ const auth = firebase.auth();
 
 auth.onAuthStateChanged((user) => {
   if (user) {
+    localStorage.setItem("phoneNumber", user._delegate.phoneNumber);
     localStorage.setItem("user", true);
   } else {
     localStorage.setItem("user", false);
+    localStorage.setItem("phoneNumber", "");
   }
 });
 
