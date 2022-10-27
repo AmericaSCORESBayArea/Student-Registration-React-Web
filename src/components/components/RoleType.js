@@ -39,7 +39,6 @@ export default function RoleType(props) {
     let data = localStorage.getItem("phoneNumber");
     async function fetchData() {
       await getContactInfo(data).then((result) => {
-        console.log(result);
         if (result.ContactId === null) {
           setRType("Parent", result.ContactId);
         } else {
