@@ -66,6 +66,7 @@ const CustomInputComponent = (props) => (
 );
 
 export default function Form(props) {
+  let phone = localStorage.getItem("phoneNumber");
   const schoolIdMapping = require("../utils/school_site_id_mapping.json");
   const classes = useStyles();
   const [loading, setLoading] = React.useState(false);
@@ -320,6 +321,8 @@ export default function Form(props) {
               parentPhone1:
                 props.studentProps !== null
                   ? props.studentProps.ParentPhone1
+                  : props.roleType === "Parent"
+                  ? phone.slice(2)
                   : "",
               parentPhone2:
                 props.studentProps !== null
