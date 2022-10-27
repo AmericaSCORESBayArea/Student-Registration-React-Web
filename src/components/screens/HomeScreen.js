@@ -105,6 +105,7 @@ export default function HomeScreen(props) {
       case 2:
         return (
           <Form
+            roleType={roleType}
             backButton={props.translations.button_back}
             submitButton={props.translations.button_submit}
             function_back={handleBack}
