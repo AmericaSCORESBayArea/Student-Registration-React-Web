@@ -88,11 +88,22 @@ export default function StudentsListTable(props) {
             display: "flex",
             justifyContent: "center",
             marginTop: "1%",
-            marginBottom: "4%",
+            marginBottom: "1%",
             textAlign: "center",
           }}
         >
           <h5>{props.props.title_parents}</h5>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: "4%",
+            textAlign: "center",
+            fontStyle: "italic",
+          }}
+        >
+          <p>{props.sub_title_parents}</p>
         </div>
         <div
           style={{
