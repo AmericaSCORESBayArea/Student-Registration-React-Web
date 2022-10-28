@@ -16,6 +16,7 @@ export const cnLanguages = {
   returning_option: "返回",
   new_returning_option: "新的还是现有的?",
   new_returning_title: "选择您是开始新的学生注册还是更新返回的学生注册.",
+  new_returning_sub_heading: "笔记: 请等待几分钟，然后再尝试查看或编辑新记录.",
   steps_1: "验证您的角色",
   steps_2: "选择新的或现有的",
   steps_3: "填写表格",
@@ -31,6 +32,7 @@ export const cnLanguages = {
   register_modal_success: {
     modal_title: "注册成功",
     modal_text: "该学生已成功注册",
+    modal_footer: "请等待几分钟，然后再尝试查看或编辑新记录.",
     modal_cancel_button: "添加其他学生",
     modal_confirm_button: "完毕",
   },

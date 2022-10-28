@@ -252,6 +252,7 @@ export default function RoleType(props) {
         <StudentsListTable
           props={props.students}
           students={studentsList}
+          sub_title_parents={props.sub_title}
           goBack={() => {
             setShowParentStudents(false);
             goBack();
