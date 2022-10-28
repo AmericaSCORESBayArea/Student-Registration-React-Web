@@ -91,6 +91,7 @@ export default function HomeScreen(props) {
             newOption={props.translations.new_option}
             returningOption={props.translations.returning_option}
             title={props.translations.new_returning_title}
+            sub_title={props.translations.new_returning_sub_heading}
             continueButton={props.translations.button_continue}
             backButton={props.translations.button_back}
             students={props.translations.searchStudent}

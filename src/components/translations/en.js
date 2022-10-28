@@ -18,6 +18,8 @@ export const enLanguages = {
   new_returning_option: "Are you registering a new or existing student?",
   new_returning_title:
     "Select whether you are starting a new student registration or updating a returning student registration.",
+  new_returning_sub_heading:
+    "NOTE: Please allow a few minutes before you attempt to view or edit a new record.",
   steps_1: "Verification of your role",
   steps_2: "Select new or existing",
   steps_3: "Complete form",
@@ -33,6 +35,8 @@ export const enLanguages = {
   register_modal_success: {
     modal_title: "Successful registration",
     modal_text: "The student has been successfully registered.",
+    modal_footer:
+      "Please allow a few minutes before you attempt to view or edit this new record.",
     modal_cancel_button: "ADD OTHER STUDENT",
     modal_confirm_button: "DONE",
   },
