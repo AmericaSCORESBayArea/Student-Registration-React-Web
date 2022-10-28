@@ -14,6 +14,7 @@ function ModalwithConfirmation(
     reverseButtons: true,
     confirmButtonColor: "#1976d2",
     cancelButtonColor: "#616161",
+    footer: translations.modal_footer,
     confirmButtonText: translations.modal_confirm_button,
     cancelButtonText: translations.modal_cancel_button,
   }).then((result) => {
