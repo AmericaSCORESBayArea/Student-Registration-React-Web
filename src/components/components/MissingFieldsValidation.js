@@ -1,4 +1,5 @@
 import React from "react";
+import firebase from "../../firebase/firebaseConfig";
 
 function MissingFieldsValidation(props) {
   function isAfterToday(date) {
@@ -100,7 +101,18 @@ function MissingFieldsValidation(props) {
       position: props.fieldsRef.emergency_Contact_Phone1_field,
     },
   ];
-
+  if (props.submitPressed === true) {
+    if (requiredFields.every((element) => element.value !== "") === false) {
+      requiredFields.map(async (value) => {
+        if (value.value === "") {
+          await firebase.analytics().logEvent("MissingFields_Form", {
+            missingField: value.label,
+          });
+        }
+      });
+    }
+    props.submitFunction(false);
+  }
   return (
     <React.Fragment>
       {requiredFields.every((element) => element.value !== "") === false ? (

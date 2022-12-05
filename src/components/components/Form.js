@@ -73,7 +73,11 @@ export default function Form(props) {
   const [datepicker, setDatePicker] = useState(false);
   const [regionProps, setRegionProps] = useState("");
   const [schoolProps, setSchoolProps] = useState("");
+  const [submitBoolean, setSubmitBoolean] = useState(false);
   const [myvalue, setMyValue] = useState(false);
+  const changesubmitBoolean = (props) => {
+    setSubmitBoolean(props);
+  };
   const date = new Date();
   date.setDate(date.getDate() - 1);
   const ethnicityOptions = props.formTranslations.ethnicityArray.sort((a, b) =>
@@ -1848,6 +1852,8 @@ export default function Form(props) {
                       values={values}
                       fieldsRef={formFieldsRef}
                       formTranslations={props.formTranslations}
+                      submitPressed={submitBoolean}
+                      submitFunction={changesubmitBoolean}
                     />
                     {show === true ? (
                       <WaiverModal
@@ -1884,7 +1890,10 @@ export default function Form(props) {
                           size={"medium"}
                           variant="contained"
                           disabled={loading}
-                          onClick={() => handleSubmit()}
+                          onClick={() => {
+                            setSubmitBoolean(true);
+                            handleSubmit();
+                          }}
                         >
                           {props.submitButton}
                         </Button>
