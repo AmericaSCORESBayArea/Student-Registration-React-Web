@@ -101,7 +101,7 @@ export const enLanguages = {
     parentFName_field_placeholder: "Enter parent/guardian first name",
     parentLName_field: "Parent/Guardian Last Name*",
     parentLName_field_placeholder: "Enter parent/guardian last name",
-    parentEmail_field: "Parent/Guardian Email",
+    parentEmail_field: "Parent/Guardian Email*",
     parentEmail_field_placeholder: "Enter parent/guardian email",
     relationship_field: "Relationship to Child*",
     relationship_field_placeholder: "Select...",

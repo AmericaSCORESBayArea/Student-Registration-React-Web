@@ -169,6 +169,7 @@ export default function Form(props) {
   const [rectReduced, refReduced] = useClientRect();
   const [rectParentFName, refParentFName] = useClientRect();
   const [rectParentLName, refParentLName] = useClientRect();
+  const [rectParentEmail, refParentEmail] = useClientRect();
   const [rectParentPhone, refParentPhone] = useClientRect();
   const [reactParentHomeLang, refParentHomeLang] = useClientRect();
   const [rectRelationship, refRelationship] = useClientRect();
@@ -219,6 +220,7 @@ export default function Form(props) {
     reducedPriceLunch_field: rectReduced,
     parentFName_field: rectParentFName,
     parentLName_field: rectParentLName,
+    parentEmail_field: rectParentEmail,
     parentPhone_field: rectParentPhone,
     parent_Home_Lang_field: reactParentHomeLang,
     relationship_field: rectRelationship,
@@ -440,9 +442,9 @@ export default function Form(props) {
               parentLName: Yup.string().required(
                 props.formTranslations.required_fields
               ),
-              parentEmail: Yup.string().email(
-                props.formTranslations.invalid_email
-              ),
+              parentEmail: Yup.string()
+                .email(props.formTranslations.invalid_email)
+                .required(props.formTranslations.required_fields),
               relationship: Yup.string().required(
                 props.formTranslations.required_fields
               ),
@@ -1152,6 +1154,7 @@ export default function Form(props) {
                     <div
                       className="form-group"
                       style={{ marginBottom: "20px" }}
+                      ref={refParentEmail}
                     >
                       <div className={classes.label}>
                         <label htmlFor="parentEmail">

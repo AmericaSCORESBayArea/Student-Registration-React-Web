@@ -66,6 +66,11 @@ function MissingFieldsValidation(props) {
       position: props.fieldsRef.parentFName_field,
     },
     {
+      label: props.formTranslations.parentEmail_field,
+      value: props.values.parentEmail,
+      position: props.fieldsRef.parentEmail_field,
+    },
+    {
       label: props.formTranslations.parentLName_field,
       value: props.values.parentLName,
       position: props.fieldsRef.parentLName_field,

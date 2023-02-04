@@ -101,7 +101,7 @@ export const esLanguages = {
     parentFName_field_placeholder: "Ingrese primer nombre del padre/tutor",
     parentLName_field: "Apellido del Padre/Tutor*",
     parentLName_field_placeholder: "Ingrese apellido del padre/tutor",
-    parentEmail_field: "Email del Padre/Tutor",
+    parentEmail_field: "Email del Padre/Tutor*",
     parentEmail_field_placeholder: "Ingrese email del padre/tutor",
     relationship_field: "Parentesco con el Estudiante*",
     relationship_field_placeholder: "Seleccione...",
