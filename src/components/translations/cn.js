@@ -95,7 +95,7 @@ export const cnLanguages = {
     parentFName_field_placeholder: "输入父母/监护人的名字",
     parentLName_field: "家长/监护人姓氏*",
     parentLName_field_placeholder: "输入父母/监护人的姓氏",
-    parentEmail_field: "家长/监护人电子邮件",
+    parentEmail_field: "家长/监护人电子邮件*",
     parentEmail_field_placeholder: "输入家长/监护人电子邮件",
     relationship_field: "关系到孩子*",
     relationship_field_placeholder: "选择...",
