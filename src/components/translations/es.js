@@ -180,6 +180,10 @@ export const esLanguages = {
         label: "Prefiero no decir",
         value: "Prefer not to say",
       },
+      {
+        label: "Desconocido",
+        value: "Unknown",
+      },
     ],
     ethnicityArray: [
       {

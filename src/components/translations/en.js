@@ -173,6 +173,10 @@ export const enLanguages = {
         label: "Prefer not to say",
         value: "Prefer not to say",
       },
+      {
+        label: "Unknown",
+        value: "Unknown",
+      },
     ],
     ethnicityArray: [
       {
