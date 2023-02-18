@@ -159,6 +159,10 @@ export const cnLanguages = {
         label: "宁愿不说",
         value: "Prefer not to say",
       },
+      {
+        label: "未知",
+        value: "Unknown",
+      },
     ],
     ethnicityArray: [
       {
