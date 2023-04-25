@@ -13,6 +13,13 @@ export const cnLanguages = {
   parent_option: "爸爸/导师",
   coach_option: "教练",
   new_option: "新的",
+  returningModal: {
+    modal_title: "找到學生記錄",
+    modal_text:
+      "我們發現學生記錄已經與您的手機號碼相關聯. 請查看您正在註冊的學生是否已經存在，並通過簡單地更新來節省您的時間.",
+    modal_close_button: "好的",
+    add_student_button: "添加新學生",
+  },
   returning_option: "返回",
   new_returning_option: "新的还是现有的?",
   new_returning_title: "选择您是开始新的学生注册还是更新返回的学生注册.",
@@ -28,6 +35,10 @@ export const cnLanguages = {
     modal_text: "所做的任何更改都不会保存.",
     modal_cancel_button: "取消",
     modal_confirm_button: "登出",
+  },
+  waiverText: {
+    waiver: "查看並接受分數條款和條件.",
+    newwaiver: "條款和條件已更新. 請查看並接受它們.",
   },
   register_modal_success: {
     modal_title: "注册成功",

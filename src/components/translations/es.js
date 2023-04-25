@@ -14,6 +14,18 @@ export const esLanguages = {
   parent_option: "Padre/Tutor",
   coach_option: "Entrenador",
   new_option: "Nuevo",
+  returningModal: {
+    modal_title: "Registro(s) de estudiante encontrado(s)",
+    modal_text:
+      "Encontramos registros de estudiantes ya asociados con su número de teléfono móvil. Compruebe si el estudiante que está registrando ya existe y ahorre tiempo simplemente actualizándolo.",
+    modal_close_button: "ACEPTAR",
+    add_student_button: "Añadir nuevo estudiante",
+  },
+  waiverText: {
+    waiver: "Revise y acepte los términos y condiciones de Scores.",
+    newwaiver:
+      "Se han actualizado los términos y condiciones. Por favor revíselos y acéptelos.",
+  },
   returning_option: "Existente",
   new_returning_option: "¿Está registrando un nuevo o existente estudiante?",
   new_returning_title:
