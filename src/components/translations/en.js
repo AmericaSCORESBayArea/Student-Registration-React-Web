@@ -14,6 +14,13 @@ export const enLanguages = {
   parent_option: "Parent/Guardian",
   coach_option: "Coach",
   new_option: "New",
+  returningModal: {
+    modal_title: "Student record(s) found",
+    modal_text:
+      "We found student record(s) already associated with your mobile number. Please see if the student you are registering already exists and save yourself time by simply updating it.",
+    modal_close_button: "OK",
+    add_student_button: "Add New Student",
+  },
   returning_option: "Existing",
   new_returning_option: "Are you registering a new or existing student?",
   new_returning_title:
@@ -26,6 +33,11 @@ export const enLanguages = {
   button_continue: "CONTINUE",
   button_back: "BACK",
   button_submit: "SUBMIT",
+  waiverText: {
+    waiver: "Please review and accept the Scores waivers and releases.",
+    newwaiver:
+      "We need a waiver update. Please review and accept this new waiver.",
+  },
   logout_modal: {
     modal_title: "Are you sure you want to log out?",
     modal_text: "Any changes made will not be saved.",

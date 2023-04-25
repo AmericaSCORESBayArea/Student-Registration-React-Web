@@ -16,6 +16,7 @@ import Stack from "@mui/material/Stack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { ErrorModal } from "../utils/Modal";
+import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import moment from "moment";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
@@ -164,6 +165,25 @@ export default function StudentsListTable(props) {
               </TableContainer>
             </Grid>
           </Grid>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: width < 1000 ? "center" : "flex-end",
+            marginTop: "8%",
+            textAlign: "center",
+          }}
+        >
+          <Button
+            size={"medium"}
+            variant="contained"
+            onClick={() => {
+              props.selectCategory();
+            }}
+            style={{ marginRight: "2%", backgroundColor: "#1976d2" }}
+          >
+            {props.add_student_button}
+          </Button>
         </div>
       </div>
     </div>
