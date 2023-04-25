@@ -12,6 +12,7 @@ import { getStudentsByPhoneNumber } from "../../components/controller/api";
 import ls from "localstorage-slim";
 import Loading from "../components/Loading";
 import { toast } from "react-toastify";
+import { ErrorModal } from "../utils/Modal";
 
 const useStyles = makeStyles(() => ({
   homeScreenContainer: {
@@ -33,7 +34,7 @@ const useStyles = makeStyles(() => ({
     textAlign: "center",
   },
 }));
-export default function RoleType(props) {
+export default function Registration_Status(props) {
   const [selected, setSelected] = useState(props.registration_status);
   const [width, setWidth] = useState(window.innerWidth);
   const [studentsList, setStudentsList] = useState();
@@ -47,9 +48,24 @@ export default function RoleType(props) {
   };
   useEffect(() => {
     props.studentProps(null);
+    async function fetchData() {
+      let data = localStorage.getItem("phoneNumber");
+      await getStudentsByPhoneNumber(data).then((result) => {
+        if (result.length !== 0) {
+          setStudentsList(result);
+          setShowSearch(true);
+          setShowParentStudents(true);
+          showModal();
+        }
+      });
+    }
+    fetchData();
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
+  const showModal = () => {
+    ErrorModal(props.modalOptions, "info");
+  };
   const goBack = () => {
     setShowSearch(false);
     dismiss();
@@ -85,6 +101,7 @@ export default function RoleType(props) {
       if (result.length === 0) {
         showToast(props.error_students);
       } else {
+        showModal();
         setStudentsList(result);
         setShowSearch(true);
         setShowParentStudents(true);
@@ -102,8 +119,7 @@ export default function RoleType(props) {
         fetchData(data);
       } else {
         if (contactId === null) {
-          showToast(props.error_students);
-          selectingCategory(category);
+          fetchData(data);
         } else {
           selectingCategory(category);
           props.function("registration_status", category);
@@ -256,6 +272,11 @@ export default function RoleType(props) {
           goBack={() => {
             setShowParentStudents(false);
             goBack();
+          }}
+          add_student_button={props.modalOptions.add_student_button}
+          selectCategory={() => {
+            selectingCategory("New");
+            props.function("registration_status", "New");
           }}
           goToForm={() => props.function("registration_status", "Existing")}
           studentProps={props.studentProps}

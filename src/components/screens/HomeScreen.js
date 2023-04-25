@@ -89,6 +89,7 @@ export default function HomeScreen(props) {
             roleType={roleType}
             props={props.translations.new_returning_option}
             newOption={props.translations.new_option}
+            modalOptions={props.translations.returningModal}
             returningOption={props.translations.returning_option}
             title={props.translations.new_returning_title}
             sub_title={props.translations.new_returning_sub_heading}
@@ -106,6 +107,7 @@ export default function HomeScreen(props) {
       case 2:
         return (
           <Form
+            waiver={props.translations.waiverText}
             roleType={roleType}
             backButton={props.translations.button_back}
             submitButton={props.translations.button_submit}
