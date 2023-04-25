@@ -21,10 +21,7 @@ function WaiverModal(props) {
           className="markdown-body entry-content container-lg"
           itemProp="text"
         >
-          <h4>
-            Please review and accept the Scores waivers and releases by clicking
-            Agree and entering your email address at the bottom.
-          </h4>
+          <h4>{props.waiverText}</h4>
           <h3>Release/Waiver/Indemnity Agreement</h3>
           <p>
             Waiver &amp; Indemnity AgreementI, the undersigned legal
