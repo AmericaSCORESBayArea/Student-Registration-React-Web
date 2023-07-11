@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import { ModalwithConfirmation, ErrorModal } from "../utils/Modal";
 import { WaiverModal } from "../utils/WaiverModal";
 import "../styles/RadioButton.css";
-import { regionsArray, schoolsName, gradesArray } from "./multiplesArray";
+import { gradesArray } from "./multiplesArray";
 import { MissingFieldsValidation } from "./MissingFieldsValidation";
 import Select from "react-select";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
@@ -23,10 +23,10 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { blue } from "@mui/material/colors";
 import Loading from "../components/Loading";
+import { getRegionsData, getSchoolData } from "../controller/api";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    //display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
@@ -67,14 +67,37 @@ const CustomInputComponent = (props) => (
 
 export default function Form(props) {
   let phone = localStorage.getItem("phoneNumber");
-  const schoolIdMapping = require("../utils/school_site_id_mapping.json");
   const classes = useStyles();
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(true);
   const [datepicker, setDatePicker] = useState(false);
   const [regionProps, setRegionProps] = useState("");
   const [schoolProps, setSchoolProps] = useState("");
+  const [regionsArray, setRegionsArray] = useState("");
   const [submitBoolean, setSubmitBoolean] = useState(false);
-  const [myvalue, setMyValue] = useState(false);
+  const [myvalue, setMyValue] = useState(true);
+  const [schoolsArray, setSchoolsArray] = useState("");
+  const [waiverInfo, setWaiverInfo] = useState({
+    name: "",
+    waiverResponse: "",
+    date: "",
+    time: "",
+    contactId: "",
+    contactEmail: "",
+    waiverId: "",
+  });
+  const AcceptWaiver = (data) => {
+    setWaiverInfo((prev) => ({
+      ...prev,
+      name: data.Name,
+      waiverResponse: "Acceptance",
+      date: "",
+      time: "",
+      contactId: "",
+      contactEmail: "",
+      waiverId: data.WaiverId,
+    }));
+  };
+
   const changesubmitBoolean = (props) => {
     setSubmitBoolean(props);
   };
@@ -96,7 +119,6 @@ export default function Form(props) {
   const phoneRegExp =
     /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
   const [width, setWidth] = useState(window.innerWidth);
-  const [schoolsArray, setSchoolsArray] = useState("");
   const updateDimensions = () => {
     setWidth(window.innerWidth);
   };
@@ -104,36 +126,64 @@ export default function Form(props) {
   useEffect(() => {
     setRegionProps("");
     setSchoolProps("");
-    if (props.studentProps !== null) {
+    getRegionsData()
+      .then(async (response) => {
+        setRegionsArray(response);
+        if (props.studentProps)
+          setRegionProps(
+            props.studentProps.Region
+              ? response.findIndex((r) => r.value === props.studentProps.Region)
+              : undefined
+          );
+        else setRegionProps(undefined);
+        setTimeout(() => {
+          setMyValue(false);
+          setLoading(false);
+        }, 3000);
+      })
+      .catch((e) => {
+        console.log(e); // <== this **WILL** be invoked on exception
+      });
+    if (props.studentProps) {
       setShow(true);
-      getSchoolNameFromSiteId(props.studentProps.SchoolSiteId).then(
-        (result) => {
-          regionsArray.map((val, index) => {
-            let aux = schoolsName[val.value];
-            let finds = aux.schools.find((element) => element.value === result);
-            if (finds !== undefined) {
-              setRegionProps(index);
-              const indexx = schoolsName[
-                regionsArray[index].value
-              ].schools.findIndex((object) => {
-                return object.value === finds.value;
-              });
-              setSchoolProps(indexx);
-            }
+      if (props.studentProps.Region) {
+        getSchoolData(props.studentProps.Region)
+          .then(async (response) => {
+            setSchoolsArray(response);
+            setSchoolProps(
+              response.findIndex(
+                (s) => s.id === props.studentProps.SchoolSiteId
+              )
+            );
+            setTimeout(() => {
+              setMyValue(false);
+              setLoading(false);
+            }, 3000);
+          })
+          .catch((e) => {
+            console.log(e); // <== this **WILL** be invoked on exception
           });
-        }
-      );
+      } else {
+        setSchoolProps(undefined);
+        setMyValue(false);
+        setLoading(false);
+      }
+    } else {
+      setSchoolProps(undefined);
+      setMyValue(false);
+      setLoading(false);
     }
-    async function getSchoolNameFromSiteId(siteId) {
-      const results = schoolIdMapping.find(
-        (school) => JSON.stringify(school.siteId) === JSON.stringify(siteId)
-      );
-      return results.schoolName;
-    }
-    setMyValue(true);
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
+
+  async function getSchoolSiteId(schoolName) {
+    const results = schoolsArray.find(
+      (school) => JSON.stringify(school.value) === JSON.stringify(schoolName)
+    );
+    return results.id;
+  }
+
   const customStyles = {
     control: (base, { isDisabled }) => ({
       ...base,
@@ -229,7 +279,9 @@ export default function Form(props) {
     emergency_Contact_Relationship_field: rectEmergencyRelationship,
     emergency_Contact_Phone1_field: rectEmergencyPhone,
   };
-  return myvalue === false ? null : (
+  return myvalue ? (
+    <Loading open={loading} />
+  ) : (
     <Grid
       container
       component="main"
@@ -271,15 +323,14 @@ export default function Form(props) {
               schoolName: {
                 region:
                   props.studentProps !== null
-                    ? regionProps !== ""
+                    ? regionProps
                       ? regionsArray[Number(regionProps)].value
                       : ""
                     : "",
                 schoolname:
                   props.studentProps !== null
-                    ? regionProps !== ""
-                      ? schoolsName[regionsArray[Number(regionProps)].value]
-                          .schools[Number(schoolProps)].value
+                    ? schoolProps
+                      ? schoolsArray[Number(schoolProps)].value
                       : ""
                     : "",
               },
@@ -516,13 +567,22 @@ export default function Form(props) {
                 props.formTranslations.required_waiver
               ),
             })}
-            onSubmit={(data) => {
+            onSubmit={async (data) => {
               setLoading(true);
+              const schoolSiteId = await getSchoolSiteId(
+                data.schoolName.schoolname
+              );
               if (props.studentProps === null) {
-                submitForm(data, showSuccessModal, showErrorModal);
+                submitForm(
+                  data,
+                  schoolSiteId,
+                  showSuccessModal,
+                  showErrorModal
+                );
               } else {
                 submitEditedForm(
                   data,
+                  schoolSiteId,
                   showSuccessModalUpdate,
                   showErrorModal,
                   props.studentProps.Id
@@ -656,9 +716,7 @@ export default function Form(props) {
                           styles={customStyles}
                           menuPlacement="auto"
                           defaultValue={
-                            regionProps !== ""
-                              ? regionsArray[Number(regionProps)]
-                              : ""
+                            regionProps ? regionsArray[Number(regionProps)] : ""
                           }
                           name="schoolName.region"
                           placeholder={
@@ -673,18 +731,12 @@ export default function Form(props) {
                               ? " is-invalid"
                               : "")
                           }
-                          onChange={(selectedOption) => {
-                            let region;
-                            for (region in schoolsName) {
-                              if (region === selectedOption.value) {
-                                let aux = schoolsName[region];
-                                setSchoolsArray(
-                                  aux.schools.sort((a, b) =>
-                                    a.label.localeCompare(b.label)
-                                  )
-                                );
-                              }
-                            }
+                          onChange={async (selectedOption) => {
+                            setSchoolProps(undefined);
+                            const school = await getSchoolData(
+                              selectedOption.value
+                            );
+                            setSchoolsArray(school);
                             setFieldValue(
                               "schoolName.region",
                               selectedOption.value
@@ -711,10 +763,8 @@ export default function Form(props) {
                                 : false
                             }
                             defaultValue={
-                              regionProps !== ""
-                                ? schoolsName[
-                                    regionsArray[Number(regionProps)].value
-                                  ].schools[Number(schoolProps)]
+                              schoolProps
+                                ? schoolsArray[Number(schoolProps)]
                                 : ""
                             }
                             styles={customStyles}
@@ -1866,6 +1916,7 @@ export default function Form(props) {
                     />
                     {show === true ? (
                       <WaiverModal
+                        addWaiverData={AcceptWaiver}
                         confirmButton={
                           props.formTranslations.waiverModal_confirm
                         }
