@@ -27,7 +27,6 @@ import { getRegionsData, getSchoolData } from "../controller/api";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    //display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
