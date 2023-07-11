@@ -1,7 +1,6 @@
 import axios from "axios";
 import moment from "moment";
 import firebase from "../../firebase/firebaseConfig";
-import { ErrorModal } from "../utils/Modal";
 
 const id = `${process.env.REACT_APP_CLIENT_ID}`;
 const secret = `${process.env.REACT_APP_CLIENT_SECRET}`;
