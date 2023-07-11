@@ -88,3 +88,22 @@ ul li::marker {
     opacity: 1;
   }
 }
+
+#waiverTitle {
+  justify-content: center;
+  display: flex;
+}
+#container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  text-align: justify;
+  word-break: break-word;
+}
+
+#buttonContainer {
+  margin: 4%;
+  display: flex;
+  justify-content: center;
+}
