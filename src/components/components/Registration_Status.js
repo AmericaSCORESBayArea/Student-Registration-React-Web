@@ -152,14 +152,14 @@ export default function Registration_Status(props) {
     }
   };
   return (
-    <div style={{ width: "100%" }}>
+    <div style={{ flex: 1 }}>
       <Loading open={loading} />
       {showSearch === false ? (
         <div
           style={{
-            width: width < 1000 ? "100%" : width < 1500 ? "60%" : "30%",
+            width: width < 1000 ? "100%" : width < 1500 ? "60%" : "35%",
             backgroundColor: "#f8f5f4",
-            padding: "40px",
+            padding: "35px",
             borderRadius: 15,
             margin: "auto",
             marginTop: "30px",
