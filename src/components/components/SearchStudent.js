@@ -57,7 +57,6 @@ export default function SearchStudent(props) {
         marginBottom: "80px",
         margin: "0 auto",
         marginTop: "30px",
-        marginLeft: width < 1000 ? 10 : 0,
       }}
     >
       <Grid
@@ -155,7 +154,7 @@ export default function SearchStudent(props) {
       {studentsResult !== undefined && studentsResult.length > 0 ? (
         <div
           style={{
-            maxWidth: width < 1000 ? "380px" : "600px",
+            maxWidth: 410,
             margin: "auto",
             marginBottom: "30px",
             padding: 10,
