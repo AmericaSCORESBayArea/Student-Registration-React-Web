@@ -14,7 +14,7 @@ export function WaiverModal(props) {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      let response = await getWaiver();
+      let response = await getWaiver(props.waiverRegion);
       setWaiverData(response);
       props.addWaiverData(response[0]);
       setLoading(false);
@@ -44,14 +44,14 @@ export function WaiverModal(props) {
           }}
         >
           <Modal.Header closeButton={props.deniedButton ? true : false}>
-            <Modal.Title>Waiver / Waivers</Modal.Title>
+            <Modal.Title> Waiver</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <article
               className="markdown-body entry-content container-lg w-100"
               itemProp="text"
             >
-              <h1 id="waiverTitle">Waiver</h1>
+              <h1 id="waiverTitle">{props.waiverRegion} Waiver</h1>
               <div id="myDiv" />
             </article>
           </Modal.Body>

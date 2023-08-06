@@ -72,8 +72,16 @@ export const esLanguages = {
         "El estudiante ya se encuentra registrado en el sistema, comuníquese con su entrenador o administrador.",
       modal_close_button: "OK",
     },
+    error_505: {
+      modal_title: "Error del servidor [500]",
+      modal_text:
+        "Se ha producido un error al guardar la aceptación de los términos y condiciones. Por favor, inténtelo de nuevo más tarde. Si esto persiste, por favor contáctenos.",
+      modal_close_button: "OK",
+    },
   },
   form: {
+    waiverModal_region:
+      "Debe seleccionar una región del sitio del programa SCORES para revisar los términos y condiciones.",
     required_fields: "El campo es obligatorio(*)",
     invalid_phone_number: "El número de teléfono no es válido",
     required_waiver: "Debe revisar y aceptar los términos y condiciones (*)",
@@ -166,7 +174,7 @@ export const esLanguages = {
       "Teléfono de Emergencia Secundario 2",
     second_Emergency_Contact_Phone2_field_placeholder:
       "Ingrese teléfono de emergencia secundario 2",
-    waiver_field: "Términos y Condiciones",
+    waiver_field: "Términos y Condiciones*",
     waiver_field_button: "Mostrar términos y condiciones",
     formTitle1: "Detalles del Estudiante",
     formTitle2: "Información del Padre/Tutor",

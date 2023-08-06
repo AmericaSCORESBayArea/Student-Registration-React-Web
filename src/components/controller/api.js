@@ -1,6 +1,10 @@
 import axios from "axios";
 import moment from "moment";
 import firebase from "../../firebase/firebaseConfig";
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 const id = `${process.env.REACT_APP_CLIENT_ID}`;
 const secret = `${process.env.REACT_APP_CLIENT_SECRET}`;
@@ -15,12 +19,23 @@ export async function submitForm(
   data,
   schoolSiteId,
   showSuccessModal,
-  showErrorModal
+  showErrorModal,
+  waiverInfo
 ) {
   firebase.analytics().logEvent("selected_school", {
     regionName: data.schoolName.region,
     schoolName: data.schoolName.schoolname,
   });
+
+  dayjs.extend(advancedFormat);
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
+  let timeZone = dayjs()
+    .format("z")
+    .toString()
+    .replace(/\d+/g, "")
+    .replace(/[^\w\s]/gi, "");
+
   const student = {
     FirstName: data.firstName,
     MiddleName: data.middleName,
@@ -79,42 +94,59 @@ export async function submitForm(
     body: JSON.stringify(student),
   };
 
-  fetch(
+  let response = await fetch(
     "https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/contacts",
     requestOptions
-  )
-    .then(async (response) => {
+  );
+  let studentCreated = await response.json();
+  const waiverData = {
+    waiverResponse: "Acceptance",
+    datetime: dayjs().format("YYYY-MM-DDTHH:mm:ss") + timeZone,
+    contactId: studentCreated.ContactId,
+    contactEmail: data.parentEmail,
+  };
+
+  var requestOptionsWaiver = {
+    method: "POST",
+    headers: myHeaders,
+    redirect: "follow",
+    body: JSON.stringify(waiverData),
+  };
+
+  if (response.status === 200) {
+    await firebase.analytics().logEvent("form_complete", {
+      app: "web_registration",
+      completed: "true",
+      status: "200",
+      message: "success",
+    });
+    await fetch(
+      `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/waiver/${waiverInfo.waiverId}`,
+      requestOptionsWaiver
+    ).then((response) => {
       if (response.status === 200) {
-        await firebase.analytics().logEvent("form_complete", {
-          app: "web_registration",
-          completed: "true",
-          status: "200",
-          message: "success",
-        });
         showSuccessModal();
-      } else if (response.status === 500) {
-        await firebase.analytics().logEvent("form_complete", {
-          app: "web_registration",
-          completed: "false",
-          status: "500",
-          message: "server error",
-        });
-        showErrorModal(500);
-      } else if (response.status === 409) {
-        await firebase.analytics().logEvent("form_complete", {
-          app: "web_registration",
-          completed: "false",
-          status: "409",
-          message: "duplicate student",
-        });
-        showErrorModal(409);
+      } else {
+        showErrorModal(505);
       }
-      response.text();
-    })
-    .then((result) => {
-      console.log(result);
-    })
-    .catch((error) => console.log("error", error));
+    });
+  } else if (response.status === 500) {
+    await firebase.analytics().logEvent("form_complete", {
+      app: "web_registration",
+      completed: "false",
+      status: "500",
+      message: "server error",
+    });
+    showErrorModal(500);
+  } else if (response.status === 409) {
+    await firebase.analytics().logEvent("form_complete", {
+      app: "web_registration",
+      completed: "false",
+      status: "409",
+      message: "duplicate student",
+    });
+    showErrorModal(409);
+  }
 }
 
 export async function getContactInfo(phoneNumberProp) {
@@ -204,13 +236,23 @@ export async function submitEditedForm(
   schoolSiteId,
   showSuccessModal,
   showErrorModal,
-  studentId
+  studentId,
+  waiverInfo
 ) {
-  console.log(data, schoolSiteId);
   firebase.analytics().logEvent("selected_school", {
     regionName: data.schoolName.region,
     schoolName: data.schoolName.schoolname,
   });
+
+  dayjs.extend(advancedFormat);
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
+  let timeZone = dayjs()
+    .format("z")
+    .toString()
+    .replace(/\d+/g, "")
+    .replace(/[^\w\s]/gi, "");
+
   const student = {
     FirstName: data.firstName,
     MiddleName: data.middleName,
@@ -262,18 +304,32 @@ export async function submitEditedForm(
     AccountId: schoolSiteId,
   };
 
+  const waiverData = {
+    waiverResponse: "Acceptance",
+    datetime: dayjs().format("YYYY-MM-DDTHH:mm:ss") + timeZone,
+    contactId: studentId,
+    contactEmail: data.parentEmail,
+  };
+
   var requestOptions = {
     method: "PATCH",
     headers: myHeaders,
     redirect: "follow",
     body: JSON.stringify(student),
   };
+
+  var requestOptionsWaiver = {
+    method: "POST",
+    headers: myHeaders,
+    redirect: "follow",
+    body: JSON.stringify(waiverData),
+  };
+
   fetch(
     `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/contacts/${studentId}`,
     requestOptions
   )
     .then(async (response) => {
-      console.log(response.status);
       if (response.status === 200) {
         await firebase.analytics().logEvent("form_complete", {
           app: "web_registration",
@@ -281,7 +337,16 @@ export async function submitEditedForm(
           status: "200",
           message: "success",
         });
-        showSuccessModal();
+        await fetch(
+          `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/waiver/${waiverInfo.waiverId}`,
+          requestOptionsWaiver
+        ).then((response) => {
+          if (response.status === 200) {
+            showSuccessModal();
+          } else {
+            showErrorModal(505);
+          }
+        });
       } else if (response.status === 500) {
         await firebase.analytics().logEvent("form_complete", {
           app: "web_registration",
@@ -306,6 +371,7 @@ export async function submitEditedForm(
     })
     .catch((error) => console.log("error", error));
 }
+
 export async function getWaiver() {
   try {
     var requestOptions = {
@@ -323,6 +389,7 @@ export async function getWaiver() {
     console.log("error", error);
   }
 }
+
 export async function getRegionsData(showErrorModal) {
   try {
     var requestOptions = {

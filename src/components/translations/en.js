@@ -72,8 +72,16 @@ export const enLanguages = {
         "This Student is already in the system please contact your Coach or Administrator.",
       modal_close_button: "OK",
     },
+    error_505: {
+      modal_title: "Server error [500]",
+      modal_text:
+        "An error has occurred while saving the waiver acceptance. Please try again later. If this persists, please contact us.",
+      modal_close_button: "OK",
+    },
   },
   form: {
+    waiverModal_region:
+      "You need to select a SCORES program site region to review the waiver.",
     required_fields: "Field is required (*)",
     invalid_phone_number: "Phone number is not valid",
     required_waiver: "You need to review and accept waiver (*)",
@@ -160,7 +168,7 @@ export const enLanguages = {
     second_Emergency_Contact_Phone2_field: "Secondary Emergency Phone 2",
     second_Emergency_Contact_Phone2_field_placeholder:
       "Enter secondary emergency contact phone 2",
-    waiver_field: "Waiver",
+    waiver_field: "Waiver*",
     waiver_field_button: "Show waiver",
     formTitle1: "Students details",
     formTitle2: "Parent/Guardian Information",

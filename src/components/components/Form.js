@@ -145,7 +145,6 @@ export default function Form(props) {
         console.log(e); // <== this **WILL** be invoked on exception
       });
     if (props.studentProps) {
-      setShow(true);
       if (props.studentProps.Region) {
         getSchoolData(props.studentProps.Region)
           .then(async (response) => {
@@ -256,6 +255,8 @@ export default function Form(props) {
       ErrorModal(props.modalErrorTranslations.error_500, "error");
     } else if (status === 409) {
       ErrorModal(props.modalErrorTranslations.error_409, "error");
+    } else {
+      ErrorModal(props.modalErrorTranslations.error_505, "error");
     }
   };
   const formFieldsRef = {
@@ -577,7 +578,8 @@ export default function Form(props) {
                   data,
                   schoolSiteId,
                   showSuccessModal,
-                  showErrorModal
+                  showErrorModal,
+                  waiverInfo
                 );
               } else {
                 submitEditedForm(
@@ -585,7 +587,8 @@ export default function Form(props) {
                   schoolSiteId,
                   showSuccessModalUpdate,
                   showErrorModal,
-                  props.studentProps.Id
+                  props.studentProps.Id,
+                  waiverInfo
                 );
               }
             }}
@@ -733,6 +736,7 @@ export default function Form(props) {
                           }
                           onChange={async (selectedOption) => {
                             setSchoolProps(undefined);
+                            setShow(false);
                             const school = await getSchoolData(
                               selectedOption.value
                             );
@@ -1894,7 +1898,8 @@ export default function Form(props) {
                           {props.formTranslations.waiver_field_button}
                         </Button>
                       </label>
-                      {errors.waiver && touched.waiver ? (
+                      {(errors.waiver && touched.waiver) ||
+                      (show && values.schoolName.region.length < 1) ? (
                         <div
                           style={{
                             textAlign: "center",
@@ -1903,7 +1908,9 @@ export default function Form(props) {
                             marginTop: ".25rem",
                           }}
                         >
-                          {errors.waiver}
+                          {show
+                            ? props.formTranslations.waiverModal_region
+                            : errors.waiver}
                         </div>
                       ) : null}
                     </div>
@@ -1914,12 +1921,13 @@ export default function Form(props) {
                       submitPressed={submitBoolean}
                       submitFunction={changesubmitBoolean}
                     />
-                    {show === true ? (
+                    {show && values.schoolName.region.length > 0 ? (
                       <WaiverModal
                         addWaiverData={AcceptWaiver}
                         confirmButton={
                           props.formTranslations.waiverModal_confirm
                         }
+                        waiverRegion={values.schoolName.region}
                         waiverText={
                           props.studentProps !== null
                             ? props.waiver.newwaiver

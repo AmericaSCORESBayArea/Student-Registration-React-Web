@@ -66,8 +66,15 @@ export const cnLanguages = {
       modal_text: "该学生已经在系统中，请联系您的教练或管理员.",
       modal_close_button: "塞拉尔",
     },
+    error_505: {
+      modal_title: "服务器错误 [500]",
+      modal_text:
+        "保存棄權接受時發生錯誤. 請稍後再試. 如果這種情況持續存在，請聯繫我們.",
+      modal_close_button: "OK",
+    },
   },
   form: {
+    waiverModal_region: "您需要選擇 SCORES 計劃站點區域才能查看豁免.",
     required_fields: "必填项(*)",
     invalid_phone_number: "电话号码无效",
     required_waiver: "您需要查看并接受弃权(*)",
@@ -146,7 +153,7 @@ export const cnLanguages = {
     second_Emergency_Contact_Phone1_field_placeholder: "输入第二紧急联络电话 1",
     second_Emergency_Contact_Phone2_field: "辅助紧急电话 2",
     second_Emergency_Contact_Phone2_field_placeholder: "输入第二紧急联络电话 2",
-    waiver_field: "放弃",
+    waiver_field: "放弃*",
     waiver_field_button: "显示豁免",
     formTitle1: "学生详情",
     formTitle2: "家长/监护人信息",

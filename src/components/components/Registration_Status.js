@@ -157,7 +157,7 @@ export default function Registration_Status(props) {
       {showSearch === false ? (
         <div
           style={{
-            width: width < 1000 ? "100%" : width < 1500 ? "60%" : "35%",
+            width: width < 1000 ? "100%" : width < 1500 ? "55%" : "35%",
             backgroundColor: "#f8f5f4",
             padding: "35px",
             borderRadius: 15,
