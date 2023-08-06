@@ -154,7 +154,7 @@ export default function SearchStudent(props) {
       {studentsResult !== undefined && studentsResult.length > 0 ? (
         <div
           style={{
-            maxWidth: width < 1000 ? "400px" : "600px",
+            maxWidth: width < 1000 ? "420px" : "600px",
             margin: "auto",
             marginBottom: "30px",
             padding: 10,
