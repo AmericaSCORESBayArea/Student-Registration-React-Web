@@ -55,8 +55,9 @@ export default function SearchStudent(props) {
         maxWidth: width < 1000 ? "100%" : width < 1500 ? "60%" : "40%",
         backgroundColor: "#f8f5f4",
         marginBottom: "80px",
-        margin: "auto",
+        margin: "0 auto",
         marginTop: "30px",
+        marginLeft: width < 1000 ? 60 : 0,
       }}
     >
       <Grid
@@ -92,11 +93,11 @@ export default function SearchStudent(props) {
             title={props.props.title}
             style={{
               display: "flex",
-              flex: 1,
+              width: "90%",
               justifyContent: "center",
               marginTop: "1%",
               marginBottom: "4%",
-              textAlign: "left",
+              textAlign: "center",
             }}
           >
             <h5>{props.props.title}</h5>
@@ -108,7 +109,7 @@ export default function SearchStudent(props) {
               marginTop: "1%",
               marginBottom: "4%",
               textAlign: "center",
-              width: "95%",
+              width: "90%",
             }}
           >
             <InputBase
@@ -154,7 +155,7 @@ export default function SearchStudent(props) {
       {studentsResult !== undefined && studentsResult.length > 0 ? (
         <div
           style={{
-            maxWidth: width < 1000 ? "420px" : "600px",
+            maxWidth: width < 1000 ? "380px" : "600px",
             margin: "auto",
             marginBottom: "30px",
             padding: 10,
