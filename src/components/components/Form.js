@@ -228,7 +228,7 @@ export default function Form(props) {
   const [rectEmergencyPhone, refEmergencyPhone] = useClientRect();
   const [show, setShow] = useState(false);
   const confirmedRegistration = () => {
-    window.open("https://scoresu.org/family", "_blank").focus();
+    window.top.location.href = "https://scoresu.org/family";
     props.handleReset();
   };
   const showSuccessModal = () => {
