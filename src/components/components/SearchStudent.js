@@ -57,7 +57,7 @@ export default function SearchStudent(props) {
         marginBottom: "80px",
         margin: "0 auto",
         marginTop: "30px",
-        marginLeft: width < 1000 ? 40 : 0,
+        marginLeft: width < 1000 ? 10 : 0,
       }}
     >
       <Grid
