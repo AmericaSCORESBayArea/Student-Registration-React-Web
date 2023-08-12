@@ -1,25 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@mui/styles";
-import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
-import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
-import { getStudents } from "../controller/api";
-import CircularProgress from "@mui/material/CircularProgress";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Stack from "@mui/material/Stack";
-import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { ErrorModal } from "../utils/Modal";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import moment from "moment";
-import SearchOffIcon from "@mui/icons-material/SearchOff";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const useStyles = makeStyles(() => ({
@@ -66,7 +56,7 @@ export default function StudentsListTable(props) {
       style={{
         backgroundColor: "#f8f5f4",
         marginBottom: "80px",
-        maxWidth: width < 1000 ? "100%" : width < 1500 ? "60%" : "30%",
+        maxWidth: width < 1000 ? "100%" : width < 1500 ? "60%" : "40%",
         margin: "auto",
         marginTop: "30px",
       }}
@@ -74,7 +64,7 @@ export default function StudentsListTable(props) {
       <div
         style={{
           backgroundColor: "#f8f5f4",
-          padding: "40px",
+          padding: "10px",
           borderRadius: 15,
         }}
         title={props.props.title_parents}
@@ -113,8 +103,10 @@ export default function StudentsListTable(props) {
             marginBottom: "30px",
           }}
         >
-          <Grid container>
-            <Grid item xs={12}>
+          <div sx={{ overflow: "auto" }}>
+            <div sx={{ width: "100%", display: "table", tableLayout: "fixed" }}>
+              {/* <Grid container>
+            <Grid item xs={12}> */}
               <TableContainer component={Paper}>
                 <Table aria-label="collapsible table">
                   <TableHead>
@@ -127,9 +119,6 @@ export default function StudentsListTable(props) {
                       </TableCell>
                       <TableCell align="center">
                         {props.props.tableOptions.lastName}
-                      </TableCell>
-                      <TableCell align="center" type="date">
-                        {props.props.tableOptions.birthdate}
                       </TableCell>
                       <TableCell align="center">
                         {props.props.tableOptions.schoolName}
@@ -152,19 +141,16 @@ export default function StudentsListTable(props) {
                         </TableCell>
                         <TableCell align="center">{row.FirstName}</TableCell>
                         <TableCell align="center">{row.LastName}</TableCell>
-                        <TableCell align="center">
-                          {row.Birthdate.length > 0
-                            ? moment(row.Birthdate).format("MM-DD-YYYY")
-                            : ""}
-                        </TableCell>
                         <TableCell align="center">{row.SchoolName}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </TableContainer>
-            </Grid>
-          </Grid>
+            </div>
+          </div>
+          {/* </Grid>
+          </Grid> */}
         </div>
         <div
           style={{
@@ -180,7 +166,11 @@ export default function StudentsListTable(props) {
             onClick={() => {
               props.selectCategory();
             }}
-            style={{ marginRight: "2%", backgroundColor: "#1976d2" }}
+            style={{
+              marginRight: "2%",
+              backgroundColor: "#1976d2",
+              marginBottom: "20px",
+            }}
           >
             {props.add_student_button}
           </Button>
