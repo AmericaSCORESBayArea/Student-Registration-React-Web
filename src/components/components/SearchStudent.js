@@ -12,11 +12,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Stack from "@mui/material/Stack";
-import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { ErrorModal } from "../utils/Modal";
 import Grid from "@mui/material/Grid";
-import moment from "moment";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
@@ -154,72 +151,57 @@ export default function SearchStudent(props) {
       {studentsResult !== undefined && studentsResult.length > 0 ? (
         <div
           style={{
-            maxWidth: 410,
+            width: "100%",
             margin: "auto",
             marginBottom: "30px",
-            padding: 10,
           }}
         >
-          {/* <Grid container>
-            <Grid item xs={12} md={6} lg={6} sm={12} sx={{ flex: 1 }}> */}
-          <TableContainer component={Paper}>
-            <Table aria-label="collapsible table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">
-                    {props.props.tableOptions.actions}
-                  </TableCell>
-                  <TableCell align="center">
-                    {props.props.tableOptions.firstName}
-                  </TableCell>
-                  <TableCell align="center">
-                    {props.props.tableOptions.lastName}
-                  </TableCell>
-                  <TableCell align="center" type="date">
-                    {props.props.tableOptions.birthdate}
-                  </TableCell>
-                  <TableCell align="center">
-                    {props.props.tableOptions.schoolName}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows[0].map((row) => (
-                  <TableRow key={row.Id}>
-                    <TableCell align="center">
-                      <Stack direction="row" spacing={1}>
-                        <IconButton
-                          aria-label="edit"
-                          onClick={() => {
-                            props.studentProps(row);
-                            props.goToForm();
-                          }}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton
-                          aria-label="delete"
-                          onClick={() => ErrorModal(props.props, "error")}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Stack>
-                    </TableCell>
-                    <TableCell align="center">{row.FirstName}</TableCell>
-                    <TableCell align="center">{row.LastName}</TableCell>
-                    <TableCell align="center">
-                      {row.Birthdate.length > 0
-                        ? moment(row.Birthdate).format("MM-DD-YYYY")
-                        : ""}
-                    </TableCell>
-                    <TableCell align="center">{row.SchoolName}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          {/* </Grid>
-          </Grid> */}
+          <div sx={{ overflow: "auto" }}>
+            <div sx={{ width: "100%", display: "table", tableLayout: "fixed" }}>
+              <TableContainer component={Paper}>
+                <Table aria-label="collapsible table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="center">
+                        {props.props.tableOptions.actions}
+                      </TableCell>
+                      <TableCell align="center">
+                        {props.props.tableOptions.firstName}
+                      </TableCell>
+                      <TableCell align="center">
+                        {props.props.tableOptions.lastName}
+                      </TableCell>
+                      <TableCell align="center" width={"20%"}>
+                        {props.props.tableOptions.schoolName}
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rows[0].map((row) => (
+                      <TableRow key={row.Id}>
+                        <TableCell align="center">
+                          <Stack direction="row" spacing={1}>
+                            <IconButton
+                              aria-label="edit"
+                              onClick={() => {
+                                props.studentProps(row);
+                                props.goToForm();
+                              }}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </Stack>
+                        </TableCell>
+                        <TableCell align="center">{row.FirstName}</TableCell>
+                        <TableCell align="center">{row.LastName}</TableCell>
+                        <TableCell align="center">{row.SchoolName}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
+          </div>
         </div>
       ) : null}
       {showResultEmpty ? (

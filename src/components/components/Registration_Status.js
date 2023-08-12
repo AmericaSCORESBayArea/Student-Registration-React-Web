@@ -152,7 +152,14 @@ export default function Registration_Status(props) {
     }
   };
   return (
-    <div style={{ flex: 1 }}>
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <Loading open={loading} />
       {showSearch === false ? (
         <div
