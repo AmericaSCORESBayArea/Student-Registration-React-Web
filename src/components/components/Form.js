@@ -86,9 +86,9 @@ export default function Form(props) {
     waiverId: "",
   });
   const AcceptWaiver = (data) => {
+    console.log(data);
     setWaiverInfo((prev) => ({
       ...prev,
-      name: data.Name,
       waiverResponse: "Acceptance",
       date: "",
       time: "",
@@ -132,7 +132,7 @@ export default function Form(props) {
         if (props.studentProps)
           setRegionProps(
             props.studentProps.Region
-              ? response.findIndex((r) => r.value === props.studentProps.Region)
+              ? response.find((r) => r.value === props.studentProps.Region)
               : undefined
           );
         else setRegionProps(undefined);
@@ -150,9 +150,7 @@ export default function Form(props) {
           .then(async (response) => {
             setSchoolsArray(response);
             setSchoolProps(
-              response.findIndex(
-                (s) => s.id === props.studentProps.SchoolSiteId
-              )
+              response.find((s) => s.id === props.studentProps.SchoolSiteId)
             );
             setTimeout(() => {
               setMyValue(false);
@@ -325,13 +323,13 @@ export default function Form(props) {
                 region:
                   props.studentProps !== null
                     ? regionProps
-                      ? regionsArray[Number(regionProps)].value
+                      ? regionProps.value
                       : ""
                     : "",
                 schoolname:
                   props.studentProps !== null
                     ? schoolProps
-                      ? schoolsArray[Number(schoolProps)].value
+                      ? schoolProps.value
                       : ""
                     : "",
               },
@@ -716,12 +714,19 @@ export default function Form(props) {
                           </label>
                         </div>
                         <Select
+                          isSearchable={false}
                           styles={customStyles}
                           menuPlacement="auto"
-                          defaultValue={
-                            regionProps ? regionsArray[Number(regionProps)] : ""
-                          }
                           name="schoolName.region"
+                          value={
+                            regionProps
+                              ? regionProps
+                              : regionsArray
+                              ? regionsArray.filter(
+                                  (s) => s.value === values.schoolName.region
+                                )
+                              : ""
+                          }
                           placeholder={
                             props.formTranslations
                               .schoolName_region_field_placeholder
@@ -735,6 +740,7 @@ export default function Form(props) {
                               : "")
                           }
                           onChange={async (selectedOption) => {
+                            setRegionProps(undefined);
                             setSchoolProps(undefined);
                             setShow(false);
                             const school = await getSchoolData(
@@ -761,14 +767,20 @@ export default function Form(props) {
                             {props.formTranslations.schoolName_schoolname_field}
                           </label>
                           <Select
+                            isSearchable={false}
                             isDisabled={
                               values.schoolName.region.length === 0
                                 ? true
                                 : false
                             }
-                            defaultValue={
+                            value={
                               schoolProps
-                                ? schoolsArray[Number(schoolProps)]
+                                ? schoolProps
+                                : schoolsArray
+                                ? schoolsArray.filter(
+                                    (s) =>
+                                      s.value === values.schoolName.schoolname
+                                  )
                                 : ""
                             }
                             styles={customStyles}
@@ -962,6 +974,7 @@ export default function Form(props) {
                         </label>
                       </div>
                       <Select
+                        isSearchable={false}
                         styles={customStyles}
                         defaultValue={
                           props.studentProps !== null
@@ -1002,6 +1015,7 @@ export default function Form(props) {
                         </label>
                       </div>
                       <Select
+                        isSearchable={false}
                         styles={customStyles}
                         menuPlacement="auto"
                         defaultValue={
@@ -1041,6 +1055,7 @@ export default function Form(props) {
                         </label>
                       </div>
                       <Select
+                        isSearchable={false}
                         styles={customStyles}
                         menuPlacement="auto"
                         defaultValue={
@@ -1247,6 +1262,7 @@ export default function Form(props) {
                         </label>
                       </div>
                       <Select
+                        isSearchable={false}
                         styles={customStyles}
                         menuPlacement="auto"
                         defaultValue={
@@ -1468,6 +1484,7 @@ export default function Form(props) {
                         </label>
                       </div>
                       <Select
+                        isSearchable={false}
                         styles={customStyles}
                         menuPlacement="auto"
                         defaultValue={
@@ -1621,6 +1638,7 @@ export default function Form(props) {
                         </label>
                       </div>
                       <Select
+                        isSearchable={false}
                         styles={customStyles}
                         menuPlacement="auto"
                         defaultValue={
@@ -1771,6 +1789,7 @@ export default function Form(props) {
                         </label>
                       </div>
                       <Select
+                        isSearchable={false}
                         styles={customStyles}
                         menuPlacement="auto"
                         defaultValue={
@@ -1923,6 +1942,9 @@ export default function Form(props) {
                     />
                     {show && values.schoolName.region.length > 0 ? (
                       <WaiverModal
+                        errorTranslation={
+                          props.formTranslations.waiverModal_error
+                        }
                         addWaiverData={AcceptWaiver}
                         confirmButton={
                           props.formTranslations.waiverModal_confirm
@@ -1945,6 +1967,7 @@ export default function Form(props) {
                         justifyContent: width < 1000 ? "center" : "flex-end",
                         marginTop: "8%",
                         textAlign: "center",
+                        marginBottom: "15px",
                       }}
                     >
                       <Button

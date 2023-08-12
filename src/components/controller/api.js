@@ -372,7 +372,7 @@ export async function submitEditedForm(
     .catch((error) => console.log("error", error));
 }
 
-export async function getWaiver() {
+export async function getWaiver(region) {
   try {
     var requestOptions = {
       method: "GET",
@@ -380,7 +380,7 @@ export async function getWaiver() {
       redirect: "follow",
     };
     const response = await fetch(
-      `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/waiver?region=Other`,
+      `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/waiver?region=${region}`,
       requestOptions
     );
     const json = await response.json();
@@ -408,7 +408,7 @@ export async function getRegionsData(showErrorModal) {
         label: region.RegionName ? region.RegionName : undefined,
       };
     });
-    remapped = remapped.filter((e) => e);
+    remapped = remapped.filter((e) => e.value !== undefined);
     remapped = remapped.sort((a, b) => a.label.localeCompare(b.label));
     return remapped;
   } catch (error) {

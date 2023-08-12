@@ -5,29 +5,29 @@ import Loader from "../utils/Loader";
 import Modal from "react-bootstrap/Modal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getWaiver } from "../controller/api";
+import { ErrorModal } from "../utils/Modal";
 
 export function WaiverModal(props) {
-  const [waiverData, setWaiverData] = useState();
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(true);
+  const [html, setHtml] = useState("");
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       let response = await getWaiver(props.waiverRegion);
-      setWaiverData(response);
-      props.addWaiverData(response[0]);
+      console.log(response);
+      if (response.length > 0) {
+        setHtml(response[0].Content);
+        props.addWaiverData(response[0]);
+      } else {
+        setShow(false);
+        props.function();
+        ErrorModal(props.errorTranslation, "warning");
+      }
       setLoading(false);
     })();
   }, []);
-  useEffect(() => {
-    if (!loading) {
-      let myDiv = "";
-      myDiv = document.getElementById("myDiv");
-      myDiv.innerHTML = waiverData[0].Content;
-      myDiv.innerHTML = myDiv.textContent;
-    }
-  }, [loading]);
 
   return (
     <div id="container">
@@ -52,7 +52,7 @@ export function WaiverModal(props) {
               itemProp="text"
             >
               <h1 id="waiverTitle">{props.waiverRegion} Waiver</h1>
-              <div id="myDiv" />
+              <div dangerouslySetInnerHTML={{ __html: html }}></div>
             </article>
           </Modal.Body>
           <Modal.Footer>

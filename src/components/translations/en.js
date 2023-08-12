@@ -362,6 +362,12 @@ export const enLanguages = {
     ],
     waiverModal_confirm: "Accept",
     waiverModal_denied: "Dismiss",
+    waiverModal_error: {
+      modal_title: "Waiver not available",
+      modal_text:
+        "Please contact your Scores Coach or Admin for an active waiver.",
+      modal_close_button: "OK",
+    },
   },
   searchStudent: {
     title_parents: "Select a student to edit their information.",
