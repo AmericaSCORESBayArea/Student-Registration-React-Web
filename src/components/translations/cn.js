@@ -346,6 +346,11 @@ export const cnLanguages = {
     ],
     waiverModal_confirm: "接受",
     waiverModal_denied: "解雇",
+    waiverModal_error: {
+      modal_title: "無法獲得豁免",
+      modal_text: "請聯繫您的教練或分數管理員以獲得主動豁免.",
+      modal_close_button: "好的",
+    },
   },
   searchStudent: {
     title_parents: "选择一个学生来编辑他们的信息.",

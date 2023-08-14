@@ -22,7 +22,7 @@ export const esLanguages = {
     add_student_button: "Añadir nuevo estudiante",
   },
   waiverText: {
-    waiver: "Revise y acepte los términos y condiciones de Scores.",
+    waiver: "Revise y acepte los términos y condiciones de SCORES.",
     newwaiver:
       "Se han actualizado los términos y condiciones. Por favor revíselos y acéptelos.",
   },
@@ -369,12 +369,18 @@ export const esLanguages = {
     ],
     waiverModal_confirm: "Aceptar",
     waiverModal_denied: "Rechazar",
+    waiverModal_error: {
+      modal_title: "Términos y condiciones no disponibles",
+      modal_text:
+        "Comuníquese con su entrenador o administrador de SCORES para que añadan términos y condiciones.",
+      modal_close_button: "OK",
+    },
   },
   searchStudent: {
     title_parents: "Selecciona un estudiante para editar su información.",
     modal_title: "Eliminar Estudiante",
     modal_text:
-      "Comuníquese con su administrador de Scores para obtener ayuda para eliminar el registro de un estudiante",
+      "Comuníquese con su administrador de SCORES para obtener ayuda para eliminar el registro de un estudiante",
     modal_close_button: "Ok",
     title: "Buscar estudiante por Nombre/Apellido",
     inputProps: "buscar estudiante",

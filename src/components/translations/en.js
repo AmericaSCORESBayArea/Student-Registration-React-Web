@@ -34,7 +34,7 @@ export const enLanguages = {
   button_back: "BACK",
   button_submit: "SUBMIT",
   waiverText: {
-    waiver: "Please review and accept the Scores waivers and releases.",
+    waiver: "Please review and accept the SCORES waivers and releases.",
     newwaiver:
       "We need a waiver update. Please review and accept this new waiver.",
   },
@@ -365,7 +365,7 @@ export const enLanguages = {
     waiverModal_error: {
       modal_title: "Waiver not available",
       modal_text:
-        "Please contact your Scores Coach or Admin for an active waiver.",
+        "Please contact your SCORES Coach or Admin for an active waiver.",
       modal_close_button: "OK",
     },
   },
@@ -373,7 +373,7 @@ export const enLanguages = {
     title_parents: "Select a student to edit their information.",
     modal_title: "Delete Student",
     modal_text:
-      "Please contact your Scores Administrator for help deleting a student record",
+      "Please contact your SCORES Administrator for help deleting a student record",
     modal_close_button: "Ok",
     title: "Search student by First Name/Last Name",
     inputProps: "search student",
