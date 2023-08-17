@@ -27,7 +27,7 @@ export const enLanguages = {
     "Select whether you are starting a new student registration or updating a returning student registration.",
   new_returning_sub_heading:
     "NOTE: Please allow a few minutes before you attempt to view or edit a new record.",
-  steps_1: "Verification of your role",
+  steps_1: "Verify your role",
   steps_2: "Select new or existing",
   steps_3: "Complete form",
   button_continue: "CONTINUE",

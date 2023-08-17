@@ -141,7 +141,7 @@ export default function HomeScreen(props) {
         justifyContent="center"
       >
         <Stepper
-          style={{ width: width < 720 ? "90%" : "50%" }}
+          style={{ width: width < 720 ? "80%" : "50%" }}
           activeStep={activeStep}
         >
           {steps.map((label, index) => (

@@ -32,7 +32,7 @@ export const esLanguages = {
     "Seleccione si está iniciando un nuevo registro de estudiante o actualizando el registro de un estudiante existente.",
   new_returning_sub_heading:
     "NOTA: Espere unos minutos antes de intentar ver o editar un nuevo registro.",
-  steps_1: "Verificación de su rol",
+  steps_1: "Verifique su rol",
   steps_2: "Seleccione nuevo o existente",
   steps_3: "Complete el formulario",
   button_continue: "CONTINUAR",

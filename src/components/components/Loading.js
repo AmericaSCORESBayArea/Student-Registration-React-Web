@@ -5,11 +5,7 @@ import Box from "@mui/material/Box";
 export default function Loading(props) {
   return (
     <div>
-      <Modal
-        sx={{ backgroundColor: "rgba(0,0,0,0.6)" }}
-        open={props.open}
-        onClose={null}
-      >
+      <Modal open={props.open} onClose={null}>
         <Box
           sx={{
             alignItems: "center",

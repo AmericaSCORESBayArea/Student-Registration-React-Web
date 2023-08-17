@@ -5,17 +5,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
 import { getStudents } from "../controller/api";
 import CircularProgress from "@mui/material/CircularProgress";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Stack from "@mui/material/Stack";
-import EditIcon from "@mui/icons-material/Edit";
 import Grid from "@mui/material/Grid";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PersonIcon from "@mui/icons-material/Person";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 export default function SearchStudent(props) {
   const [showResultEmpty, setShowResultEmpty] = useState(false);
@@ -36,7 +30,7 @@ export default function SearchStudent(props) {
       setLoading(true);
       setShowResultEmpty(false);
       let studentsList = await getStudents(student);
-      if (studentsList.length === 0) {
+      if (!studentsList) {
         setShowResultEmpty(true);
       }
       setStudentsResult(studentsList);
@@ -44,7 +38,66 @@ export default function SearchStudent(props) {
     }
   };
 
-  const rows = [studentsResult];
+  function StudentsList({ value }) {
+    const lastItem = studentsResult[studentsResult.length - 1];
+    return (
+      <>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            props.studentProps(value);
+            props.goToForm();
+          }}
+        >
+          <div
+            style={{
+              padding: "20px",
+            }}
+          >
+            <PersonIcon sx={{ color: "#757575" }} fontSize="medium" />
+          </div>
+          <div style={{ marginTop: "15px" }}>
+            <b>
+              {value.FirstName} {value.LastName} <br />
+            </b>
+            <p>{value.SchoolName}</p>
+          </div>
+          <div style={{ margin: "auto 0 auto auto" }}>
+            <IconButton
+              aria-label="edit"
+              sx={{
+                paddingRight: "20px",
+                color: "#1976d2",
+                fontSize: "medium",
+              }}
+              onClick={() => {
+                props.studentProps(value);
+                props.goToForm();
+              }}
+            >
+              <ArrowForwardIosIcon fontSize="small" />
+            </IconButton>
+          </div>
+        </div>
+        {value !== lastItem && (
+          <div
+            style={{
+              background: "#D3D3D3",
+              height: "1.5px",
+            }}
+          />
+        )}
+      </>
+    );
+  }
 
   return (
     <div
@@ -148,63 +201,21 @@ export default function SearchStudent(props) {
           </Paper>
         </div>
       </Grid>
-      {studentsResult !== undefined && studentsResult.length > 0 ? (
+      {studentsResult && (
         <div
           style={{
             width: "100%",
             margin: "auto",
-            marginBottom: "30px",
           }}
         >
           <div sx={{ overflow: "auto" }}>
-            <div sx={{ width: "100%", display: "table", tableLayout: "fixed" }}>
-              <TableContainer component={Paper}>
-                <Table aria-label="collapsible table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell align="center">
-                        {props.props.tableOptions.actions}
-                      </TableCell>
-                      <TableCell align="center">
-                        {props.props.tableOptions.firstName}
-                      </TableCell>
-                      <TableCell align="center">
-                        {props.props.tableOptions.lastName}
-                      </TableCell>
-                      <TableCell align="center" width={"20%"}>
-                        {props.props.tableOptions.schoolName}
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows[0].map((row) => (
-                      <TableRow key={row.Id}>
-                        <TableCell align="center">
-                          <Stack direction="row" spacing={1}>
-                            <IconButton
-                              aria-label="edit"
-                              onClick={() => {
-                                props.studentProps(row);
-                                props.goToForm();
-                              }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </Stack>
-                        </TableCell>
-                        <TableCell align="center">{row.FirstName}</TableCell>
-                        <TableCell align="center">{row.LastName}</TableCell>
-                        <TableCell align="center">{row.SchoolName}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </div>
+            {studentsResult.map((student) => (
+              <StudentsList key={student.Id} value={student} />
+            ))}
           </div>
         </div>
-      ) : null}
-      {showResultEmpty ? (
+      )}
+      {showResultEmpty && (
         <div
           style={{
             maxWidth: "80%",
@@ -217,7 +228,7 @@ export default function SearchStudent(props) {
           <SearchOffIcon sx={{ fontSize: 50 }} />
           <h6>{props.empty}</h6>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
