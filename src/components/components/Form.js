@@ -18,7 +18,12 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import InputAdornment from "@mui/material/InputAdornment";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { FormTitles } from "../utils/FormTitles";
-import { submitForm, submitEditedForm } from "../controller/api";
+import {
+  submitForm,
+  submitEditedForm,
+  getWaiver,
+  getWaiverAcceptance,
+} from "../controller/api";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { blue } from "@mui/material/colors";
@@ -76,6 +81,7 @@ export default function Form(props) {
   const [submitBoolean, setSubmitBoolean] = useState(false);
   const [myvalue, setMyValue] = useState(true);
   const [schoolsArray, setSchoolsArray] = useState("");
+  const [isWaiverAccepted, setIsWaiverAccepted] = useState(false);
   const [waiverInfo, setWaiverInfo] = useState({
     name: "",
     waiverResponse: "",
@@ -86,7 +92,6 @@ export default function Form(props) {
     waiverId: "",
   });
   const AcceptWaiver = (data) => {
-    console.log(data);
     setWaiverInfo((prev) => ({
       ...prev,
       waiverResponse: "Acceptance",
@@ -126,6 +131,29 @@ export default function Form(props) {
   useEffect(() => {
     setRegionProps("");
     setSchoolProps("");
+    if (props.studentProps) {
+      try {
+        const region = props.studentProps.Region;
+        getWaiver(region).then(async (response) => {
+          if (response.length > 0) {
+            getWaiverAcceptance(
+              props.studentProps.Id,
+              response[0].WaiverId,
+              region
+            ).then(async (acceptance) => {
+              let accepted = acceptance
+                ? acceptance[0].Response === "Acceptance"
+                  ? true
+                  : false
+                : false;
+              setIsWaiverAccepted(accepted);
+            });
+          }
+        });
+      } catch (error) {
+        console.log("error");
+      }
+    }
     getRegionsData()
       .then(async (response) => {
         setRegionsArray(response);
@@ -444,7 +472,7 @@ export default function Form(props) {
                 props.studentProps !== null
                   ? props.studentProps.Second_Emergency_Contact_Phone2
                   : "",
-              waiver: false,
+              waiver: isWaiverAccepted,
             }}
             validationSchema={Yup.object().shape({
               firstName: Yup.string().required(
@@ -586,7 +614,8 @@ export default function Form(props) {
                   showSuccessModalUpdate,
                   showErrorModal,
                   props.studentProps.Id,
-                  waiverInfo
+                  waiverInfo,
+                  isWaiverAccepted
                 );
               }
             }}

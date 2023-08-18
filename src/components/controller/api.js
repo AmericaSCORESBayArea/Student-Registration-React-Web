@@ -237,7 +237,8 @@ export async function submitEditedForm(
   showSuccessModal,
   showErrorModal,
   studentId,
-  waiverInfo
+  waiverInfo,
+  isWaiverAccepted
 ) {
   firebase.analytics().logEvent("selected_school", {
     regionName: data.schoolName.region,
@@ -337,16 +338,20 @@ export async function submitEditedForm(
           status: "200",
           message: "success",
         });
-        await fetch(
-          `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/waiver/${waiverInfo.waiverId}`,
-          requestOptionsWaiver
-        ).then((response) => {
-          if (response.status === 200) {
-            showSuccessModal();
-          } else {
-            showErrorModal(505);
-          }
-        });
+        if (!isWaiverAccepted) {
+          await fetch(
+            `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/waiver/${waiverInfo.waiverId}`,
+            requestOptionsWaiver
+          ).then((response) => {
+            if (response.status === 200) {
+              showSuccessModal();
+            } else {
+              showErrorModal(505);
+            }
+          });
+        } else {
+          showSuccessModal();
+        }
       } else if (response.status === 500) {
         await firebase.analytics().logEvent("form_complete", {
           app: "web_registration",
@@ -440,5 +445,25 @@ export async function getSchoolData(regionName, showErrorModal) {
     return remapped;
   } catch (error) {
     showErrorModal(500);
+  }
+}
+
+export async function getWaiverAcceptance(contactId, waiverId, regionName) {
+  try {
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+    const response = await fetch(
+      `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/contacts/${contactId}/waiver/${waiverId}?` +
+        new URLSearchParams({
+          region: regionName,
+        }),
+      requestOptions
+    );
+    return await response.json();
+  } catch (error) {
+    console.log(error);
   }
 }

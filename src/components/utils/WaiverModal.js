@@ -16,7 +16,6 @@ export function WaiverModal(props) {
     (async () => {
       setLoading(true);
       let response = await getWaiver(props.waiverRegion);
-      console.log(response);
       if (response.length > 0) {
         setHtml(response[0].Content);
         props.addWaiverData(response[0]);
