@@ -255,7 +255,9 @@ export default function Form(props) {
   const [show, setShow] = useState(false);
   const confirmedRegistration = () => {
     window.top.location.href = "https://scoresu.org/family";
-    props.handleReset();
+    setTimeout(() => {
+      props.handleReset();
+    }, 1000);
   };
   const showSuccessModal = () => {
     setLoading(false);
