@@ -169,7 +169,7 @@ export const enLanguages = {
     second_Emergency_Contact_Phone2_field_placeholder:
       "Enter secondary emergency contact phone 2",
     waiver_field: "Waiver*",
-    waiver_field_button: "Show waiver",
+    waiver_field_button: "Accept waiver",
     formTitle1: "Students details",
     formTitle2: "Parent/Guardian Information",
     formTitle3: "Emergency Contact (Other than Parent/Guardian)",
