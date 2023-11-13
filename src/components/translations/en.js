@@ -2,6 +2,7 @@ export const enLanguages = {
   US: "English",
   ES: "Spanish",
   CN: "Chinese (simplified)",
+  pages_title: "Student registration",
   resultOption:
     "We didn't find any student that matches your search. Please double check the spelling or try creating a New Student.",
   login_warning:

@@ -2,6 +2,7 @@ export const cnLanguages = {
   US: "英语",
   ES: "西班牙语",
   CN: "中国人",
+  pages_title: "学生注册",
   resultOption:
     "我们没有找到任何符合您搜索条件的学生。请检查您的拼写或尝试创建一个新学生.",
   login_warning: "您需要登录才能访问学生注册表.",

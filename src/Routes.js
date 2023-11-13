@@ -84,7 +84,7 @@ export default function RoutesWeb() {
             : localStorage.getItem("language")
         }
       />
-      <PagesTitle />
+      <PagesTitle translations={auxTranslation} />
       <div>
         <ScrollToTop />
         <Routes history={useNavigate}>

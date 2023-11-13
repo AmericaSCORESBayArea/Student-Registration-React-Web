@@ -2,6 +2,7 @@ export const esLanguages = {
   US: "Inglés",
   ES: "Español",
   CN: "Chino (simplificado)",
+  pages_title: "Registro de estudiantes",
   resultOption:
     "No encontramos ningún estudiante que coincida con tu búsqueda.Verifique la ortografía o intente crear un nuevo estudiante.",
   login_warning:
