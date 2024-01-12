@@ -98,22 +98,21 @@ export async function submitForm(
     "https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/contacts",
     requestOptions
   );
-  let studentCreated = await response.json();
-  const waiverData = {
-    waiverResponse: "Acceptance",
-    datetime: dayjs().format("YYYY-MM-DDTHH:mm:ss") + timeZone,
-    contactId: studentCreated.ContactId,
-    contactEmail: data.parentEmail,
-  };
-
-  var requestOptionsWaiver = {
-    method: "POST",
-    headers: myHeaders,
-    redirect: "follow",
-    body: JSON.stringify(waiverData),
-  };
-
   if (response.status === 200) {
+    let studentCreated = await response.json();
+    const waiverData = {
+      waiverResponse: "Acceptance",
+      datetime: dayjs().format("YYYY-MM-DDTHH:mm:ss") + timeZone,
+      contactId: studentCreated.ContactId,
+      contactEmail: data.parentEmail,
+    };
+
+    var requestOptionsWaiver = {
+      method: "POST",
+      headers: myHeaders,
+      redirect: "follow",
+      body: JSON.stringify(waiverData),
+    };
     await firebase.analytics().logEvent("form_complete", {
       app: "web_registration",
       completed: "true",
@@ -131,6 +130,7 @@ export async function submitForm(
       }
     });
   } else if (response.status === 500) {
+    console.log("response", response.status.code);
     await firebase.analytics().logEvent("form_complete", {
       app: "web_registration",
       completed: "false",
