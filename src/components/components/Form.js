@@ -29,6 +29,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { blue } from "@mui/material/colors";
 import Loading from "../components/Loading";
 import { getRegionsData, getSchoolData } from "../controller/api";
+import Input from "./Input";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -42,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#f8f5f4",
   },
   form: {
-    width: "100%", // Fix IE 11 issue.
+    width: "100%",
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -58,17 +59,14 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "left",
     paddingBottom: "5px",
   },
+  inputLabel: {
+    textAlign: "left",
+    paddingBottom: "5px",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
 }));
-const CustomInputComponent = (props) => (
-  <textarea
-    className="form-control"
-    cols={5}
-    rows={2}
-    type="text"
-    autoComplete="off"
-    {...props}
-  />
-);
 
 export default function Form(props) {
   let phone = localStorage.getItem("phoneNumber");
@@ -170,7 +168,7 @@ export default function Form(props) {
         }, 3000);
       })
       .catch((e) => {
-        console.log(e); // <== this **WILL** be invoked on exception
+        console.log(e);
       });
     if (props.studentProps) {
       if (props.studentProps.Region) {
@@ -186,7 +184,7 @@ export default function Form(props) {
             }, 3000);
           })
           .catch((e) => {
-            console.log(e); // <== this **WILL** be invoked on exception
+            console.log(e);
           });
       } else {
         setSchoolProps(undefined);
@@ -245,7 +243,6 @@ export default function Form(props) {
   const [rectReduced, refReduced] = useClientRect();
   const [rectParentFName, refParentFName] = useClientRect();
   const [rectParentLName, refParentLName] = useClientRect();
-  const [rectParentEmail, refParentEmail] = useClientRect();
   const [rectParentPhone, refParentPhone] = useClientRect();
   const [reactParentHomeLang, refParentHomeLang] = useClientRect();
   const [rectRelationship, refRelationship] = useClientRect();
@@ -300,7 +297,6 @@ export default function Form(props) {
     reducedPriceLunch_field: rectReduced,
     parentFName_field: rectParentFName,
     parentLName_field: rectParentLName,
-    parentEmail_field: rectParentEmail,
     parentPhone_field: rectParentPhone,
     parent_Home_Lang_field: reactParentHomeLang,
     relationship_field: rectRelationship,
@@ -523,9 +519,9 @@ export default function Form(props) {
               parentLName: Yup.string().required(
                 props.formTranslations.required_fields
               ),
-              parentEmail: Yup.string()
-                .email(props.formTranslations.invalid_email)
-                .required(props.formTranslations.required_fields),
+              parentEmail: Yup.string().email(
+                props.formTranslations.invalid_email
+              ),
               relationship: Yup.string().required(
                 props.formTranslations.required_fields
               ),
@@ -637,90 +633,41 @@ export default function Form(props) {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <FormTitles title={props.formTranslations.formTitle1} />
                   <div className={classes.inputForm}>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                      ref={ref}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="firstName">
-                          {props.formTranslations.firstName_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="firstName"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.firstName_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.firstName && touched.firstName
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="firstName"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="middleName">
-                          {props.formTranslations.middleName_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="middleName"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.middleName_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.middleName && touched.middleName
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                      ref={refLName_field}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="lastName">
-                          {props.formTranslations.lastName_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="lastName"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.lastName_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.lastName && touched.lastName
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="lastName"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
+                    <Input
+                      innerRef={ref}
+                      fieldName={"firstName"}
+                      label={props.formTranslations.firstName_field}
+                      placeholder={
+                        props.formTranslations.firstName_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.firstName}
+                      touched={touched.firstName}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      fieldName={"middleName"}
+                      label={props.formTranslations.middleName_field}
+                      placeholder={
+                        props.formTranslations.middleName_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.middleName}
+                      touched={touched.middleName}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      innerRef={refLName_field}
+                      fieldName={"lastName"}
+                      label={props.formTranslations.lastName_field}
+                      placeholder={
+                        props.formTranslations.lastName_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.lastName}
+                      touched={touched.lastName}
+                      labelStyle={classes.inputLabel}
+                    />
                     <div
                       className="form-group"
                       style={{ marginBottom: "20px" }}
@@ -844,95 +791,40 @@ export default function Form(props) {
                         />
                       </div>
                     </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className={classes.label} ref={refSchoolAttending}>
-                        <label htmlFor="attendingSchool">
-                          {props.formTranslations.attendingSchool_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="attendingSchool"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations
-                            .attendingSchool_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.attendingSchool && touched.attendingSchool
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="attendingSchool"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="studentEmail">
-                          {props.formTranslations.studentEmail_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="studentEmail"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.studentEmail_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.studentEmail && touched.studentEmail
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="studentEmail"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="studentphoneNumber">
-                          {props.formTranslations.studentphoneNumber_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="studentphoneNumber"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.studentphoneNumber_field
-                        }
-                        className={
-                          "form-control" +
-                          (errors.studentphoneNumber &&
-                          touched.studentphoneNumber
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="studentphoneNumber"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
+                    <Input
+                      innerRef={refSchoolAttending}
+                      fieldName={"attendingSchool"}
+                      label={props.formTranslations.attendingSchool_field}
+                      placeholder={
+                        props.formTranslations.attendingSchool_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.attendingSchool}
+                      touched={touched.attendingSchool}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      fieldName={"studentEmail"}
+                      label={props.formTranslations.studentEmail_field}
+                      placeholder={
+                        props.formTranslations.studentEmail_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.studentEmail}
+                      touched={touched.studentEmail}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      fieldName={"studentphoneNumber"}
+                      label={props.formTranslations.studentphoneNumber_field}
+                      placeholder={
+                        props.formTranslations.studentphoneNumber_field
+                      }
+                      type={"text"}
+                      errors={errors.studentphoneNumber}
+                      touched={touched.studentphoneNumber}
+                      labelStyle={classes.inputLabel}
+                    />
                     <div
                       className="form-group"
                       style={{ marginBottom: "20px" }}
@@ -1167,121 +1059,58 @@ export default function Form(props) {
                         </div>
                       ) : null}
                     </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "40px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="allergies">
-                          {props.formTranslations.allergies_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="allergies"
-                        as={CustomInputComponent}
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.allergies_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.allergies && touched.allergies
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                    </div>
+                    <Input
+                      useCustomInput={true}
+                      fieldName={"allergies"}
+                      label={props.formTranslations.allergies_field}
+                      placeholder={
+                        props.formTranslations.allergies_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.allergies}
+                      touched={touched.allergies}
+                      labelStyle={classes.inputLabel}
+                    />
                     <FormTitles title={props.formTranslations.formTitle2} />
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px", marginTop: "5px" }}
-                      ref={refParentFName}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="parentFName">
-                          {props.formTranslations.parentFName_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="parentFName"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.parentFName_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.parentFName && touched.parentFName
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="parentFName"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                      ref={refParentLName}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="parentLName">
-                          {props.formTranslations.parentLName_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="parentLName"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.parentLName_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.parentLName && touched.parentLName
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="parentFName"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                      ref={refParentEmail}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="parentEmail">
-                          {props.formTranslations.parentEmail_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="parentEmail"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.parentEmail_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.parentEmail && touched.parentEmail
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="parentEmail"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
+                    <Input
+                      innerRef={refParentFName}
+                      fieldName={"parentFName"}
+                      label={props.formTranslations.parentFName_field}
+                      placeholder={
+                        props.formTranslations.parentFName_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.parentFName}
+                      touched={touched.parentFName}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      innerRef={refParentLName}
+                      fieldName={"parentLName"}
+                      label={props.formTranslations.parentLName_field}
+                      placeholder={
+                        props.formTranslations.parentLName_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.parentLName}
+                      touched={touched.parentLName}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      fieldName={"parentEmail"}
+                      label={props.formTranslations.parentEmail_field}
+                      placeholder={
+                        props.formTranslations.parentEmail_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.parentEmail}
+                      touched={touched.parentEmail}
+                      labelStyle={classes.inputLabel}
+                      showInfoButton={true} //props to show the info button
+                      infoModalTexts={
+                        props.formTranslations.modal_info_parent_email
+                      } // texts for the info modal
+                    />
                     <div
                       className="form-group"
                       style={{ marginBottom: "20px" }}
@@ -1326,184 +1155,83 @@ export default function Form(props) {
                         className="invalid-feedback"
                       />
                     </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                      ref={refParentPhone}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="parentPhone1">
-                          {props.formTranslations.parentPhone1_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="parentPhone1"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.parentPhone1_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.parentPhone1 && touched.parentPhone1
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="parentPhone1"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="parentPhone2">
-                          {props.formTranslations.parentPhone2_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="parentPhone2"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.parentPhone2_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.parentPhone2 && touched.parentPhone2
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="parentPhone2"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="mailingStreet">
-                          {props.formTranslations.mailingStreet_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="mailingStreet"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.mailingStreet_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.mailingStreet && touched.mailingStreet
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="mailingCity">
-                          {props.formTranslations.mailingCity_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="mailingCity"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.mailingCity_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.mailingCity && touched.mailingCity
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="mailingState">
-                          {props.formTranslations.mailingState_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="mailingState"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.mailingState_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.mailingState && touched.mailingState
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="mailingZip">
-                          {props.formTranslations.mailingZip_field}
-                        </label>
-                      </div>
-                      <input
-                        name="mailingZip"
-                        type="number"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations.mailingZip_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.mailingZip && touched.mailingZip
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="mailingCountry">
-                          {props.formTranslations.mailingCountry_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="mailingCountry"
-                        value={values.mailingCountry}
-                        type="text"
-                        disabled={true}
-                        autoComplete="off"
-                        className={
-                          "form-control" +
-                          (errors.mailingCountry && touched.mailingCountry
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                    </div>
+                    <Input
+                      innerRef={refParentPhone}
+                      fieldName={"parentPhone1"}
+                      label={props.formTranslations.parentPhone1_field}
+                      placeholder={
+                        props.formTranslations.parentPhone1_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.parentPhone1}
+                      touched={touched.parentPhone1}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      fieldName={"parentPhone2"}
+                      label={props.formTranslations.parentPhone2_field}
+                      placeholder={
+                        props.formTranslations.parentPhone2_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.parentPhone2}
+                      touched={touched.parentPhone2}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      fieldName={"mailingStreet"}
+                      label={props.formTranslations.mailingStreet_field}
+                      placeholder={
+                        props.formTranslations.mailingStreet_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.mailingStreet}
+                      touched={touched.mailingStreet}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      fieldName={"mailingCity"}
+                      label={props.formTranslations.mailingCity_field}
+                      placeholder={
+                        props.formTranslations.mailingCity_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.mailingCity}
+                      touched={touched.mailingCity}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      fieldName={"mailingState"}
+                      label={props.formTranslations.mailingState_field}
+                      placeholder={
+                        props.formTranslations.mailingState_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.mailingState}
+                      touched={touched.mailingState}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      fieldName={"mailingZip"}
+                      label={props.formTranslations.mailingZip_field}
+                      placeholder={
+                        props.formTranslations.mailingZip_field_placeholder
+                      }
+                      type={"number"}
+                      errors={errors.mailingZip}
+                      touched={touched.mailingZip}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      fieldName={"mailingCountry"}
+                      label={props.formTranslations.mailingCountry_field}
+                      placeholder={""}
+                      type={"text"}
+                      errors={errors.mailingCountry}
+                      touched={touched.mailingCountry}
+                      labelStyle={classes.inputLabel}
+                      disabled={true}
+                    />
                     <div
                       className="form-group"
                       style={{ marginBottom: "20px" }}
@@ -1550,36 +1278,18 @@ export default function Form(props) {
                       />
                     </div>
                     {values.parentHomeLang === "Other" ? (
-                      <div
-                        className="form-group"
-                        style={{ marginBottom: "20px" }}
-                      >
-                        <div className={classes.label}>
-                          <label htmlFor="otherLang">
-                            {props.formTranslations.parentHomeLang_field}
-                          </label>
-                        </div>
-                        <Field
-                          name="otherLang"
-                          type="text"
-                          autoComplete="off"
-                          placeholder={
-                            props.formTranslations
-                              .parentHomeLang_field_input_placeholder
-                          }
-                          className={
-                            "form-control" +
-                            (errors.otherLang && touched.otherLang
-                              ? " is-invalid"
-                              : "")
-                          }
-                        />
-                        <ErrorMessage
-                          name="otherLang"
-                          component="div"
-                          className="invalid-feedback"
-                        />
-                      </div>
+                      <Input
+                        fieldName={"otherLang"}
+                        label={props.formTranslations.parentHomeLang_field}
+                        placeholder={
+                          props.formTranslations
+                            .parentHomeLang_field_input_placeholder
+                        }
+                        type={"text"}
+                        errors={errors.otherLang}
+                        touched={touched.otherLang}
+                        labelStyle={classes.inputLabel}
+                      />
                     ) : null}
                     <div
                       className="form-group"
@@ -1623,38 +1333,21 @@ export default function Form(props) {
                       />
                     </div>
                     <FormTitles title={props.formTranslations.formTitle3} />
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                      ref={refEmergencyName}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="emergency_Contact_Name">
-                          {props.formTranslations.emergency_Contact_Name_field}
-                        </label>
-                      </div>
-                      <Field
-                        name="emergency_Contact_Name"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations
-                            .emergency_Contact_Name_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.emergency_Contact_Name &&
-                          touched.emergency_Contact_Name
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="emergency_Contact_Name"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
+                    <Input
+                      innerRef={refEmergencyName}
+                      fieldName={"emergency_Contact_Name"}
+                      label={
+                        props.formTranslations.emergency_Contact_Name_field
+                      }
+                      placeholder={
+                        props.formTranslations
+                          .emergency_Contact_Name_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.emergency_Contact_Name}
+                      touched={touched.emergency_Contact_Name}
+                      labelStyle={classes.inputLabel}
+                    />
                     <div
                       className="form-group"
                       style={{ marginBottom: "20px" }}
@@ -1708,105 +1401,51 @@ export default function Form(props) {
                         className="invalid-feedback"
                       />
                     </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                      ref={refEmergencyPhone}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="emergency_Contact_Phone1">
-                          {
-                            props.formTranslations
-                              .emergency_Contact_Phone1_field
-                          }
-                        </label>
-                      </div>
-                      <Field
-                        name="emergency_Contact_Phone1"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations
-                            .emergency_Contact_Phone1_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.emergency_Contact_Phone1 &&
-                          touched.emergency_Contact_Phone1
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="emergency_Contact_Phone1"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "40px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="emergency_Contact_Phone2">
-                          {
-                            props.formTranslations
-                              .emergency_Contact_Phone2_field
-                          }
-                        </label>
-                      </div>
-                      <Field
-                        name="emergency_Contact_Phone2"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations
-                            .emergency_Contact_Phone2_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.emergency_Contact_Phone2 &&
-                          touched.emergency_Contact_Phone2
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="emergency_Contact_Phone2"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
+                    <Input
+                      innerRef={refEmergencyPhone}
+                      fieldName={"emergency_Contact_Phone1"}
+                      label={
+                        props.formTranslations.emergency_Contact_Phone1_field
+                      }
+                      placeholder={
+                        props.formTranslations
+                          .emergency_Contact_Phone1_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.emergency_Contact_Phone1}
+                      touched={touched.emergency_Contact_Phone1}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      fieldName={"emergency_Contact_Phone2"}
+                      label={
+                        props.formTranslations.emergency_Contact_Phone2_field
+                      }
+                      placeholder={
+                        props.formTranslations
+                          .emergency_Contact_Phone2_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.emergency_Contact_Phone2}
+                      touched={touched.emergency_Contact_Phone2}
+                      labelStyle={classes.inputLabel}
+                    />
                     <FormTitles title={props.formTranslations.formTitle4} />
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="second_Emergency_Contact_Name">
-                          {
-                            props.formTranslations
-                              .second_Emergency_Contact_Name_field
-                          }
-                        </label>
-                      </div>
-                      <Field
-                        name="second_Emergency_Contact_Name"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations
-                            .second_Emergency_Contact_Name_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.second_Emergency_Contact_Name &&
-                          touched.second_Emergency_Contact_Name
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                    </div>
+                    <Input
+                      fieldName={"second_Emergency_Contact_Name"}
+                      label={
+                        props.formTranslations
+                          .second_Emergency_Contact_Name_field
+                      }
+                      placeholder={
+                        props.formTranslations
+                          .second_Emergency_Contact_Name_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.second_Emergency_Contact_Name}
+                      touched={touched.second_Emergency_Contact_Name}
+                      labelStyle={classes.inputLabel}
+                    />
                     <div
                       className="form-group"
                       style={{ marginBottom: "20px" }}
@@ -1854,74 +1493,36 @@ export default function Form(props) {
                         }
                       />
                     </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="second_Emergency_Contact_Phone1">
-                          {
-                            props.formTranslations
-                              .second_Emergency_Contact_Phone1_field
-                          }
-                        </label>
-                      </div>
-                      <Field
-                        name="second_Emergency_Contact_Phone1"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations
-                            .second_Emergency_Contact_Phone1_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.second_Emergency_Contact_Phone1 &&
-                          touched.second_Emergency_Contact_Phone1
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="second_Emergency_Contact_Phone1"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
-                    <div
-                      className="form-group"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className={classes.label}>
-                        <label htmlFor="second_Emergency_Contact_Phone2">
-                          {
-                            props.formTranslations
-                              .second_Emergency_Contact_Phone2_field
-                          }
-                        </label>
-                      </div>
-                      <Field
-                        name="second_Emergency_Contact_Phone2"
-                        type="text"
-                        autoComplete="off"
-                        placeholder={
-                          props.formTranslations
-                            .second_Emergency_Contact_Phone2_field_placeholder
-                        }
-                        className={
-                          "form-control" +
-                          (errors.second_Emergency_Contact_Phone2 &&
-                          touched.second_Emergency_Contact_Phone2
-                            ? " is-invalid"
-                            : "")
-                        }
-                      />
-                      <ErrorMessage
-                        name="second_Emergency_Contact_Phone2"
-                        component="div"
-                        className="invalid-feedback"
-                      />
-                    </div>
+                    <Input
+                      fieldName={"second_Emergency_Contact_Phone1"}
+                      label={
+                        props.formTranslations
+                          .second_Emergency_Contact_Phone1_field
+                      }
+                      placeholder={
+                        props.formTranslations
+                          .second_Emergency_Contact_Phone1_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.second_Emergency_Contact_Phone1}
+                      touched={touched.second_Emergency_Contact_Phone1}
+                      labelStyle={classes.inputLabel}
+                    />
+                    <Input
+                      fieldName={"second_Emergency_Contact_Phone2"}
+                      label={
+                        props.formTranslations
+                          .second_Emergency_Contact_Phone2_field
+                      }
+                      placeholder={
+                        props.formTranslations
+                          .second_Emergency_Contact_Phone2_field_placeholder
+                      }
+                      type={"text"}
+                      errors={errors.second_Emergency_Contact_Phone2}
+                      touched={touched.second_Emergency_Contact_Phone2}
+                      labelStyle={classes.inputLabel}
+                    />
                     <div
                       className="form-group"
                       style={{ marginBottom: "40px" }}
