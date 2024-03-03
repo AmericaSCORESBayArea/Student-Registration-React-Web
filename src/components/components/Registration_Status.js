@@ -191,8 +191,9 @@ export default function Registration_Status(props) {
             alignItems="center"
             spacing={{ xs: 0, sm: 0, md: 0, lg: 0 }}
           >
-            {statusArray.map((category) => (
+            {statusArray.map((category, index) => (
               <Grid
+                key={index}
                 item
                 sm={12}
                 xs={12}

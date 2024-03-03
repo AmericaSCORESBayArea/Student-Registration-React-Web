@@ -32,7 +32,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 export default function StudentsListTable(props) {
-  console.log(props);
   var w = window.innerWidth;
   const classes = useStyles();
   const [width, setWidth] = useState(window.innerWidth);
@@ -158,53 +157,7 @@ export default function StudentsListTable(props) {
             {props.students.map((student) => (
               <StudentsList key={student.Id} value={student} />
             ))}
-            {/* <div sx={{ width: "100%", display: "table", tableLayout: "fixed" }}>
-              {/* <Grid container>
-            <Grid item xs={12}> 
-              <TableContainer component={Paper}>
-                <Table aria-label="collapsible table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell align="center">
-                        {props.props.tableOptions.actions}
-                      </TableCell>
-                      <TableCell align="center">
-                        {props.props.tableOptions.firstName}
-                      </TableCell>
-                      <TableCell align="center">
-                        {props.props.tableOptions.lastName}
-                      </TableCell>
-                      <TableCell align="center">
-                        {props.props.tableOptions.schoolName}
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows[0].map((row) => (
-                      <TableRow key={row.Id}>
-                        <TableCell align="center">
-                          <IconButton
-                            aria-label="edit"
-                            onClick={() => {
-                              props.studentProps(row);
-                              props.goToForm();
-                            }}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                        </TableCell>
-                        <TableCell align="center">{row.FirstName}</TableCell>
-                        <TableCell align="center">{row.LastName}</TableCell>
-                        <TableCell align="center">{row.SchoolName}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </div> */}
           </div>
-          {/* </Grid>
-          </Grid> */}
         </div>
         <div
           style={{
