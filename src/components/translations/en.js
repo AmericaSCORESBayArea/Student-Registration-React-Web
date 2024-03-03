@@ -122,7 +122,7 @@ export const enLanguages = {
     parentFName_field_placeholder: "Enter parent/guardian first name",
     parentLName_field: "Parent/Guardian Last Name*",
     parentLName_field_placeholder: "Enter parent/guardian last name",
-    parentEmail_field: "Parent/Guardian Email*",
+    parentEmail_field: "Parent/Guardian Email",
     parentEmail_field_placeholder: "Enter parent/guardian email",
     relationship_field: "Relationship to Child*",
     relationship_field_placeholder: "Select...",
@@ -368,6 +368,11 @@ export const enLanguages = {
       modal_text:
         "Please contact your SCORES Coach or Admin for an active waiver.",
       modal_close_button: "OK",
+    },
+    modal_info_parent_email: {
+      modal_title: "Parent email",
+      modal_text: `<div class="align-left">Providing SCORES with a parent email will help us keep you informed of your student's participation and upcoming events.</div>`,
+      modal_close_button: "Close",
     },
   },
   searchStudent: {
