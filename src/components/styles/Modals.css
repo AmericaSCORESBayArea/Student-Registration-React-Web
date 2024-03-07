@@ -1,0 +1,13 @@
+.swal2-icon {
+    width: 4em;
+    height: 4em;
+  }
+  
+  .align-left {
+    text-align: left;
+    line-height: 1.5rem;
+  }
+  
+  .border-radius-15 {
+    border-radius: 15px;
+  }

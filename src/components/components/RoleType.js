@@ -129,8 +129,9 @@ export default function RoleType(props) {
         alignItems="center"
         spacing={{ xs: 0, sm: 0, md: 10, lg: 10 }}
       >
-        {categoriesArray.map((category) => (
+        {categoriesArray.map((category, index) => (
           <Grid
+            key={index}
             item
             sm={12}
             xs={12}

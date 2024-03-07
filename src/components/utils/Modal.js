@@ -1,5 +1,7 @@
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
+import "../styles/Modals.css"; //info modal styles
+
 function ModalwithConfirmation(
   translations,
   confirmFunction,
@@ -38,3 +40,19 @@ function ErrorModal(translations, iconType) {
   });
 }
 export { ErrorModal };
+
+//info modal
+function InfoModal(translations) {
+  return Swal.fire({
+    title: translations.modal_title,
+    html: translations.modal_text,
+    icon: "info",
+    confirmButtonColor: "#1976d2",
+    confirmButtonText: translations.modal_close_button,
+    showCloseButton: true,
+    customClass: {
+      popup: "border-radius-15",
+    },
+  });
+}
+export { InfoModal };

@@ -114,7 +114,7 @@ export const cnLanguages = {
     parentFName_field_placeholder: "输入父母/监护人的名字",
     parentLName_field: "家长/监护人姓氏*",
     parentLName_field_placeholder: "输入父母/监护人的姓氏",
-    parentEmail_field: "家长/监护人电子邮件*",
+    parentEmail_field: "家长/监护人电子邮件",
     parentEmail_field_placeholder: "输入家长/监护人电子邮件",
     relationship_field: "关系到孩子*",
     relationship_field_placeholder: "选择...",
@@ -351,6 +351,11 @@ export const cnLanguages = {
       modal_title: "無法獲得豁免",
       modal_text: "請聯繫您的教練或分數管理員以獲得主動豁免.",
       modal_close_button: "好的",
+    },
+    modal_info_parent_email: {
+      modal_title: "家長電子郵件",
+      modal_text: `<div class="align-left">透過家長電子郵件提供分數將有助於我們讓您了解學生的參與情況和即將舉行的活動.</div>`,
+      modal_close_button: "關閉",
     },
   },
   searchStudent: {

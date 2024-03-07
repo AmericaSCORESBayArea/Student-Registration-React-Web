@@ -122,7 +122,7 @@ export const esLanguages = {
     parentFName_field_placeholder: "Ingrese primer nombre del padre/tutor",
     parentLName_field: "Apellido del Padre/Tutor*",
     parentLName_field_placeholder: "Ingrese apellido del padre/tutor",
-    parentEmail_field: "Email del Padre/Tutor*",
+    parentEmail_field: "Email del Padre/Tutor",
     parentEmail_field_placeholder: "Ingrese email del padre/tutor",
     relationship_field: "Parentesco con el Estudiante*",
     relationship_field_placeholder: "Seleccione...",
@@ -375,6 +375,11 @@ export const esLanguages = {
       modal_text:
         "Comuníquese con su entrenador o administrador de SCORES para que añadan términos y condiciones.",
       modal_close_button: "OK",
+    },
+    modal_info_parent_email: {
+      modal_title: "Email del padre",
+      modal_text: `<div class="align-left">Proporcionar a SCORES un correo electrónico para padres nos ayudará a mantenerlo informado sobre la participación de su estudiante y los próximos eventos.</div>`,
+      modal_close_button: "Cerrar",
     },
   },
   searchStudent: {

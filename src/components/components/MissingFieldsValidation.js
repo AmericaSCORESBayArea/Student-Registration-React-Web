@@ -66,11 +66,6 @@ function MissingFieldsValidation(props) {
       position: props.fieldsRef.parentFName_field,
     },
     {
-      label: props.formTranslations.parentEmail_field,
-      value: props.values.parentEmail,
-      position: props.fieldsRef.parentEmail_field,
-    },
-    {
       label: props.formTranslations.parentLName_field,
       value: props.values.parentLName,
       position: props.fieldsRef.parentLName_field,
@@ -133,9 +128,10 @@ function MissingFieldsValidation(props) {
         >
           <p>{props.formTranslations.requiredFieldsTitle}</p>
           <ul>
-            {requiredFields.map((value) =>
+            {requiredFields.map((value, index) =>
               value.value === "" ? (
                 <li
+                  key={index}
                   style={{ cursor: "pointer" }}
                   onClick={() => {
                     window.scrollTo(0, value.position);
