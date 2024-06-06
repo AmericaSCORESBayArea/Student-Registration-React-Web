@@ -96,7 +96,6 @@ export async function submitForm(
   };
 
   let response = await fetch(
-    // "https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/contacts",
     `${process.env.REACT_APP_BASEURL}`,
     requestOptions
   );
@@ -122,7 +121,6 @@ export async function submitForm(
       message: "success",
     });
     await fetch(
-      // `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/waiver/${waiverInfo.waiverId}`,
       `${process.env.REACT_APP_BASEURL}/waiver/${waiverInfo.waiverId}`,
       requestOptionsWaiver
     ).then((response) => {
@@ -157,19 +155,35 @@ export async function submitForm(
 //   phoneNumberProp = phoneNumberProp.slice(2);
 //   const serviceProvider = "Phone";
 
-// var requestOptions = {
-//   method: "GET",
-//   headers: myHeaders,
-//   redirect: "follow",
-// };
+//   const prodHeaders = new Headers();
+//   prodHeaders.append("client_id", `${process.env.REACT_APP_PROD_CLIENT_ID}`);
+//   prodHeaders.append(
+//     "client_secret",
+//     `${process.env.REACT_APP_PROD_CLIENT_SECRET}`
+//   );
+//   prodHeaders.append("Content-Type", "application/json");
 
-//   await fetch(
-//     `https://salesforce-auth-api-prod.us-e2.cloudhub.io/api/auth/login?useridentifier=${phoneNumberProp}&serviceprovider=${serviceProvider}`,
-//     // `${process.env.REACT_APP_BASEURL}/auth/login?useridentifier=${phoneNumberProp}&serviceprovider=${serviceProvider}`,
-//     requestOptions
-//   )
+//   var requestOptionsForProd = {
+//     method: "GET",
+//     headers: prodHeaders,
+//     redirect: "follow",
+//   };
+
+//   var requestOptions = {
+//     method: "GET",
+//     headers: myHeaders,
+//     redirect: "follow",
+//   };
+
+//   const url = useProdApi
+//     ? `${process.env.REACT_APP_AUTH_BASEURL}/auth/login?useridentifier=${phoneNumberProp}&serviceprovider=${serviceProvider}`
+//     : `${process.env.REACT_APP_BASEURL}/auth/login?useridentifier=${phoneNumberProp}&serviceprovider=${serviceProvider}`;
+
+//   await fetch(url, useProdApi ? requestOptionsForProd : requestOptions)
 //     .then((response) => response.json())
-//     .then((data) => (value = data))
+//     .then((data) => {
+//       value = data;
+//     })
 //     .catch((error) => console.log("error", error));
 //   return value;
 // }
@@ -179,23 +193,28 @@ export async function getContactInfo(phoneNumberProp) {
   phoneNumberProp = phoneNumberProp.slice(2);
   const serviceProvider = "Phone";
 
-  const myHeaders = new Headers();
-  myHeaders.append("client_id", "87de15a992ad4510bf4f4a43d2f0e4bc");
-  myHeaders.append("client_secret", "415d5220915f4c81814978896a4AEcC3");
-  myHeaders.append("Content-Type", "application/json");
+  const authApiHeaders = new Headers();
+  authApiHeaders.append("client_id", `${process.env.REACT_APP_PROD_CLIENT_ID}`);
+  authApiHeaders.append(
+    "client_secret",
+    `${process.env.REACT_APP_PROD_CLIENT_SECRET}`
+  );
+  authApiHeaders.append("Content-Type", "application/json");
 
-  var requestOptionsForLogin = {
+  var requestOptionsForAuthApi = {
     method: "GET",
-    headers: myHeaders,
+    headers: authApiHeaders,
     redirect: "follow",
   };
 
   await fetch(
-    `https://salesforce-auth-api-prod.us-e2.cloudhub.io/api/auth/login?useridentifier=${phoneNumberProp}&serviceprovider=${serviceProvider}`,
-    requestOptionsForLogin
+    `${process.env.REACT_APP_AUTH_BASEURL}/auth/login?useridentifier=${phoneNumberProp}&serviceprovider=${serviceProvider}`,
+    requestOptionsForAuthApi
   )
     .then((response) => response.json())
-    .then((data) => (value = data))
+    .then((data) => {
+      value = data;
+    })
     .catch((error) => console.log("error", error));
   return value;
 }
@@ -208,7 +227,6 @@ export async function getStudents(student) {
   };
 
   return fetch(
-    // `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/contacts/search?searchString=${student}`,
     `${process.env.REACT_APP_BASEURL}/contacts/search?searchString=${student}`,
     requestOptions
   ).then((response) => {
@@ -233,7 +251,6 @@ export async function getContactRecordType(contactId) {
   };
 
   await fetch(
-    // `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/contacts/${contactId}`,
     `${process.env.REACT_APP_BASEURL}/contacts/${contactId}`,
     requestOptions
   )
@@ -254,7 +271,6 @@ export async function getStudentsByPhoneNumber(phoneNumber) {
   };
 
   await fetch(
-    // `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/contacts/searchByPhoneNumber?phoneNumber=${phoneNumber}`,
     `${process.env.REACT_APP_BASEURL}/contacts/searchByPhoneNumber?phoneNumber=${phoneNumber}`,
     requestOptions
   )
@@ -360,7 +376,6 @@ export async function submitEditedForm(
   };
 
   fetch(
-    // `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/contacts/${studentId}`,
     `${process.env.REACT_APP_BASEURL}/contacts/${studentId}`,
     requestOptions
   )
@@ -374,7 +389,6 @@ export async function submitEditedForm(
         });
         if (!isWaiverAccepted) {
           await fetch(
-            // `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/waiver/${waiverInfo.waiverId}`,
             `${process.env.REACT_APP_BASEURL}/waiver/${waiverInfo.waiverId}`,
             requestOptionsWaiver
           ).then((response) => {
@@ -420,7 +434,6 @@ export async function getWaiver(region) {
       redirect: "follow",
     };
     const response = await fetch(
-      // `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/waiver?region=${region}`,
       `${process.env.REACT_APP_BASEURL}/waiver?region=${region}`,
       requestOptions
     );
@@ -439,7 +452,6 @@ export async function getRegionsData(showErrorModal) {
       redirect: "follow",
     };
     const response = await fetch(
-      // `https://salesforce-data-api-proxy.us-e2.cloudhub.io/api/regions`,
       `${process.env.REACT_APP_BASEURL}/regions`,
       requestOptions
     );
@@ -466,7 +478,6 @@ export async function getSchoolData(regionName, showErrorModal) {
       redirect: "follow",
     };
     const response = await fetch(
-      // `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/regions/${regionName}/schoolsites`,
       `${process.env.REACT_APP_BASEURL}/regions/${regionName}/schoolsites`,
       requestOptions
     );
@@ -494,10 +505,6 @@ export async function getWaiverAcceptance(contactId, waiverId, regionName) {
       redirect: "follow",
     };
     const response = await fetch(
-      // `https://salesforce-data-api-proxy-prod.us-e2.cloudhub.io/api/contacts/${contactId}/waiver/${waiverId}?` +
-      //   new URLSearchParams({
-      //     region: regionName,
-      //   }),
       `${process.env.REACT_APP_BASEURL}/contacts/${contactId}/waiver/${waiverId}?` +
         new URLSearchParams({
           region: regionName,
@@ -518,7 +525,6 @@ export async function getTeamSeaons() {
       redirect: "follow",
     };
     const response = await fetch(
-      // `https://salesforce-data-api-proxy.us-e2.cloudhub.io/api/teamSeasons?date=2019-01-04`,
       `${process.env.REACT_APP_BASEURL}/teamSeasons?date=2019-01-04`,
       requestOptions
     );
@@ -537,7 +543,6 @@ export async function postContact(data) {
       redirect: "follow",
     };
     const response = await fetch(
-      // `https://salesforce-data-api-proxy.us-e2.cloudhub.io/api/contacts`,
       `${process.env.REACT_APP_BASEURL}/contacts`,
       requestOptions
     );

@@ -16,6 +16,15 @@ const QuickRegisteration = () => {
   const [teamsSeasonsDatas, setTeamsSeasonsData] = useState([]);
   const [region, setRegion] = useState("");
 
+  const [errors, setErrors] = useState(
+    Array(10).fill({
+      firstNameError: "",
+      lastNameError: "",
+      schoolSiteError: "",
+      teamSeasonError: "",
+    })
+  );
+
   useEffect(() => {
     getRegionsData()
       .then(async (response) => {
@@ -50,14 +59,6 @@ const QuickRegisteration = () => {
       teamSeason: "",
     })
   );
-  const [errors, setErrors] = useState(
-    Array(10).fill({
-      firstName: false,
-      lastName: false,
-      schoolSite: false,
-      teamSeason: false,
-    })
-  );
 
   const handleRegionChange = useCallback((event) => {
     const newRegion = event.target.value;
@@ -79,27 +80,18 @@ const QuickRegisteration = () => {
         teamSeason: "",
       })
     );
-    setErrors(
-      Array(10).fill({
-        firstName: false,
-        lastName: false,
-        schoolSite: false,
-        teamSeason: false,
-      })
-    );
   }, []);
 
   const handleInputChange = useCallback((index, field, value) => {
     setRows((rows) =>
       rows.map((row, idx) => (idx === index ? { ...row, [field]: value } : row))
     );
+
+    // Clear the error of the field that is changed
     setErrors((errors) =>
       errors.map((error, idx) => {
         if (idx === index) {
-          return {
-            ...error,
-            [field]: !value.trim(),
-          };
+          return { ...error, [field + "Error"]: "" }; // Assuming error keys are fieldName + 'Error'
         }
         return error;
       })
@@ -114,10 +106,10 @@ const QuickRegisteration = () => {
     setErrors([
       ...errors,
       {
-        firstName: false,
-        lastName: false,
-        schoolSite: false,
-        teamSeason: false,
+        firstNameError: "",
+        lastNameError: "",
+        schoolSiteError: "",
+        teamSeasonError: "",
       },
     ]);
   }, [rows, errors]);
@@ -133,23 +125,69 @@ const QuickRegisteration = () => {
     );
     setErrors(
       Array(10).fill({
-        firstName: false,
-        lastName: false,
-        schoolSite: false,
-        teamSeason: false,
+        firstNameError: "",
+        lastNameError: "",
+        schoolSiteError: "",
+        teamSeasonError: "",
       })
     );
     setRegion("");
   }, []);
 
   const handleSubmit = useCallback(() => {
-    const filteredRows = rows.filter(
-      (row) =>
+    const newErrors = rows.map((row) => {
+      const isRowInteracted =
+        row.firstName.trim() ||
+        row.lastName.trim() ||
+        row.schoolSite.trim() ||
+        row.teamSeason.trim();
+      return isRowInteracted
+        ? {
+            firstNameError: row.firstName.trim()
+              ? ""
+              : "First name is required",
+            lastNameError: row.lastName.trim() ? "" : "Last name is required",
+            schoolSiteError: row.schoolSite.trim()
+              ? ""
+              : "School site is required",
+            teamSeasonError: row.teamSeason.trim()
+              ? ""
+              : "Team season is required",
+          }
+        : {
+            firstNameError: "",
+            lastNameError: "",
+            schoolSiteError: "",
+            teamSeasonError: "",
+          };
+    });
+
+    setErrors(newErrors);
+
+    const filteredRows = rows.filter((row, index) => {
+      const isRowInteracted =
+        row.firstName.trim() ||
+        row.lastName.trim() ||
+        row.schoolSite.trim() ||
+        row.teamSeason.trim();
+      if (!isRowInteracted) return false;
+
+      const noErrors = Object.values(newErrors[index]).every(
+        (val) => val === ""
+      );
+      return (
+        noErrors &&
         row.firstName.trim() &&
         row.lastName.trim() &&
         row.schoolSite.trim() &&
         row.teamSeason.trim()
-    );
+      );
+    });
+
+    if (filteredRows.length === 0) {
+      return;
+    }
+
     const promises = filteredRows.map(async (row) => {
       const formattedData = {
         FirstName: row.firstName,
@@ -157,10 +195,10 @@ const QuickRegisteration = () => {
         Birthdate: "2000-01-01",
         SchoolSiteId: row.schoolSite,
       };
-      console.log("Formatted data:", formattedData);
+      // console.log("Formatted data:", formattedData);
       try {
         const response = await postContact(formattedData);
-        console.log("Submitted", response);
+        // console.log("Submitted", response);
         return response;
       } catch (e) {
         console.error("Failed to submit:", e);
