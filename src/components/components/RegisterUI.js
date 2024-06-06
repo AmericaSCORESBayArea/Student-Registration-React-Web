@@ -9,6 +9,8 @@ import {
   styled,
 } from "@mui/material";
 import DataRow from "./DataRow";
+import { useNavigate } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export const CustomTextField = styled(TextField)({
   backgroundColor: "transparent",
@@ -22,10 +24,10 @@ export const CustomTextField = styled(TextField)({
     borderBottom: "none",
   },
   "& .MuiFilledInput-underline:hover:before": {
-    borderBottom: "none",
+    borderBottom: "none !important",
   },
   "& .MuiFilledInput-underline:hover:after": {
-    borderBottom: "none",
+    borderBottom: "none !important",
   },
   "& .MuiFilledInput-root": {
     backgroundColor: "transparent",
@@ -33,6 +35,7 @@ export const CustomTextField = styled(TextField)({
     borderRadius: 10,
     "&:hover": {
       backgroundColor: "rgba(0, 0, 0, 0.04)",
+      border: "1px solid #ccc",
     },
     "&.Mui-focused": {
       border: "0.5px solid #ccc",
@@ -57,6 +60,7 @@ const RegisterUI = React.memo(
     onSubmit,
     errors,
   }) => {
+    const navigate = useNavigate();
     return (
       <Box
         sx={{
@@ -68,12 +72,16 @@ const RegisterUI = React.memo(
           backgroundColor: "#f8f5f4",
         }}
       >
-        <Grid
-          container
-          spacing={2}
-          alignItems="center"
-          justifyContent={"center"}
-        >
+        <Grid container alignItems="center">
+          <Grid item xs={12} md={2} sm={12}>
+            <Button
+              variant="contained"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate(-1)}
+            >
+              Go Back
+            </Button>
+          </Grid>
           <Grid item xs={12} md={3} sm={12}>
             <Typography variant="h4">Select a region</Typography>
           </Grid>
@@ -83,11 +91,21 @@ const RegisterUI = React.memo(
               hiddenLabel
               fullWidth
               variant="filled"
-              label={regionsData ? "" : "Select Region"}
               size="small"
               value={region}
               onChange={onRegionChange}
-              sx={{ marginBottom: 2 }}
+              SelectProps={{
+                displayEmpty: true,
+                renderValue: (selected) => {
+                  if (selected === "") {
+                    return (
+                      <span style={{ opacity: 0.5 }}>Select a Region</span>
+                    );
+                  }
+                  return regionsData.find((option) => option.value === selected)
+                    ?.label;
+                },
+              }}
             >
               {regionsData &&
                 regionsData.map((option) => (
@@ -115,7 +133,7 @@ const RegisterUI = React.memo(
                 lg={6}
                 sx={{ textAlign: "center" }}
               >
-                <Typography variant="h4" sx={{ marginBottom: 2 }}>
+                <Typography variant="h4" sx={{ marginBlock: 2 }}>
                   Students Details
                 </Typography>
               </Grid>

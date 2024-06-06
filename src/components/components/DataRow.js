@@ -56,6 +56,19 @@ const DataRow = React.memo(
             value={rowData.schoolSite}
             onChange={(e) => setRowData(index, "schoolSite", e.target.value)}
             disabled={!region}
+            SelectProps={{
+              displayEmpty: true,
+              renderValue: (selected) => {
+                if (selected === "") {
+                  return (
+                    <span style={{ opacity: 0.5 }}>Select a School/Site</span>
+                  );
+                }
+                return schoolSitesData.find(
+                  (option) => option.value === selected
+                )?.label;
+              },
+            }}
           >
             {schoolSitesData && schoolSitesData.length > 0 ? (
               schoolSitesData.map((option) => (
@@ -80,6 +93,19 @@ const DataRow = React.memo(
             value={rowData.teamSeason}
             onChange={(e) => setRowData(index, "teamSeason", e.target.value)}
             disabled={!region}
+            SelectProps={{
+              displayEmpty: true,
+              renderValue: (selected) => {
+                if (selected === "") {
+                  return (
+                    <span style={{ opacity: 0.5 }}>Select Team Season</span>
+                  );
+                }
+                return teamsSeasonsData.find(
+                  (option) => option.TeamSeasonId === selected
+                )?.TeamSeasonName;
+              },
+            }}
           >
             {teamsSeasonsData && teamsSeasonsData.length > 0 ? (
               teamsSeasonsData.map((option) => (

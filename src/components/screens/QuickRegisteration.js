@@ -7,6 +7,7 @@ import {
   postContact,
 } from "../controller/api";
 import { Box } from "@mui/material";
+import Loader from "../utils/Loader";
 
 const QuickRegisteration = () => {
   const [loadingRegions, setLoadingRegions] = useState(true);
@@ -215,7 +216,7 @@ const QuickRegisteration = () => {
       });
   }, [rows]);
 
-  if (loadingRegions) return <div>Loading...</div>;
+  if (loadingRegions) return <Loader />;
   return (
     <Box
       container
