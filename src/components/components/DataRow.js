@@ -65,14 +65,14 @@ const DataRow = React.memo(
                   );
                 }
                 return schoolSitesData.find(
-                  (option) => option.value === selected
+                  (option) => option.label === selected
                 )?.label;
               },
             }}
           >
             {schoolSitesData && schoolSitesData.length > 0 ? (
               schoolSitesData.map((option) => (
-                <MenuItem key={option.value} value={option.id}>
+                <MenuItem key={option.id} value={option.label}>
                   {option.label}
                 </MenuItem>
               ))
