@@ -9,7 +9,7 @@ const DataRow = React.memo(
     setRowData,
     region,
     schoolSitesData,
-    teamsSeasonsData,
+    teamSeasons,
     errors,
   }) => {
     return (
@@ -45,7 +45,7 @@ const DataRow = React.memo(
           />
         </Grid>
         <Grid item xs={12} sm={3}>
-          <CustomTextField
+          {/* <CustomTextField
             error={!!errors[index].schoolSiteError}
             helperText={errors[index].schoolSiteError}
             select
@@ -66,6 +66,47 @@ const DataRow = React.memo(
                 }
                 return schoolSitesData.find((option) => option.id === selected)
                   ?.label;
+              },
+            }}
+          >
+            {schoolSitesData && schoolSitesData.length > 0 ? (
+              schoolSitesData.map((option) => (
+                <MenuItem key={option.id} value={option.id}>
+                  {option.label}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem disabled>No schools found</MenuItem>
+            )}
+          </CustomTextField> */}
+          <CustomTextField
+            error={!!errors[index].schoolSiteError}
+            helperText={errors[index].schoolSiteError}
+            select
+            variant="filled"
+            hiddenLabel
+            fullWidth
+            size="small"
+            value={rowData.schoolSite.id}
+            onChange={(e) => {
+              const selectedSite = schoolSitesData.find(
+                (option) => option.id === e.target.value
+              );
+              setRowData(index, "schoolSite", {
+                id: selectedSite.id,
+                label: selectedSite.label,
+              });
+            }}
+            disabled={!region}
+            SelectProps={{
+              displayEmpty: true,
+              renderValue: (selected) => {
+                if (!selected || selected === "" || !rowData.schoolSite.label) {
+                  return (
+                    <span style={{ opacity: 0.5 }}>Select a School/Site</span>
+                  );
+                }
+                return rowData.schoolSite.label;
               },
             }}
           >
@@ -100,14 +141,14 @@ const DataRow = React.memo(
                     <span style={{ opacity: 0.5 }}>Select Team Season</span>
                   );
                 }
-                return teamsSeasonsData.find(
+                return teamSeasons.find(
                   (option) => option.TeamSeasonId === selected
                 )?.TeamSeasonName;
               },
             }}
           >
-            {teamsSeasonsData && teamsSeasonsData.length > 0 ? (
-              teamsSeasonsData.map((option) => (
+            {teamSeasons && teamSeasons.length > 0 ? (
+              teamSeasons.map((option) => (
                 <MenuItem key={option.TeamSeasonId} value={option.TeamSeasonId}>
                   {option.TeamSeasonName}
                 </MenuItem>

@@ -150,44 +150,6 @@ export async function submitForm(
   }
 }
 
-// export async function getContactInfo(phoneNumberProp) {
-//   let value = "";
-//   phoneNumberProp = phoneNumberProp.slice(2);
-//   const serviceProvider = "Phone";
-
-//   const prodHeaders = new Headers();
-//   prodHeaders.append("client_id", `${process.env.REACT_APP_PROD_CLIENT_ID}`);
-//   prodHeaders.append(
-//     "client_secret",
-//     `${process.env.REACT_APP_PROD_CLIENT_SECRET}`
-//   );
-//   prodHeaders.append("Content-Type", "application/json");
-
-//   var requestOptionsForProd = {
-//     method: "GET",
-//     headers: prodHeaders,
-//     redirect: "follow",
-//   };
-
-//   var requestOptions = {
-//     method: "GET",
-//     headers: myHeaders,
-//     redirect: "follow",
-//   };
-
-//   const url = useProdApi
-//     ? `${process.env.REACT_APP_AUTH_BASEURL}/auth/login?useridentifier=${phoneNumberProp}&serviceprovider=${serviceProvider}`
-//     : `${process.env.REACT_APP_BASEURL}/auth/login?useridentifier=${phoneNumberProp}&serviceprovider=${serviceProvider}`;
-
-//   await fetch(url, useProdApi ? requestOptionsForProd : requestOptions)
-//     .then((response) => response.json())
-//     .then((data) => {
-//       value = data;
-//     })
-//     .catch((error) => console.log("error", error));
-//   return value;
-// }
-
 export async function getContactInfo(phoneNumberProp) {
   let value = "";
   phoneNumberProp = phoneNumberProp.slice(2);
@@ -517,7 +479,7 @@ export async function getWaiverAcceptance(contactId, waiverId, regionName) {
   }
 }
 
-export async function getTeamSeaons() {
+export async function getTeamSeasons() {
   try {
     var requestOptions = {
       method: "GET",
@@ -525,7 +487,7 @@ export async function getTeamSeaons() {
       redirect: "follow",
     };
     const response = await fetch(
-      `${process.env.REACT_APP_BASEURL}/teamSeasons?date=2019-01-04`,
+      `${process.env.REACT_APP_BASEURL}/teamSeasons?date=2023-08-14`,
       requestOptions
     );
     const json = await response.json();
@@ -534,6 +496,7 @@ export async function getTeamSeaons() {
     console.log("error", error);
   }
 }
+
 export async function postContact(data) {
   try {
     var requestOptions = {
@@ -544,6 +507,24 @@ export async function postContact(data) {
     };
     const response = await fetch(
       `${process.env.REACT_APP_BASEURL}/contacts`,
+      requestOptions
+    );
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function postEnrollment(data) {
+  try {
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: JSON.stringify(data),
+      redirect: "follow",
+    };
+    const response = await fetch(
+      `${process.env.REACT_APP_BASEURL}/enrollments`,
       requestOptions
     );
     return await response.json();

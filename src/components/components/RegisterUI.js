@@ -52,13 +52,14 @@ const RegisterUI = React.memo(
     region,
     regionsData,
     schoolSitesData,
-    teamsSeasonsData,
+    teamSeasons,
     onRegionChange,
     onInputChange,
     onAddRow,
     onReset,
     onSubmit,
     errors,
+    loadingSubmit,
   }) => {
     const navigate = useNavigate();
     return (
@@ -156,8 +157,12 @@ const RegisterUI = React.memo(
                 <Button onClick={onReset} variant="outlined">
                   Cancel
                 </Button>
-                <Button onClick={onSubmit} variant="contained">
-                  Assign
+                <Button
+                  onClick={onSubmit}
+                  variant="contained"
+                  disabled={loadingSubmit}
+                >
+                  {loadingSubmit ? "Submitting..." : "Assign"}
                 </Button>
               </Grid>
             </Grid>
@@ -195,7 +200,7 @@ const RegisterUI = React.memo(
                 setRowData={onInputChange}
                 region={region}
                 schoolSitesData={schoolSitesData}
-                teamsSeasonsData={teamsSeasonsData}
+                teamSeasons={teamSeasons}
                 errors={errors}
               />
             ))}

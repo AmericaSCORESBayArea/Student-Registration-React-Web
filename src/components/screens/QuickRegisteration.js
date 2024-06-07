@@ -1,28 +1,39 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import RegisterUI from "../components/RegisterUI";
 import {
   getRegionsData,
   getSchoolData,
-  getTeamSeaons,
+  getTeamSeasons,
   postContact,
+  postEnrollment,
 } from "../controller/api";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Loader from "../utils/Loader";
 
 const QuickRegisteration = () => {
   const [loadingRegions, setLoadingRegions] = useState(true);
-
+  const [loadingTeamSeasons, setLoadingTeamSeasons] = useState(false);
   const [regionsData, setRegionsData] = useState([]);
   const [schoolSitesData, setSchoolSitesData] = useState([]);
-  const [teamsSeasonsDatas, setTeamsSeasonsData] = useState([]);
+  const [teamSeasons, setTeamSeasons] = useState([]);
   const [region, setRegion] = useState("");
-
   const [errors, setErrors] = useState(
     Array(10).fill({
       firstNameError: "",
       lastNameError: "",
       schoolSiteError: "",
       teamSeasonError: "",
+    })
+  );
+  const [formSubmitted, setFormSubmitted] = useState(false); // New state variable
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+
+  const [rows, setRows] = useState(
+    Array(10).fill({
+      firstName: "",
+      lastName: "",
+      schoolSite: { id: "", label: "" },
+      teamSeason: "",
     })
   );
 
@@ -37,29 +48,33 @@ const QuickRegisteration = () => {
       });
   }, []);
 
+  const schoolSiteLabelsDependency = useMemo(
+    () => rows.map((row) => row.schoolSite.label).join("|"),
+    [rows]
+  );
+
   useEffect(() => {
-    if (region) {
-      getTeamSeaons()
+    if (schoolSiteLabelsDependency.replace(/\|/g, "").length > 0) {
+      setLoadingTeamSeasons(true);
+      getTeamSeasons()
         .then((response) => {
-          const filteredTeams = response.filter(
-            (team) => team.Region === region
+          const schoolLabels = schoolSiteLabelsDependency
+            .split("|")
+            .filter(Boolean);
+          const filteredTeams = response.filter((team) =>
+            schoolLabels.includes(team.SchoolSite)
           );
-          setTeamsSeasonsData(filteredTeams);
+          setTeamSeasons(filteredTeams.length > 0 ? filteredTeams : []);
+          setLoadingTeamSeasons(false);
         })
         .catch((e) => {
           console.log("Failed to fetch team seasons:", e);
+          setLoadingTeamSeasons(false);
         });
+    } else {
+      setTeamSeasons([]);
     }
-  }, [region]);
-
-  const [rows, setRows] = useState(
-    Array(10).fill({
-      firstName: "",
-      lastName: "",
-      schoolSite: "",
-      teamSeason: "",
-    })
-  );
+  }, [schoolSiteLabelsDependency]);
 
   const handleRegionChange = useCallback((event) => {
     const newRegion = event.target.value;
@@ -77,7 +92,7 @@ const QuickRegisteration = () => {
       Array(10).fill({
         firstName: "",
         lastName: "",
-        schoolSite: "",
+        schoolSite: { id: "", label: "" },
         teamSeason: "",
       })
     );
@@ -88,11 +103,10 @@ const QuickRegisteration = () => {
       rows.map((row, idx) => (idx === index ? { ...row, [field]: value } : row))
     );
 
-    // Clear the error of the field that is changed
     setErrors((errors) =>
       errors.map((error, idx) => {
         if (idx === index) {
-          return { ...error, [field + "Error"]: "" }; // Assuming error keys are fieldName + 'Error'
+          return { ...error, [field + "Error"]: "" };
         }
         return error;
       })
@@ -102,7 +116,12 @@ const QuickRegisteration = () => {
   const handleAddRow = useCallback(() => {
     setRows([
       ...rows,
-      { firstName: "", lastName: "", schoolSite: "", teamSeason: "" },
+      {
+        firstName: "",
+        lastName: "",
+        schoolSite: { id: "", label: "" },
+        teamSeason: "",
+      },
     ]);
     setErrors([
       ...errors,
@@ -120,7 +139,7 @@ const QuickRegisteration = () => {
       Array(10).fill({
         firstName: "",
         lastName: "",
-        schoolSite: "",
+        schoolSite: { id: "", label: "" },
         teamSeason: "",
       })
     );
@@ -136,11 +155,12 @@ const QuickRegisteration = () => {
   }, []);
 
   const handleSubmit = useCallback(() => {
+    setLoadingSubmit(true);
     const newErrors = rows.map((row) => {
       const isRowInteracted =
         row.firstName.trim() ||
         row.lastName.trim() ||
-        row.schoolSite.trim() ||
+        row.schoolSite.id.trim() ||
         row.teamSeason.trim();
       return isRowInteracted
         ? {
@@ -148,7 +168,7 @@ const QuickRegisteration = () => {
               ? ""
               : "First name is required",
             lastNameError: row.lastName.trim() ? "" : "Last name is required",
-            schoolSiteError: row.schoolSite.trim()
+            schoolSiteError: row.schoolSite.id.trim()
               ? ""
               : "School site is required",
             teamSeasonError: row.teamSeason.trim()
@@ -166,13 +186,6 @@ const QuickRegisteration = () => {
     setErrors(newErrors);
 
     const filteredRows = rows.filter((row, index) => {
-      const isRowInteracted =
-        row.firstName.trim() ||
-        row.lastName.trim() ||
-        row.schoolSite.trim() ||
-        row.teamSeason.trim();
-      if (!isRowInteracted) return false;
-
       const noErrors = Object.values(newErrors[index]).every(
         (val) => val === ""
       );
@@ -180,7 +193,7 @@ const QuickRegisteration = () => {
         noErrors &&
         row.firstName.trim() &&
         row.lastName.trim() &&
-        row.schoolSite.trim() &&
+        row.schoolSite.id.trim() &&
         row.teamSeason.trim()
       );
     });
@@ -188,35 +201,65 @@ const QuickRegisteration = () => {
     if (filteredRows.length === 0) {
       return;
     }
-
-    const promises = filteredRows.map(async (row) => {
+    const contactPromises = filteredRows.map(async (row) => {
       const formattedData = {
         FirstName: row.firstName,
         LastName: row.lastName,
         Birthdate: "2000-01-01",
-        SchoolSiteId: row.schoolSite,
+        SchoolSiteId: row.schoolSite.id,
       };
-      // console.log("Formatted data:", formattedData);
       try {
-        const response = await postContact(formattedData);
-        // console.log("Submitted", response);
-        return response;
+        const contactResponse = await postContact(formattedData);
+        return {
+          ...contactResponse,
+          teamSeason: row.teamSeason,
+        };
       } catch (e) {
-        console.error("Failed to submit:", e);
-        throw e;
+        console.error("Failed to submit contact:", e);
+        return { error: true, message: e.message };
       }
     });
 
-    Promise.all(promises)
+    Promise.allSettled(contactPromises)
       .then((results) => {
-        console.log("All submissions completed:", results);
+        const enrollmentPromises = results.map((result) => {
+          if (result.status === "fulfilled" && !result.value.error) {
+            const enrollmentData = {
+              // TeamSeasonId: result.value.teamSeason,
+              TeamSeasonId: "a0qU8000001MkTRIA0",
+              StudentId: result.value.ContactId,
+              StartDate: "2023-08-06",
+              EndDate: "2024-06-06",
+            };
+            return postEnrollment(enrollmentData);
+          } else {
+            return Promise.resolve(null);
+          }
+        });
+        return Promise.allSettled(enrollmentPromises);
       })
-      .catch((error) => {
-        console.error("One or more submissions failed:", error);
+      .then(() => {
+        setFormSubmitted(true);
+        handleReset();
+        setLoadingSubmit(false);
+      })
+      .catch(() => {
+        setLoadingSubmit(false);
       });
-  }, [rows]);
+  }, [rows, handleReset]);
 
-  if (loadingRegions) return <Loader />;
+  useEffect(() => {
+    if (formSubmitted) {
+      const timer = setTimeout(() => {
+        setFormSubmitted(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [formSubmitted]);
+
+  if (loadingRegions || loadingTeamSeasons) return <Loader />;
+
   return (
     <Box
       container
@@ -227,18 +270,29 @@ const QuickRegisteration = () => {
       marginBottom={"10%"}
       sx={{ maxWidth: 1400 }}
     >
+      {formSubmitted && (
+        <Typography
+          variant="h6"
+          color="green"
+          textAlign={"center"}
+          gutterBottom
+        >
+          Form successfully submitted!
+        </Typography>
+      )}
       <RegisterUI
         rows={rows}
         region={region}
         regionsData={regionsData}
         schoolSitesData={schoolSitesData}
-        teamsSeasonsData={teamsSeasonsDatas}
+        teamSeasons={teamSeasons}
         onRegionChange={handleRegionChange}
         onInputChange={handleInputChange}
         onAddRow={handleAddRow}
         onReset={handleReset}
         onSubmit={handleSubmit}
         errors={errors}
+        loadingSubmit={loadingSubmit}
       />
     </Box>
   );
