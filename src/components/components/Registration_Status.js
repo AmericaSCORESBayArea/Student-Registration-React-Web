@@ -47,7 +47,6 @@ export default function Registration_Status(props) {
   const [showParentStudents, setShowParentStudents] = useState(false);
   const toastId = React.useRef(null);
   const classes = useStyles();
-  console.log("propsss", props);
   const updateDimensions = () => {
     setWidth(window.innerWidth);
   };
