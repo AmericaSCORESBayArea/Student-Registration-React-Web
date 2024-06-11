@@ -33,12 +33,14 @@ const QuickRegisteration = () => {
   const [userHasInteracted, setUserHasInteracted] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [enrollmentResults, setEnrollmentResults] = useState([]);
+
   const [rows, setRows] = useState(
     Array(10).fill({
       firstName: "",
       lastName: "",
       schoolSite: { id: "", label: "" },
-      teamSeason: "",
+      teamSeason: { id: "", label: "" },
     })
   );
 
@@ -145,7 +147,7 @@ const QuickRegisteration = () => {
         firstName: "",
         lastName: "",
         schoolSite: { id: "", label: "" },
-        teamSeason: "",
+        teamSeason: { id: "", label: "" },
       },
     ]);
     setErrors([
@@ -183,7 +185,7 @@ const QuickRegisteration = () => {
         firstName: "",
         lastName: "",
         schoolSite: { id: "", label: "" },
-        teamSeason: "",
+        teamSeason: { id: "", label: "" },
       })
     );
     setErrors(
@@ -207,7 +209,7 @@ const QuickRegisteration = () => {
         row.firstName.trim() ||
         row.lastName.trim() ||
         row.schoolSite.id.trim() ||
-        row.teamSeason.trim();
+        row.teamSeason.id.trim();
       if (isRowInteracted) {
         const errors = {
           firstNameError: row.firstName.trim() ? "" : "First name is required",
@@ -215,7 +217,7 @@ const QuickRegisteration = () => {
           schoolSiteError: row.schoolSite.id.trim()
             ? ""
             : "School site is required",
-          teamSeasonError: row.teamSeason.trim()
+          teamSeasonError: row.teamSeason.id.trim()
             ? ""
             : "Team season is required",
         };
@@ -239,45 +241,55 @@ const QuickRegisteration = () => {
       return;
     }
 
-    const filteredRows = rows.filter(
-      (row, index) =>
-        newErrors[index].firstNameError === "" && row.firstName.trim()
-    );
+    const contactPromises = rows
+      .filter(
+        (row, index) =>
+          newErrors[index].firstNameError === "" && row.firstName.trim()
+      )
+      .map(async (row) => {
+        const formattedData = {
+          FirstName: row.firstName,
+          LastName: row.lastName,
+          Birthdate: "2000-01-01",
+          SchoolSiteId: row.schoolSite.id,
+        };
 
-    const contactPromises = filteredRows.map(async (row) => {
-      const formattedData = {
-        FirstName: row.firstName,
-        LastName: row.lastName,
-        Birthdate: "2000-01-01",
-        SchoolSiteId: row.schoolSite.id,
-      };
+        try {
+          const contactResponse = await postContact(formattedData);
+          if (contactResponse.error) {
+            throw new Error(contactResponse.message);
+          }
 
-      try {
-        return await postContact(formattedData);
-      } catch (e) {
-        console.error("Failed to submit contact:", e);
-        return { error: true, message: e.message };
-      }
-    });
+          const enrollmentData = {
+            TeamSeasonId: "a0qU8000001MkTRIA0",
+            StudentId: contactResponse.ContactId,
+            StartDate: "2023-08-06",
+            EndDate: "2024-06-06",
+          };
+          return postEnrollment(enrollmentData).then((enrollmentResponse) => ({
+            ...enrollmentResponse,
+            firstName: row.firstName,
+            lastName: row.lastName,
+            schoolSiteLabel: row.schoolSite.label,
+            teamSeasonLabel: row.teamSeason.label,
+          }));
+        } catch (e) {
+          console.error("Failed to submit contact:", e);
+          return { error: true, message: e.message };
+        }
+      });
 
     Promise.allSettled(contactPromises)
       .then((results) => {
-        const enrollmentPromises = results.map((result) => {
-          if (result.status === "fulfilled" && !result.value.error) {
-            const enrollmentData = {
-              TeamSeasonId: "a0qU8000001MkTRIA0",
-              StudentId: result.value.ContactId,
-              StartDate: "2023-08-06",
-              EndDate: "2024-06-06",
-            };
-            return postEnrollment(enrollmentData);
-          } else {
-            return Promise.resolve(null);
-          }
-        });
-        return Promise.allSettled(enrollmentPromises);
-      })
-      .then(() => {
+        const enrolledDetails = results
+          .filter(
+            (result) => result.status === "fulfilled" && !result.value.error
+          )
+          .map((result) => ({
+            ...result.value,
+            region: region,
+          }));
+        setEnrollmentResults(enrolledDetails);
         setFormSubmitted(true);
         handleReset(false);
         setLoadingSubmit(false);
@@ -287,7 +299,7 @@ const QuickRegisteration = () => {
       });
 
     setUserHasInteracted(false);
-  }, [rows, handleReset]);
+  }, [rows, handleReset, region]);
 
   const handleGoBack = useCallback(() => {
     if (userHasInteracted) {
@@ -373,6 +385,7 @@ const QuickRegisteration = () => {
         errors={errors}
         loadingSubmit={loadingSubmit}
         userHasInteracted={userHasInteracted}
+        enrollmentResults={enrollmentResults}
       />
     </Box>
   );
