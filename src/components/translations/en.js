@@ -45,6 +45,14 @@ export const enLanguages = {
     modal_cancel_button: "CANCEL",
     modal_confirm_button: "LOG OUT",
   },
+  dataLoss_modal: {
+    modal_title: "Confirm Action",
+    modal_text: "Are you sure you want to discard your changes?",
+    modal_footer: "Any unsaved changes will be lost.",
+    modal_confirm_button: "Discard Changes",
+    modal_cancel_button: "Keep Editing",
+    modal_close_button: "Close",
+  },
   register_modal_success: {
     modal_title: "Successful registration",
     modal_text: "The student has been successfully registered.",

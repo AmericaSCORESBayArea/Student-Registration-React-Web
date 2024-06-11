@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Grid, MenuItem } from "@mui/material";
 import { CustomTextField } from "./RegisterUI";
 
@@ -12,6 +12,13 @@ const DataRow = React.memo(
     teamSeasons,
     errors,
   }) => {
+    const filteredTeamSeasons = useMemo(() => {
+      if (!rowData.schoolSite.label) return [];
+      return teamSeasons.filter((team) => {
+        return team.SchoolSite === rowData.schoolSite.label;
+      });
+    }, [teamSeasons, rowData.schoolSite.label]);
+
     return (
       <Grid container spacing={2} sx={{ marginBottom: 2 }}>
         <Grid item xs={12} sm={3}>
@@ -45,40 +52,6 @@ const DataRow = React.memo(
           />
         </Grid>
         <Grid item xs={12} sm={3}>
-          {/* <CustomTextField
-            error={!!errors[index].schoolSiteError}
-            helperText={errors[index].schoolSiteError}
-            select
-            variant="filled"
-            hiddenLabel
-            fullWidth
-            size="small"
-            value={rowData.schoolSite}
-            onChange={(e) => setRowData(index, "schoolSite", e.target.value)}
-            disabled={!region}
-            SelectProps={{
-              displayEmpty: true,
-              renderValue: (selected) => {
-                if (selected === "") {
-                  return (
-                    <span style={{ opacity: 0.5 }}>Select a School/Site</span>
-                  );
-                }
-                return schoolSitesData.find((option) => option.id === selected)
-                  ?.label;
-              },
-            }}
-          >
-            {schoolSitesData && schoolSitesData.length > 0 ? (
-              schoolSitesData.map((option) => (
-                <MenuItem key={option.id} value={option.id}>
-                  {option.label}
-                </MenuItem>
-              ))
-            ) : (
-              <MenuItem disabled>No schools found</MenuItem>
-            )}
-          </CustomTextField> */}
           <CustomTextField
             error={!!errors[index].schoolSiteError}
             helperText={errors[index].schoolSiteError}
@@ -141,20 +114,20 @@ const DataRow = React.memo(
                     <span style={{ opacity: 0.5 }}>Select Team Season</span>
                   );
                 }
-                return teamSeasons.find(
+                return filteredTeamSeasons.find(
                   (option) => option.TeamSeasonId === selected
                 )?.TeamSeasonName;
               },
             }}
           >
-            {teamSeasons && teamSeasons.length > 0 ? (
-              teamSeasons.map((option) => (
+            {filteredTeamSeasons.length > 0 ? (
+              filteredTeamSeasons.map((option) => (
                 <MenuItem key={option.TeamSeasonId} value={option.TeamSeasonId}>
                   {option.TeamSeasonName}
                 </MenuItem>
               ))
             ) : (
-              <MenuItem disabled>No teams found</MenuItem>
+              <MenuItem disabled>No team found</MenuItem>
             )}
           </CustomTextField>
         </Grid>

@@ -9,8 +9,6 @@ import {
   styled,
 } from "@mui/material";
 import DataRow from "./DataRow";
-import { useNavigate } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export const CustomTextField = styled(TextField)({
   backgroundColor: "transparent",
@@ -60,8 +58,8 @@ const RegisterUI = React.memo(
     onSubmit,
     errors,
     loadingSubmit,
+    userHasInteracted,
   }) => {
-    const navigate = useNavigate();
     return (
       <Box
         sx={{
@@ -74,15 +72,7 @@ const RegisterUI = React.memo(
         }}
       >
         <Grid container alignItems="center">
-          <Grid item xs={12} md={2} sm={12}>
-            <Button
-              variant="contained"
-              startIcon={<ArrowBackIcon />}
-              onClick={() => navigate(-1)}
-            >
-              Go Back
-            </Button>
-          </Grid>
+          <Grid item xs={12} md={2} sm={12} />
           <Grid item xs={12} md={3} sm={12}>
             <Typography variant="h4">Select a region</Typography>
           </Grid>
@@ -160,7 +150,12 @@ const RegisterUI = React.memo(
                 <Button
                   onClick={onSubmit}
                   variant="contained"
-                  disabled={loadingSubmit}
+                  disabled={
+                    !userHasInteracted ||
+                    errors.some((error) =>
+                      Object.values(error).some((e) => e !== "")
+                    )
+                  }
                 >
                   {loadingSubmit ? "Submitting..." : "Assign"}
                 </Button>
