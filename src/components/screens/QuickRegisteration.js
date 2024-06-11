@@ -100,7 +100,7 @@ const QuickRegisteration = () => {
                   firstName: "",
                   lastName: "",
                   schoolSite: { id: "", label: "" },
-                  teamSeason: "",
+                  teamSeason: { id: "", label: "" },
                 })
               );
             })
@@ -261,6 +261,7 @@ const QuickRegisteration = () => {
           }
 
           const enrollmentData = {
+            // TeamSeasonId: row.teamSeason.id,
             TeamSeasonId: "a0qU8000001MkTRIA0",
             StudentId: contactResponse.ContactId,
             StartDate: "2023-08-06",
