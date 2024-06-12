@@ -7,7 +7,7 @@ import {
   postContact,
   postEnrollment,
 } from "../controller/api";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Alert, Box, Button, Grid, Typography } from "@mui/material";
 import Loader from "../utils/Loader";
 import { ModalwithConfirmation } from "../utils/Modal";
 import { enLanguages } from "../translations/en";
@@ -22,6 +22,21 @@ const QuickRegisteration = () => {
   const [schoolSitesData, setSchoolSitesData] = useState([]);
   const [teamSeasons, setTeamSeasons] = useState([]);
   const [region, setRegion] = useState("");
+  const [userHasInteracted, setUserHasInteracted] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [enrollmentResults, setEnrollmentResults] = useState([]);
+  const [errorAlert, setErrorAlert] = useState({ show: false, message: "" });
+
+  const [rows, setRows] = useState(
+    Array(10).fill({
+      firstName: "",
+      lastName: "",
+      schoolSite: { id: "", label: "" },
+      teamSeason: { id: "", label: "" },
+    })
+  );
+
   const [errors, setErrors] = useState(
     Array(10).fill({
       firstNameError: "",
@@ -30,38 +45,6 @@ const QuickRegisteration = () => {
       teamSeasonError: "",
     })
   );
-  const [userHasInteracted, setUserHasInteracted] = useState(false);
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const [loadingSubmit, setLoadingSubmit] = useState(false);
-  const [rows, setRows] = useState(
-    Array(10).fill({
-      firstName: "",
-      lastName: "",
-      schoolSite: { id: "", label: "" },
-      teamSeason: "",
-    })
-  );
-
-  useEffect(() => {
-    getRegionsData()
-      .then(async (response) => {
-        setRegionsData(response);
-        setLoadingRegions(false);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-
-    getTeamSeasons()
-      .then(async (response) => {
-        setTeamSeasons(response);
-        setLoadingTeamSeasons(false);
-      })
-      .catch((e) => {
-        console.log(e);
-        setLoadingTeamSeasons(false);
-      });
-  }, []);
 
   const handleBeforeUnload = useCallback(
     (event) => {
@@ -75,14 +58,6 @@ const QuickRegisteration = () => {
     [userHasInteracted]
   );
 
-  useEffect(() => {
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [handleBeforeUnload]);
-
   const handleRegionChange = useCallback(
     (event) => {
       if (userHasInteracted) {
@@ -93,12 +68,14 @@ const QuickRegisteration = () => {
             .then((response) => {
               setSchoolSitesData(response);
               setUserHasInteracted(false);
+              setErrorAlert({ show: false, message: "" });
+              setFormSubmitted(false);
               setRows(
                 Array(10).fill({
                   firstName: "",
                   lastName: "",
                   schoolSite: { id: "", label: "" },
-                  teamSeason: "",
+                  teamSeason: { id: "", label: "" },
                 })
               );
             })
@@ -113,6 +90,8 @@ const QuickRegisteration = () => {
           .then((response) => {
             setSchoolSitesData(response);
             setUserHasInteracted(false);
+            setErrorAlert({ show: false, message: "" });
+            setFormSubmitted(false);
           })
           .catch((e) => {
             console.log("Failed to fetch school sites:", e);
@@ -145,7 +124,7 @@ const QuickRegisteration = () => {
         firstName: "",
         lastName: "",
         schoolSite: { id: "", label: "" },
-        teamSeason: "",
+        teamSeason: { id: "", label: "" },
       },
     ]);
     setErrors([
@@ -177,13 +156,157 @@ const QuickRegisteration = () => {
     [userHasInteracted]
   );
 
+  const handleSubmit = useCallback(() => {
+    setLoadingSubmit(true);
+    let allValid = true;
+
+    const newErrors = rows.map((row) => {
+      const isRowInteracted =
+        row.firstName.trim() ||
+        row.lastName.trim() ||
+        row.schoolSite.id.trim() ||
+        row.teamSeason.id.trim();
+
+      if (!isRowInteracted) {
+        return {
+          firstNameError: "",
+          lastNameError: "",
+          schoolSiteError: "",
+          teamSeasonError: "",
+        };
+      }
+
+      const errors = {
+        firstNameError: row.firstName.trim() ? "" : "First name is required",
+        lastNameError: row.lastName.trim() ? "" : "Last name is required",
+        schoolSiteError: row.schoolSite.id.trim()
+          ? ""
+          : "School site is required",
+        teamSeasonError: row.teamSeason.id.trim()
+          ? ""
+          : "Team season is required",
+      };
+
+      if (Object.values(errors).some((error) => error !== "")) {
+        allValid = false;
+      }
+      return errors;
+    });
+
+    setErrors(newErrors);
+
+    if (!allValid) {
+      setLoadingSubmit(false);
+      return;
+    }
+
+    const filteredAndValidRows = rows.filter(
+      (row, index) =>
+        (row.firstName.trim() ||
+          row.lastName.trim() ||
+          row.schoolSite.id.trim() ||
+          row.teamSeason.id.trim()) &&
+        !Object.values(newErrors[index]).some((error) => error !== "")
+    );
+
+    const contactPromises = filteredAndValidRows.map(async (row) => {
+      try {
+        const contactResponse = await postContact({
+          FirstName: row.firstName,
+          LastName: row.lastName,
+          Birthdate: "2000-01-01",
+          SchoolSiteId: row.schoolSite.id,
+        });
+        if (contactResponse.error) {
+          throw new Error(contactResponse.message);
+        }
+
+        const enrollmentData = {
+          TeamSeasonId: row.teamSeason.id,
+          StudentId: contactResponse.ContactId,
+          StartDate: "2023-08-06",
+          EndDate: "2024-06-06",
+        };
+        return postEnrollment(enrollmentData).then((enrollmentResponse) => {
+          if (enrollmentResponse.error) {
+            throw new Error(enrollmentResponse.message);
+          }
+          return {
+            ...enrollmentResponse,
+            firstName: row.firstName,
+            lastName: row.lastName,
+            schoolSiteLabel: row.schoolSite.label,
+            teamSeasonLabel: row.teamSeason.label,
+          };
+        });
+      } catch (e) {
+        console.error("Failed to submit contact:", e);
+        return { error: true, message: e.message };
+      }
+    });
+
+    Promise.allSettled(contactPromises)
+      .then((results) => {
+        const errors = results.filter(
+          (result) => result.status === "rejected" || result.value.error
+        );
+
+        if (errors.length > 0) {
+          setErrorAlert({
+            show: true,
+            message:
+              "Some entries could not be processed. Please check the data and try again.",
+          });
+        } else {
+          const enrolledDetails = results.map((result) => ({
+            ...result.value,
+            region: region,
+          }));
+          setEnrollmentResults(enrolledDetails);
+          setFormSubmitted(true);
+          handleReset(false);
+        }
+      })
+      .catch((error) => {
+        setErrorAlert({
+          show: true,
+          message:
+            "There appears to be a problem with the selected Site and/or Team Season. Please try another or inform your Program Manager.",
+        });
+      })
+      .finally(() => {
+        setLoadingSubmit(false);
+      });
+
+    setUserHasInteracted(false);
+  }, [rows, handleReset, region]);
+
+  const handleGoBack = useCallback(
+    (event) => {
+      event.preventDefault();
+      if (userHasInteracted) {
+        ModalwithConfirmation(
+          enLanguages.dataLoss_modal,
+          () => {
+            navigate(-1);
+          },
+          "warning",
+          () => console.log("Navigation cancelled.")
+        );
+      } else {
+        navigate(-1);
+      }
+    },
+    [userHasInteracted, navigate]
+  );
+
   const resetForm = () => {
     setRows(
       Array(10).fill({
         firstName: "",
         lastName: "",
         schoolSite: { id: "", label: "" },
-        teamSeason: "",
+        teamSeason: { id: "", label: "" },
       })
     );
     setErrors(
@@ -198,121 +321,33 @@ const QuickRegisteration = () => {
     setUserHasInteracted(false);
   };
 
-  const handleSubmit = useCallback(() => {
-    setLoadingSubmit(true);
-    let allValid = true;
-
-    const newErrors = rows.map((row) => {
-      const isRowInteracted =
-        row.firstName.trim() ||
-        row.lastName.trim() ||
-        row.schoolSite.id.trim() ||
-        row.teamSeason.trim();
-      if (isRowInteracted) {
-        const errors = {
-          firstNameError: row.firstName.trim() ? "" : "First name is required",
-          lastNameError: row.lastName.trim() ? "" : "Last name is required",
-          schoolSiteError: row.schoolSite.id.trim()
-            ? ""
-            : "School site is required",
-          teamSeasonError: row.teamSeason.trim()
-            ? ""
-            : "Team season is required",
-        };
-        if (Object.values(errors).some((error) => error !== "")) {
-          allValid = false;
-        }
-        return errors;
-      }
-      return {
-        firstNameError: "",
-        lastNameError: "",
-        schoolSiteError: "",
-        teamSeasonError: "",
-      };
-    });
-
-    setErrors(newErrors);
-
-    if (!allValid) {
-      setLoadingSubmit(false);
-      return;
-    }
-
-    const filteredRows = rows.filter(
-      (row, index) =>
-        newErrors[index].firstNameError === "" && row.firstName.trim()
-    );
-
-    const contactPromises = filteredRows.map(async (row) => {
-      const formattedData = {
-        FirstName: row.firstName,
-        LastName: row.lastName,
-        Birthdate: "2000-01-01",
-        SchoolSiteId: row.schoolSite.id,
-      };
-
-      try {
-        return await postContact(formattedData);
-      } catch (e) {
-        console.error("Failed to submit contact:", e);
-        return { error: true, message: e.message };
-      }
-    });
-
-    Promise.allSettled(contactPromises)
-      .then((results) => {
-        const enrollmentPromises = results.map((result) => {
-          if (result.status === "fulfilled" && !result.value.error) {
-            const enrollmentData = {
-              TeamSeasonId: "a0qU8000001MkTRIA0",
-              StudentId: result.value.ContactId,
-              StartDate: "2023-08-06",
-              EndDate: "2024-06-06",
-            };
-            return postEnrollment(enrollmentData);
-          } else {
-            return Promise.resolve(null);
-          }
-        });
-        return Promise.allSettled(enrollmentPromises);
+  useEffect(() => {
+    getRegionsData()
+      .then(async (response) => {
+        setRegionsData(response);
+        setLoadingRegions(false);
       })
-      .then(() => {
-        setFormSubmitted(true);
-        handleReset(false);
-        setLoadingSubmit(false);
-      })
-      .catch(() => {
-        setLoadingSubmit(false);
+      .catch((e) => {
+        console.log(e);
       });
 
-    setUserHasInteracted(false);
-  }, [rows, handleReset]);
-
-  const handleGoBack = useCallback(() => {
-    if (userHasInteracted) {
-      ModalwithConfirmation(
-        enLanguages.dataLoss_modal,
-        () => {
-          navigate(-1);
-        },
-        "warning",
-        () => console.log("Navigation cancelled.")
-      );
-    } else {
-      navigate(-1);
-    }
-  }, [userHasInteracted, navigate]);
+    getTeamSeasons()
+      .then(async (response) => {
+        setTeamSeasons(response);
+        setLoadingTeamSeasons(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoadingTeamSeasons(false);
+      });
+  }, []);
 
   useEffect(() => {
-    if (formSubmitted) {
-      const timer = setTimeout(() => {
-        setFormSubmitted(false);
-      }, 5000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [formSubmitted]);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [handleBeforeUnload]);
 
   if (loadingRegions || loadingTeamSeasons) return <Loader />;
 
@@ -339,7 +374,7 @@ const QuickRegisteration = () => {
           <Button
             variant="outlined"
             startIcon={<ArrowBackIcon />}
-            onClick={handleGoBack}
+            onClick={(e) => handleGoBack(e)}
           >
             Go Back
           </Button>
@@ -349,16 +384,19 @@ const QuickRegisteration = () => {
         </Grid>
         <Grid item xs={12} md={3} sm={12} />
       </Grid>
+
+      {errorAlert.show && <Alert severity="error">{errorAlert.message}</Alert>}
       {formSubmitted && (
-        <Typography
-          variant="h6"
-          color="green"
-          textAlign={"center"}
-          gutterBottom
+        <Alert
+          severity="success"
+          sx={{
+            marginBlock: 2,
+          }}
         >
           Form successfully submitted!
-        </Typography>
+        </Alert>
       )}
+
       <RegisterUI
         rows={rows}
         region={region}
@@ -373,6 +411,7 @@ const QuickRegisteration = () => {
         errors={errors}
         loadingSubmit={loadingSubmit}
         userHasInteracted={userHasInteracted}
+        enrollmentResults={enrollmentResults}
       />
     </Box>
   );

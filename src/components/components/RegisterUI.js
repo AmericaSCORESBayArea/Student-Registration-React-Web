@@ -1,5 +1,8 @@
 import React from "react";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   Grid,
@@ -9,17 +12,20 @@ import {
   styled,
 } from "@mui/material";
 import DataRow from "./DataRow";
+import { ExpandMore } from "@mui/icons-material";
+import EnrollmentDetailsAccordion from "./EnrollmentDetailsAccordion";
 
 export const CustomTextField = styled(TextField)({
   backgroundColor: "transparent",
   "& .MuiFilledInput-input": {
     backgroundColor: "transparent",
+    borderBottom: " none !important",
   },
   "& .MuiFilledInput-underline:before": {
-    borderBottom: "none",
+    borderBottom: "none !important",
   },
   "& .MuiFilledInput-underline:after": {
-    borderBottom: "none",
+    borderBottom: "none !important",
   },
   "& .MuiFilledInput-underline:hover:before": {
     borderBottom: "none !important",
@@ -41,6 +47,10 @@ export const CustomTextField = styled(TextField)({
       borderColor: "#ccc",
       boxShadow: "0 0 0 2px #ccc",
     },
+    "&.Mui-disabled": {
+      backgroundColor: "transparent !important",
+      color: "#ccc",
+    },
   },
 });
 
@@ -59,6 +69,7 @@ const RegisterUI = React.memo(
     errors,
     loadingSubmit,
     userHasInteracted,
+    enrollmentResults,
   }) => {
     return (
       <Box
@@ -68,10 +79,13 @@ const RegisterUI = React.memo(
           alignItems: "center",
           width: "100%",
           padding: 3,
-          backgroundColor: "#f8f5f4",
+          borderRadius: 2,
         }}
       >
-        <Grid container alignItems="center">
+        {enrollmentResults.length > 0 && (
+          <EnrollmentDetailsAccordion enrollmentResults={enrollmentResults} />
+        )}
+        <Grid container item alignItems="center" sx={{ marginBlock: 2 }}>
           <Grid item xs={12} md={2} sm={12} />
           <Grid item xs={12} md={3} sm={12}>
             <Typography variant="h4">Select a region</Typography>
@@ -108,121 +122,131 @@ const RegisterUI = React.memo(
           </Grid>
         </Grid>
         {region && (
-          <>
-            <Grid
-              container
-              alignItems="center"
-              justifyContent="space-between"
-              spacing={2}
-            >
-              <Grid item xs={12} sm={3} md={3} lg={3} />
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={6}
-                lg={6}
-                sx={{ textAlign: "center" }}
-              >
-                <Typography variant="h4" sx={{ marginBlock: 2 }}>
-                  Students Details
-                </Typography>
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                sm={3}
-                md={3}
-                lg={3}
-                sx={{
-                  textAlign: "right",
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  flexWrap: "wrap",
-                  gap: 1,
-                  alignItems: "center",
-                  paddingBlock: 1,
-                }}
-              >
-                <Button onClick={onReset} variant="outlined">
-                  Cancel
-                </Button>
-                <Button
-                  onClick={onSubmit}
-                  variant="contained"
-                  disabled={
-                    !userHasInteracted ||
-                    errors.some((error) =>
-                      Object.values(error).some((e) => e !== "")
-                    )
-                  }
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+              borderRadius: 3,
+              padding: 3,
+              backgroundColor: "#f8f5f4",
+            }}
+          >
+            <Box sx={{ width: "100%", marginY: 2 }}>
+              <Accordion defaultExpanded>
+                <AccordionSummary
+                  expandIcon={<ExpandMore />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
                 >
-                  {loadingSubmit ? "Submitting..." : "Assign"}
-                </Button>
-              </Grid>
-            </Grid>
-            <Grid container>
-              <Grid item xs={12} sm={3}>
-                <Typography variant="subtitle1">
-                  First Name
-                  <span style={{ color: "red" }}>*</span>
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <Typography variant="subtitle1">
-                  Last Name
-                  <span style={{ color: "red" }}>*</span>
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <Typography variant="subtitle1">
-                  School/Site
-                  <span style={{ color: "red" }}>*</span>
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <Typography variant="subtitle1">
-                  Team-Season
-                  <span style={{ color: "red" }}>*</span>
-                </Typography>
-              </Grid>
-            </Grid>
-            {rows.map((row, index) => (
-              <DataRow
-                key={index}
-                index={index}
-                rowData={row}
-                setRowData={onInputChange}
-                region={region}
-                schoolSitesData={schoolSitesData}
-                teamSeasons={teamSeasons}
-                errors={errors}
-              />
-            ))}
-            <Grid container item>
-              <Button
-                onClick={onAddRow}
-                variant="outlined"
-                sx={{
-                  width: "100%",
-                  borderColor: "#e1e1d4",
-                  height: "100%",
-                  backgroundColor: "#e1e1d4",
-                  display: "flex",
-                  borderRadius: 2,
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  color: "black",
-                }}
-              >
-                + Add Row
-              </Button>
-            </Grid>
-          </>
+                  <Typography variant="h5">Students Details</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid
+                    container
+                    alignItems="center"
+                    justifyContent="space-between"
+                    spacing={2}
+                  >
+                    <Grid item xs={12} sm={3} md={3} lg={3} />
+                    <Grid
+                      item
+                      xs={12}
+                      sm={3}
+                      md={3}
+                      lg={3}
+                      sx={{
+                        textAlign: "right",
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        flexWrap: "wrap",
+                        gap: 1,
+                        alignItems: "center",
+                        paddingBlock: 1,
+                      }}
+                    >
+                      <Button onClick={onReset} variant="outlined">
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={onSubmit}
+                        variant="contained"
+                        disabled={
+                          !userHasInteracted ||
+                          errors.some((error) =>
+                            Object.values(error).some((e) => e !== "")
+                          )
+                        }
+                      >
+                        {loadingSubmit ? "Submitting..." : "Assign"}
+                      </Button>
+                    </Grid>
+                  </Grid>
+                  <Grid container>
+                    <Grid item xs={12} sm={3}>
+                      <Typography variant="subtitle1">
+                        First Name
+                        <span style={{ color: "red" }}>*</span>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                      <Typography variant="subtitle1">
+                        Last Name
+                        <span style={{ color: "red" }}>*</span>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                      <Typography variant="subtitle1">
+                        School/Site
+                        <span style={{ color: "red" }}>*</span>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                      <Typography variant="subtitle1">
+                        Team-Season
+                        <span style={{ color: "red" }}>*</span>
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                  {rows.map((row, index) => (
+                    <DataRow
+                      key={index}
+                      index={index}
+                      rowData={row}
+                      setRowData={onInputChange}
+                      region={region}
+                      schoolSitesData={schoolSitesData}
+                      teamSeasons={teamSeasons}
+                      errors={errors}
+                    />
+                  ))}
+                  <Grid container item>
+                    <Button
+                      onClick={onAddRow}
+                      variant="outlined"
+                      sx={{
+                        width: "100%",
+                        borderColor: "#e1e1d4",
+                        height: "100%",
+                        backgroundColor: "#e1e1d4",
+                        display: "flex",
+                        borderRadius: 2,
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        color: "black",
+                      }}
+                    >
+                      + Add Row
+                    </Button>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+            </Box>
+          </Box>
         )}
       </Box>
     );
   }
 );
-
 export default RegisterUI;

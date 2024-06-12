@@ -103,32 +103,32 @@ const DataRow = React.memo(
             variant="filled"
             hiddenLabel
             size="small"
-            value={rowData.teamSeason}
-            onChange={(e) => setRowData(index, "teamSeason", e.target.value)}
-            disabled={!region}
+            value={rowData.teamSeason.id}
+            onChange={(e) => {
+              const selectedTeamSeason = filteredTeamSeasons.find(
+                (option) => option.TeamSeasonId === e.target.value
+              );
+              setRowData(index, "teamSeason", {
+                id: selectedTeamSeason.TeamSeasonId,
+                label: selectedTeamSeason.TeamSeasonName,
+              });
+            }}
+            disabled={!region || !filteredTeamSeasons.length}
             SelectProps={{
               displayEmpty: true,
-              renderValue: (selected) => {
-                if (selected === "") {
-                  return (
-                    <span style={{ opacity: 0.5 }}>Select Team Season</span>
-                  );
-                }
-                return filteredTeamSeasons.find(
-                  (option) => option.TeamSeasonId === selected
-                )?.TeamSeasonName;
-              },
+              renderValue: (selected) =>
+                !selected ? (
+                  <span style={{ opacity: 0.5 }}>Select Team Season</span>
+                ) : (
+                  rowData.teamSeason.label
+                ),
             }}
           >
-            {filteredTeamSeasons.length > 0 ? (
-              filteredTeamSeasons.map((option) => (
-                <MenuItem key={option.TeamSeasonId} value={option.TeamSeasonId}>
-                  {option.TeamSeasonName}
-                </MenuItem>
-              ))
-            ) : (
-              <MenuItem disabled>No team found</MenuItem>
-            )}
+            {filteredTeamSeasons.map((option) => (
+              <MenuItem key={option.TeamSeasonId} value={option.TeamSeasonId}>
+                {option.TeamSeasonName}
+              </MenuItem>
+            ))}
           </CustomTextField>
         </Grid>
       </Grid>
