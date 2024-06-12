@@ -22,14 +22,6 @@ const QuickRegisteration = () => {
   const [schoolSitesData, setSchoolSitesData] = useState([]);
   const [teamSeasons, setTeamSeasons] = useState([]);
   const [region, setRegion] = useState("");
-  const [errors, setErrors] = useState(
-    Array(10).fill({
-      firstNameError: "",
-      lastNameError: "",
-      schoolSiteError: "",
-      teamSeasonError: "",
-    })
-  );
   const [userHasInteracted, setUserHasInteracted] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
@@ -45,26 +37,14 @@ const QuickRegisteration = () => {
     })
   );
 
-  useEffect(() => {
-    getRegionsData()
-      .then(async (response) => {
-        setRegionsData(response);
-        setLoadingRegions(false);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-
-    getTeamSeasons()
-      .then(async (response) => {
-        setTeamSeasons(response);
-        setLoadingTeamSeasons(false);
-      })
-      .catch((e) => {
-        console.log(e);
-        setLoadingTeamSeasons(false);
-      });
-  }, []);
+  const [errors, setErrors] = useState(
+    Array(10).fill({
+      firstNameError: "",
+      lastNameError: "",
+      schoolSiteError: "",
+      teamSeasonError: "",
+    })
+  );
 
   const handleBeforeUnload = useCallback(
     (event) => {
@@ -77,14 +57,6 @@ const QuickRegisteration = () => {
     },
     [userHasInteracted]
   );
-
-  useEffect(() => {
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [handleBeforeUnload]);
 
   const handleRegionChange = useCallback(
     (event) => {
@@ -184,27 +156,6 @@ const QuickRegisteration = () => {
     [userHasInteracted]
   );
 
-  const resetForm = () => {
-    setRows(
-      Array(10).fill({
-        firstName: "",
-        lastName: "",
-        schoolSite: { id: "", label: "" },
-        teamSeason: { id: "", label: "" },
-      })
-    );
-    setErrors(
-      Array(10).fill({
-        firstNameError: "",
-        lastNameError: "",
-        schoolSiteError: "",
-        teamSeasonError: "",
-      })
-    );
-    setRegion("");
-    setUserHasInteracted(false);
-  };
-
   const handleSubmit = useCallback(() => {
     setLoadingSubmit(true);
     let allValid = true;
@@ -271,7 +222,6 @@ const QuickRegisteration = () => {
         }
 
         const enrollmentData = {
-          // TeamSeasonId: "a0qU8000081MkMRIA0",
           TeamSeasonId: row.teamSeason.id,
           StudentId: contactResponse.ContactId,
           StartDate: "2023-08-06",
@@ -331,20 +281,73 @@ const QuickRegisteration = () => {
     setUserHasInteracted(false);
   }, [rows, handleReset, region]);
 
-  const handleGoBack = useCallback(() => {
-    if (userHasInteracted) {
-      ModalwithConfirmation(
-        enLanguages.dataLoss_modal,
-        () => {
-          navigate(-1);
-        },
-        "warning",
-        () => console.log("Navigation cancelled.")
-      );
-    } else {
-      navigate(-1);
-    }
-  }, [userHasInteracted, navigate]);
+  const handleGoBack = useCallback(
+    (event) => {
+      event.preventDefault();
+      if (userHasInteracted) {
+        ModalwithConfirmation(
+          enLanguages.dataLoss_modal,
+          () => {
+            navigate(-1);
+          },
+          "warning",
+          () => console.log("Navigation cancelled.")
+        );
+      } else {
+        navigate(-1);
+      }
+    },
+    [userHasInteracted, navigate]
+  );
+
+  const resetForm = () => {
+    setRows(
+      Array(10).fill({
+        firstName: "",
+        lastName: "",
+        schoolSite: { id: "", label: "" },
+        teamSeason: { id: "", label: "" },
+      })
+    );
+    setErrors(
+      Array(10).fill({
+        firstNameError: "",
+        lastNameError: "",
+        schoolSiteError: "",
+        teamSeasonError: "",
+      })
+    );
+    setRegion("");
+    setUserHasInteracted(false);
+  };
+
+  useEffect(() => {
+    getRegionsData()
+      .then(async (response) => {
+        setRegionsData(response);
+        setLoadingRegions(false);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    getTeamSeasons()
+      .then(async (response) => {
+        setTeamSeasons(response);
+        setLoadingTeamSeasons(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoadingTeamSeasons(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [handleBeforeUnload]);
 
   if (loadingRegions || loadingTeamSeasons) return <Loader />;
 
@@ -371,7 +374,7 @@ const QuickRegisteration = () => {
           <Button
             variant="outlined"
             startIcon={<ArrowBackIcon />}
-            onClick={handleGoBack}
+            onClick={(e) => handleGoBack(e)}
           >
             Go Back
           </Button>
