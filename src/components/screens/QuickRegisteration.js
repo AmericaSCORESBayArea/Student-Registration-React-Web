@@ -7,7 +7,7 @@ import {
   postContact,
   postEnrollment,
 } from "../controller/api";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Alert, Box, Button, Grid, Typography } from "@mui/material";
 import Loader from "../utils/Loader";
 import { ModalwithConfirmation } from "../utils/Modal";
 import { enLanguages } from "../translations/en";
@@ -34,6 +34,7 @@ const QuickRegisteration = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [enrollmentResults, setEnrollmentResults] = useState([]);
+  const [errorAlert, setErrorAlert] = useState({ show: false, message: "" });
 
   const [rows, setRows] = useState(
     Array(10).fill({
@@ -95,6 +96,8 @@ const QuickRegisteration = () => {
             .then((response) => {
               setSchoolSitesData(response);
               setUserHasInteracted(false);
+              setErrorAlert({ show: false, message: "" });
+              setFormSubmitted(false);
               setRows(
                 Array(10).fill({
                   firstName: "",
@@ -115,6 +118,8 @@ const QuickRegisteration = () => {
           .then((response) => {
             setSchoolSitesData(response);
             setUserHasInteracted(false);
+            setErrorAlert({ show: false, message: "" });
+            setFormSubmitted(false);
           })
           .catch((e) => {
             console.log("Failed to fetch school sites:", e);
@@ -210,28 +215,31 @@ const QuickRegisteration = () => {
         row.lastName.trim() ||
         row.schoolSite.id.trim() ||
         row.teamSeason.id.trim();
-      if (isRowInteracted) {
-        const errors = {
-          firstNameError: row.firstName.trim() ? "" : "First name is required",
-          lastNameError: row.lastName.trim() ? "" : "Last name is required",
-          schoolSiteError: row.schoolSite.id.trim()
-            ? ""
-            : "School site is required",
-          teamSeasonError: row.teamSeason.id.trim()
-            ? ""
-            : "Team season is required",
+
+      if (!isRowInteracted) {
+        return {
+          firstNameError: "",
+          lastNameError: "",
+          schoolSiteError: "",
+          teamSeasonError: "",
         };
-        if (Object.values(errors).some((error) => error !== "")) {
-          allValid = false;
-        }
-        return errors;
       }
-      return {
-        firstNameError: "",
-        lastNameError: "",
-        schoolSiteError: "",
-        teamSeasonError: "",
+
+      const errors = {
+        firstNameError: row.firstName.trim() ? "" : "First name is required",
+        lastNameError: row.lastName.trim() ? "" : "Last name is required",
+        schoolSiteError: row.schoolSite.id.trim()
+          ? ""
+          : "School site is required",
+        teamSeasonError: row.teamSeason.id.trim()
+          ? ""
+          : "Team season is required",
       };
+
+      if (Object.values(errors).some((error) => error !== "")) {
+        allValid = false;
+      }
+      return errors;
     });
 
     setErrors(newErrors);
@@ -241,61 +249,82 @@ const QuickRegisteration = () => {
       return;
     }
 
-    const contactPromises = rows
-      .filter(
-        (row, index) =>
-          newErrors[index].firstNameError === "" && row.firstName.trim()
-      )
-      .map(async (row) => {
-        const formattedData = {
+    const filteredAndValidRows = rows.filter(
+      (row, index) =>
+        (row.firstName.trim() ||
+          row.lastName.trim() ||
+          row.schoolSite.id.trim() ||
+          row.teamSeason.id.trim()) &&
+        !Object.values(newErrors[index]).some((error) => error !== "")
+    );
+
+    const contactPromises = filteredAndValidRows.map(async (row) => {
+      try {
+        const contactResponse = await postContact({
           FirstName: row.firstName,
           LastName: row.lastName,
           Birthdate: "2000-01-01",
           SchoolSiteId: row.schoolSite.id,
+        });
+        if (contactResponse.error) {
+          throw new Error(contactResponse.message);
+        }
+
+        const enrollmentData = {
+          // TeamSeasonId: "a0qU8000081MkMRIA0",
+          TeamSeasonId: row.teamSeason.id,
+          StudentId: contactResponse.ContactId,
+          StartDate: "2023-08-06",
+          EndDate: "2024-06-06",
         };
-
-        try {
-          const contactResponse = await postContact(formattedData);
-          if (contactResponse.error) {
-            throw new Error(contactResponse.message);
+        return postEnrollment(enrollmentData).then((enrollmentResponse) => {
+          if (enrollmentResponse.error) {
+            throw new Error(enrollmentResponse.message);
           }
-
-          const enrollmentData = {
-            // TeamSeasonId: row.teamSeason.id,
-            TeamSeasonId: "a0qU8000001MkTRIA0",
-            StudentId: contactResponse.ContactId,
-            StartDate: "2023-08-06",
-            EndDate: "2024-06-06",
-          };
-          return postEnrollment(enrollmentData).then((enrollmentResponse) => ({
+          return {
             ...enrollmentResponse,
             firstName: row.firstName,
             lastName: row.lastName,
             schoolSiteLabel: row.schoolSite.label,
             teamSeasonLabel: row.teamSeason.label,
-          }));
-        } catch (e) {
-          console.error("Failed to submit contact:", e);
-          return { error: true, message: e.message };
-        }
-      });
+          };
+        });
+      } catch (e) {
+        console.error("Failed to submit contact:", e);
+        return { error: true, message: e.message };
+      }
+    });
 
     Promise.allSettled(contactPromises)
       .then((results) => {
-        const enrolledDetails = results
-          .filter(
-            (result) => result.status === "fulfilled" && !result.value.error
-          )
-          .map((result) => ({
+        const errors = results.filter(
+          (result) => result.status === "rejected" || result.value.error
+        );
+
+        if (errors.length > 0) {
+          setErrorAlert({
+            show: true,
+            message:
+              "Some entries could not be processed. Please check the data and try again.",
+          });
+        } else {
+          const enrolledDetails = results.map((result) => ({
             ...result.value,
             region: region,
           }));
-        setEnrollmentResults(enrolledDetails);
-        setFormSubmitted(true);
-        handleReset(false);
-        setLoadingSubmit(false);
+          setEnrollmentResults(enrolledDetails);
+          setFormSubmitted(true);
+          handleReset(false);
+        }
       })
-      .catch(() => {
+      .catch((error) => {
+        setErrorAlert({
+          show: true,
+          message:
+            "There appears to be a problem with the selected Site and/or Team Season. Please try another or inform your Program Manager.",
+        });
+      })
+      .finally(() => {
         setLoadingSubmit(false);
       });
 
@@ -316,16 +345,6 @@ const QuickRegisteration = () => {
       navigate(-1);
     }
   }, [userHasInteracted, navigate]);
-
-  useEffect(() => {
-    if (formSubmitted) {
-      const timer = setTimeout(() => {
-        setFormSubmitted(false);
-      }, 5000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [formSubmitted]);
 
   if (loadingRegions || loadingTeamSeasons) return <Loader />;
 
@@ -362,16 +381,19 @@ const QuickRegisteration = () => {
         </Grid>
         <Grid item xs={12} md={3} sm={12} />
       </Grid>
+
+      {errorAlert.show && <Alert severity="error">{errorAlert.message}</Alert>}
       {formSubmitted && (
-        <Typography
-          variant="h6"
-          color="green"
-          textAlign={"center"}
-          gutterBottom
+        <Alert
+          severity="success"
+          sx={{
+            marginBlock: 2,
+          }}
         >
           Form successfully submitted!
-        </Typography>
+        </Alert>
       )}
+
       <RegisterUI
         rows={rows}
         region={region}
