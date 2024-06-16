@@ -519,9 +519,9 @@ export default function Form(props) {
               parentLName: Yup.string().required(
                 props.formTranslations.required_fields
               ),
-              parentEmail: Yup.string().email(
-                props.formTranslations.invalid_email
-              ),
+              parentEmail: Yup.string()
+                .required(props.formTranslations.required_fields)
+                .email(props.formTranslations.invalid_email),
               relationship: Yup.string().required(
                 props.formTranslations.required_fields
               ),
