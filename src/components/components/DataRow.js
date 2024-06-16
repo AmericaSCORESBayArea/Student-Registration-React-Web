@@ -139,13 +139,13 @@ const DataRow = React.memo(
         const nameToAdd = newValue.inputValue;
         if (type === "firstName") {
           setFirstNameInput(nameToAdd);
-          setRowData(index, "firstName", nameToAdd);
+          setRowData(index, "firstName", nameToAdd, "");
         } else {
           setLastNameInput(nameToAdd);
-          setRowData(index, "lastName", nameToAdd);
+          setRowData(index, "lastName", nameToAdd, "");
         }
-        setRowData(index, "schoolSite", { id: "", label: "" });
-      } else if (newValue.label) {
+        setRowData(index, "schoolSite", { id: "", label: "" }, "");
+      } else if (newValue.id) {
         const parts = newValue.label.split(" ");
         const firstName = parts[0];
         const lastName = parts[1];
@@ -157,6 +157,7 @@ const DataRow = React.memo(
         const matchedSite = schoolSitesData.find(
           (site) => site.label === schoolSiteLabel
         );
+
         if (matchedSite) {
           setRowData(index, "schoolSite", {
             id: matchedSite.id,
@@ -164,8 +165,9 @@ const DataRow = React.memo(
           });
         }
 
-        setRowData(index, "firstName", firstName);
-        setRowData(index, "lastName", lastName);
+        setRowData(index, "firstName", firstName, newValue.id);
+        setRowData(index, "lastName", lastName, newValue.id);
+        setRowData(index, "contactId", newValue.id);
       }
     };
 

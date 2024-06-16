@@ -34,6 +34,7 @@ const QuickRegisteration = () => {
       lastName: "",
       schoolSite: { id: "", label: "" },
       teamSeason: { id: "", label: "" },
+      contactId: "",
     })
   );
 
@@ -76,6 +77,7 @@ const QuickRegisteration = () => {
                   lastName: "",
                   schoolSite: { id: "", label: "" },
                   teamSeason: { id: "", label: "" },
+                  contactId: "",
                 })
               );
             })
@@ -125,6 +127,7 @@ const QuickRegisteration = () => {
         lastName: "",
         schoolSite: { id: "", label: "" },
         teamSeason: { id: "", label: "" },
+        contactId: "",
       },
     ]);
     setErrors([
@@ -210,37 +213,42 @@ const QuickRegisteration = () => {
     );
 
     const contactPromises = filteredAndValidRows.map(async (row) => {
-      try {
-        const contactResponse = await postContact({
-          FirstName: row.firstName,
-          LastName: row.lastName,
-          Birthdate: "2000-01-01",
-          SchoolSiteId: row.schoolSite.id,
-        });
-        if (contactResponse.error) {
-          throw new Error(contactResponse.message);
+      if (row.contactId === "") {
+        try {
+          const contactResponse = await postContact({
+            FirstName: row.firstName,
+            LastName: row.lastName,
+            SchoolSiteId: row.schoolSite.id,
+          });
+          if (contactResponse.error) {
+            throw new Error(contactResponse.message);
+          }
+          row.contactId = contactResponse.ContactId;
+        } catch (e) {
+          console.error("Failed to create contact:", e);
+          return { error: true, message: e.message };
         }
-
-        const enrollmentData = {
+      }
+      try {
+        const enrollmentResponse = await postEnrollment({
           TeamSeasonId: row.teamSeason.id,
-          StudentId: contactResponse.ContactId,
+          StudentId: row.contactId,
           StartDate: "2023-08-06",
           EndDate: "2024-06-06",
-        };
-        return postEnrollment(enrollmentData).then((enrollmentResponse) => {
-          if (enrollmentResponse.error) {
-            throw new Error(enrollmentResponse.message);
-          }
-          return {
-            ...enrollmentResponse,
-            firstName: row.firstName,
-            lastName: row.lastName,
-            schoolSiteLabel: row.schoolSite.label,
-            teamSeasonLabel: row.teamSeason.label,
-          };
         });
+        if (enrollmentResponse.error) {
+          throw new Error(enrollmentResponse.message);
+        }
+        return {
+          ...enrollmentResponse,
+          firstName: row.firstName,
+          lastName: row.lastName,
+          schoolSiteLabel: row.schoolSite.label,
+          teamSeasonLabel: row.teamSeason.label,
+          region: region,
+        };
       } catch (e) {
-        console.error("Failed to submit contact:", e);
+        console.error("Failed to enroll contact:", e);
         return { error: true, message: e.message };
       }
     });
@@ -258,10 +266,7 @@ const QuickRegisteration = () => {
               "Some entries could not be processed. Please check the data and try again.",
           });
         } else {
-          const enrolledDetails = results.map((result) => ({
-            ...result.value,
-            region: region,
-          }));
+          const enrolledDetails = results.map((result) => result.value);
           setEnrollmentResults(enrolledDetails);
           setFormSubmitted(true);
           handleReset(false);
@@ -270,8 +275,7 @@ const QuickRegisteration = () => {
       .catch((error) => {
         setErrorAlert({
           show: true,
-          message:
-            "There appears to be a problem with the selected Site and/or Team Season. Please try another or inform your Program Manager.",
+          message: error.message,
         });
       })
       .finally(() => {
@@ -307,6 +311,7 @@ const QuickRegisteration = () => {
         lastName: "",
         schoolSite: { id: "", label: "" },
         teamSeason: { id: "", label: "" },
+        contactId: "",
       })
     );
     setErrors(
