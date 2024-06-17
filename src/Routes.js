@@ -1,10 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  useNavigate,
-  Routes,
-} from "react-router-dom";
+import { Route, useNavigate, Routes } from "react-router-dom";
 import HomeScreen from "./components/screens/HomeScreen";
 import NavBar from "./components/NavbarComponent";
 //import Footer from "./components/Footer";
@@ -19,6 +14,7 @@ import { enLanguages } from "./components/translations/en";
 import { esLanguages } from "./components/translations/es";
 import { cnLanguages } from "./components/translations/cn";
 import firebase from "./firebase/firebaseConfig";
+import QuickRegisteration from "./components/screens/QuickRegisteration";
 
 export default function RoutesWeb() {
   const lang = navigator.language || navigator.userLanguage;
@@ -72,7 +68,7 @@ export default function RoutesWeb() {
     } else {
       checkLocalstorageLanguage();
     }
-  }, []);
+  }, [lang]);
   return (
     <div>
       <NavBar
@@ -93,6 +89,14 @@ export default function RoutesWeb() {
             element={
               <PrivateRoute>
                 <HomeScreen translations={auxTranslation} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/QuickRegistration"
+            element={
+              <PrivateRoute>
+                <QuickRegisteration />
               </PrivateRoute>
             }
           />

@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { makeStyles } from "@mui/styles";
 import { statusArray } from "./categoriesArray";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import PersonAddIcon from "@mui/icons-material/PersonAddAlt1";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import NoteAltIcon from "@mui/icons-material/NoteAlt";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import firebase from "../../firebase/firebaseConfig";
 import SearchStudent from "./SearchStudent";
@@ -13,6 +15,7 @@ import ls from "localstorage-slim";
 import Loading from "../components/Loading";
 import { toast } from "react-toastify";
 import { ErrorModal } from "../utils/Modal";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   homeScreenContainer: {
@@ -35,6 +38,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 export default function Registration_Status(props) {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState(props.registration_status);
   const [width, setWidth] = useState(window.innerWidth);
   const [studentsList, setStudentsList] = useState();
@@ -46,6 +50,11 @@ export default function Registration_Status(props) {
   const updateDimensions = () => {
     setWidth(window.innerWidth);
   };
+
+  const showModal = useCallback(() => {
+    ErrorModal(props.modalOptions, "info");
+  }, [props]);
+
   useEffect(() => {
     props.studentProps(null);
     async function fetchData() {
@@ -62,23 +71,26 @@ export default function Registration_Status(props) {
     fetchData();
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
-  }, []);
-  const showModal = () => {
-    ErrorModal(props.modalOptions, "info");
-  };
+  }, [props, showModal]);
+
   const goBack = () => {
     setShowSearch(false);
     dismiss();
   };
   const dismiss = () => toast.dismiss(toastId.current);
+
   const selectingCategory = (categoryName) => {
-    console.log(categoryName);
     setSelected(categoryName);
     firebase.analytics().logEvent("student_status", {
       app: "web_registration",
       status: categoryName,
     });
+
+    if (categoryName === "Quick Registration" && props.roleType === "Coach") {
+      navigate("/QuickRegistration");
+    }
   };
+
   const showToast = (message) => {
     setLoading(false);
     toast.error(message, {
@@ -131,25 +143,24 @@ export default function Registration_Status(props) {
     }
   };
   const icons = (name) => {
-    if (name === selected) {
-      switch (name) {
-        case "New":
-          return <PersonAddIcon sx={{ fontSize: 100, color: "#F0F8FF" }} />;
-        case "Existing":
-          return <PersonSearchIcon sx={{ fontSize: 100, color: "#F0F8FF" }} />;
-        default:
-          return <PersonAddIcon sx={{ fontSize: 100, color: "#F0F8FF" }} />;
-      }
-    } else {
-      switch (name) {
-        case "New":
-          return <PersonAddIcon sx={{ fontSize: 100, color: "#808080" }} />;
-        case "Existing":
-          return <PersonSearchIcon sx={{ fontSize: 100, color: "#808080" }} />;
-        default:
-          return <PersonAddIcon sx={{ fontSize: 100, color: "#808080" }} />;
-      }
+    const color = selected === name ? "#F0F8FF" : "#808080";
+    const iconProps = { sx: { fontSize: 100, color } };
+    switch (name) {
+      case "New":
+        return <PersonAddIcon {...iconProps} />;
+      case "Existing":
+        return <PersonSearchIcon {...iconProps} />;
+      case "Quick Registration":
+        return <GroupAddIcon {...iconProps} />;
+      case "Enroll":
+        return <NoteAltIcon {...iconProps} />;
+      default:
+        return <PersonAddIcon {...iconProps} />;
     }
+  };
+
+  const buttonDisabled = (categoryName) => {
+    return categoryName === "Enroll";
   };
   return (
     <div
@@ -205,25 +216,33 @@ export default function Registration_Status(props) {
               >
                 <Button
                   variant="outlined"
-                  style={
-                    selected === category.name
-                      ? {
-                          borderRadius: 15,
-                          width: "200px",
-                          height: "200px",
-                          borderWidth: 3,
-                          borderColor: "#1976d2",
-                          backgroundColor: "#1976d2",
-                        }
-                      : {
-                          borderRadius: 15,
-                          width: "200px",
-                          height: "200px",
-                          borderWidth: 3,
-                          borderColor: "#1976d2",
-                        }
-                  }
+                  disabled={buttonDisabled(category.name)}
+                  style={{
+                    borderRadius: 15,
+                    width: "200px",
+                    height: "200px",
+                    borderWidth: 3,
+                    borderColor: buttonDisabled(category.name)
+                      ? "#D3D3D3"
+                      : "#1976d2",
+                    backgroundColor: buttonDisabled(category.name)
+                      ? "#D3D3D3"
+                      : selected === category.name
+                      ? "#1976d2"
+                      : "transparent",
+                    color: buttonDisabled(category.name)
+                      ? "#D3D3D3"
+                      : selected === category.name
+                      ? "#FFFFFF"
+                      : "#1976d2",
+                    cursor: buttonDisabled(category.name)
+                      ? "not-allowed"
+                      : "pointer",
+                  }}
                   onClick={() => {
+                    if (!buttonDisabled(category.name)) {
+                      setSelected(category.name);
+                    }
                     if (
                       category.name === "Existing" &&
                       props.roleType === "Coach"
@@ -244,9 +263,7 @@ export default function Registration_Status(props) {
                       : classes.textCategory
                   }
                 >
-                  {category.name === "New"
-                    ? props.newOption
-                    : props.returningOption}
+                  {category.name}
                 </h3>
               </Grid>
             ))}

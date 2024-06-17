@@ -17,4 +17,12 @@ export const statusArray = [
     id: 1,
     name: "Existing",
   },
+  {
+    id: 2,
+    name: "Quick Registration",
+  },
+  {
+    id: 3,
+    name: "Enroll",
+  },
 ];
