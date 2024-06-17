@@ -114,8 +114,10 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/m
 This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
 ### Deployment
+The Heroku environment debug instance points to the /debug branch https://github.com/AmericaSCORESBayArea/Student-Registration-React-Web/tree/debug and will auto-deploy.
+Likewise Master directs to the Production instance. Commit to /debug first and then /master only after testing is completed.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Additional information can be found here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
 ### `npm run build` fails to minify
 
