@@ -27,6 +27,7 @@ const QuickRegisteration = () => {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [enrollmentResults, setEnrollmentResults] = useState([]);
   const [errorAlert, setErrorAlert] = useState({ show: false, message: "" });
+  const [isNewContact, setIsNewContact] = useState(false);
 
   const [rows, setRows] = useState(
     Array(10).fill({
@@ -118,6 +119,10 @@ const QuickRegisteration = () => {
       })
     );
   }, []);
+
+  const handleFieldChange = (index, field, value) => {
+    setIsNewContact(true);
+  };
 
   const handleAddRow = useCallback(() => {
     setRows([
@@ -213,7 +218,7 @@ const QuickRegisteration = () => {
     );
 
     const contactPromises = filteredAndValidRows.map(async (row) => {
-      if (row.contactId === "") {
+      if (row.contactId === "" || isNewContact) {
         try {
           const contactResponse = await postContact({
             FirstName: row.firstName,
@@ -283,7 +288,7 @@ const QuickRegisteration = () => {
       });
 
     setUserHasInteracted(false);
-  }, [rows, handleReset, region]);
+  }, [rows, isNewContact, region, handleReset]);
 
   const handleGoBack = useCallback(
     (event) => {
@@ -417,6 +422,7 @@ const QuickRegisteration = () => {
         loadingSubmit={loadingSubmit}
         userHasInteracted={userHasInteracted}
         enrollmentResults={enrollmentResults}
+        handleFieldChange={handleFieldChange}
       />
     </Box>
   );

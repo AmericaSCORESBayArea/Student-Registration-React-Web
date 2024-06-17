@@ -1,11 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Autocomplete,
-  CircularProgress,
-  Grid,
-  MenuItem,
-  TextField,
-} from "@mui/material";
+import { Autocomplete, CircularProgress, Grid, MenuItem } from "@mui/material";
 import { CustomTextField } from "./RegisterUI";
 import { getStudents } from "../controller/api";
 import debounce from "lodash/debounce";
@@ -20,6 +14,7 @@ const DataRow = React.memo(
     schoolSitesData,
     teamSeasons,
     errors,
+    handleFieldChange,
   }) => {
     const filteredTeamSeasons = useMemo(() => {
       if (!rowData.schoolSite.label) return [];
@@ -36,6 +31,7 @@ const DataRow = React.memo(
     const [lastNameOptions, setLastNameOptions] = useState([]);
     const [loadingFirstName, setLoadingFirstName] = useState(false);
     const [loadingLastName, setLoadingLastName] = useState(false);
+    const [shouldCreateNewContact, setShouldCreateNewContact] = useState(false);
 
     const defaultFilterOptions = createFilterOptions();
 
@@ -108,30 +104,6 @@ const DataRow = React.memo(
       [fetchData]
     );
 
-    useEffect(() => {
-      if (
-        firstNameInput &&
-        firstNameInput.trim().length >= 2 &&
-        firstNameInput !== rowData.firstName
-      ) {
-        debouncedFetchFirstNameData(firstNameInput);
-      } else {
-        setFirstNameOptions([]);
-      }
-    }, [firstNameInput, debouncedFetchFirstNameData, rowData.firstName]);
-
-    useEffect(() => {
-      if (
-        lastNameInput &&
-        lastNameInput.trim().length >= 2 &&
-        lastNameInput !== rowData.lastName
-      ) {
-        debouncedFetchLastNameData(lastNameInput);
-      } else {
-        setLastNameOptions([]);
-      }
-    }, [lastNameInput, debouncedFetchLastNameData, rowData.lastName]);
-
     const handleNameSelect = (newValue, type) => {
       if (!newValue) return;
 
@@ -145,7 +117,9 @@ const DataRow = React.memo(
           setRowData(index, "lastName", nameToAdd, "");
         }
         setRowData(index, "schoolSite", { id: "", label: "" }, "");
+        shouldCreateNewContact(false);
       } else if (newValue.id) {
+        shouldCreateNewContact(true);
         const parts = newValue.label.split(" ");
         const firstName = parts[0];
         const lastName = parts[1];
@@ -171,11 +145,48 @@ const DataRow = React.memo(
       }
     };
 
+    const handleInputChange = (field, value) => {
+      setRowData(index, field, value);
+
+      if (shouldCreateNewContact) {
+        handleFieldChange(index, field, value);
+      }
+
+      setShouldCreateNewContact(false);
+    };
+
+    useEffect(() => {
+      if (
+        firstNameInput &&
+        firstNameInput.trim().length >= 2 &&
+        firstNameInput !== rowData.firstName
+      ) {
+        debouncedFetchFirstNameData(firstNameInput);
+      } else {
+        setFirstNameOptions([]);
+      }
+    }, [firstNameInput, debouncedFetchFirstNameData, rowData.firstName]);
+
+    useEffect(() => {
+      if (
+        lastNameInput &&
+        lastNameInput.trim().length >= 2 &&
+        lastNameInput !== rowData.lastName
+      ) {
+        debouncedFetchLastNameData(lastNameInput);
+      } else {
+        setLastNameOptions([]);
+      }
+    }, [lastNameInput, debouncedFetchLastNameData, rowData.lastName]);
+
     return (
       <Grid container spacing={2} sx={{ marginBottom: 2 }}>
         <Grid item xs={12} sm={3}>
           <Autocomplete
             id="first-name"
+            hiddenLabel
+            fullWidth
+            size="small"
             open={openFirstName}
             onOpen={() => setOpenFirstName(true)}
             onClose={() => setOpenFirstName(false)}
@@ -187,14 +198,18 @@ const DataRow = React.memo(
             onInputChange={(event, newInputValue, reason) => {
               if (reason === "input") setFirstNameInput(newInputValue);
             }}
-            onChange={(event, newValue) =>
-              handleNameSelect(newValue, "firstName")
-            }
+            onChange={(event, newValue) => {
+              handleInputChange("firstName", newValue);
+              handleNameSelect(newValue, "firstName");
+            }}
             filterOptions={filterOptions}
             renderInput={(params) => (
-              <TextField
+              <CustomTextField
                 {...params}
-                label="Search First Names"
+                label="Enter First Name"
+                size="small"
+                fullWidth
+                hiddenLabel
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -224,6 +239,10 @@ const DataRow = React.memo(
         <Grid item xs={12} sm={3}>
           <Autocomplete
             id="last-name"
+            variant="filled"
+            hiddenLabel
+            fullWidth
+            size="small"
             open={openLastName}
             onOpen={() => setOpenLastName(true)}
             onClose={() => setOpenLastName(false)}
@@ -235,14 +254,18 @@ const DataRow = React.memo(
             onInputChange={(event, newInputValue, reason) => {
               if (reason === "input") setLastNameInput(newInputValue);
             }}
-            onChange={(event, newValue) =>
-              handleNameSelect(newValue, "lastName")
-            }
+            onChange={(event, newValue) => {
+              handleInputChange("lastName", newValue);
+              handleNameSelect(newValue, "lastName");
+            }}
             filterOptions={filterOptions}
             renderInput={(params) => (
-              <TextField
+              <CustomTextField
                 {...params}
-                label="Search Last Names"
+                label="Enter Last Name"
+                size="small"
+                fullWidth
+                hiddenLabel
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -284,6 +307,10 @@ const DataRow = React.memo(
                 (option) => option.id === e.target.value
               );
               setRowData(index, "schoolSite", {
+                id: selectedSite.id,
+                label: selectedSite.label,
+              });
+              handleInputChange("schoolSite", {
                 id: selectedSite.id,
                 label: selectedSite.label,
               });

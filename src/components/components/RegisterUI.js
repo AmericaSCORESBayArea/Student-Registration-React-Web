@@ -70,6 +70,7 @@ const RegisterUI = React.memo(
     loadingSubmit,
     userHasInteracted,
     enrollmentResults,
+    handleFieldChange,
   }) => {
     return (
       <Box
@@ -219,6 +220,7 @@ const RegisterUI = React.memo(
                       schoolSitesData={schoolSitesData}
                       teamSeasons={teamSeasons}
                       errors={errors}
+                      handleFieldChange={handleFieldChange}
                     />
                   ))}
                   <Grid container item>
