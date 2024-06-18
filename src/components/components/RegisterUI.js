@@ -51,7 +51,7 @@ const baseTextFieldStyle = (customStyles) => ({
       backgroundColor: "transparent !important",
       color: "#ccc",
     },
-    ...customStyles, // Merge custom styles here
+    ...customStyles,
   },
 });
 

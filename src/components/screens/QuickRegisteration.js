@@ -81,6 +81,14 @@ const QuickRegisteration = () => {
                   contactId: "",
                 })
               );
+              setErrors(
+                Array(5).fill({
+                  firstNameError: "",
+                  lastNameError: "",
+                  schoolSiteError: "",
+                  teamSeasonError: "",
+                })
+              );
             })
             .catch((e) => {
               console.log("Failed to fetch school sites:", e);
@@ -120,7 +128,7 @@ const QuickRegisteration = () => {
     );
   }, []);
 
-  const handleFieldChange = (index, field, value) => {
+  const handleFieldChange = () => {
     setIsNewContact(true);
   };
 
@@ -291,14 +299,15 @@ const QuickRegisteration = () => {
   }, [rows, isNewContact, region, handleReset]);
 
   useEffect(() => {
-    if (formSubmitted) {
+    if (errorAlert.show || formSubmitted) {
       const timer = setTimeout(() => {
+        setErrorAlert({ ...errorAlert, show: false });
         setFormSubmitted(false);
       }, 5000);
 
       return () => clearTimeout(timer);
     }
-  }, [formSubmitted]);
+  }, [errorAlert, formSubmitted]);
 
   const handleGoBack = useCallback(
     (event) => {

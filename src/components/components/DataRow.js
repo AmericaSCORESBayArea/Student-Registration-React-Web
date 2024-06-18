@@ -179,6 +179,22 @@ const DataRow = React.memo(
       }
     }, [lastNameInput, debouncedFetchLastNameData, rowData.lastName]);
 
+    useEffect(() => {
+      setRowData(index, "teamSeason", { id: "", label: "" });
+    }, [rowData.schoolSite, index, setRowData]);
+
+    useEffect(() => {
+      setFirstNameInput("");
+      setLastNameInput("");
+      setRowData(index, {
+        firstName: "",
+        lastName: "",
+        schoolSite: { id: "", label: "" },
+        teamSeason: { id: "", label: "" },
+        contactId: "",
+      });
+    }, [region, index, setRowData]);
+
     return (
       <Grid container spacing={2} sx={{ marginBottom: 2 }}>
         <Grid item xs={12} sm={3}>
@@ -208,7 +224,6 @@ const DataRow = React.memo(
               }
             }}
             onBlur={() => {
-              // Handle case when user exits the input without selecting "Add"
               const inputValue = firstNameInput.trim();
               if (
                 inputValue &&
@@ -218,6 +233,7 @@ const DataRow = React.memo(
                 )
               ) {
                 setRowData(index, "firstName", inputValue, "");
+                handleInputChange("firstName", inputValue);
               }
             }}
             onChange={(event, newValue) => {
@@ -225,8 +241,11 @@ const DataRow = React.memo(
               handleNameSelect(newValue, "firstName");
             }}
             filterOptions={filterOptions}
+            noOptionsText="start typing to search"
             renderInput={(params) => (
               <CustomTextField
+                error={!!errors[index].firstNameError}
+                helperText={errors[index].firstNameError}
                 {...params}
                 variant="filled"
                 size="small"
@@ -304,11 +323,15 @@ const DataRow = React.memo(
                 )
               ) {
                 setRowData(index, "lastName", inputValue, "");
+                handleInputChange("lastName", inputValue);
               }
             }}
             filterOptions={filterOptions}
+            noOptionsText="start typing to search"
             renderInput={(params) => (
               <CustomTextField
+                error={!!errors[index].lastNameError}
+                helperText={errors[index].lastNameError}
                 {...params}
                 variant="filled"
                 size="small"
