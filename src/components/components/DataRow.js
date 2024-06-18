@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Autocomplete, CircularProgress, Grid, MenuItem } from "@mui/material";
-import { CustomTextField } from "./RegisterUI";
 import { getStudents } from "../controller/api";
 import debounce from "lodash/debounce";
 import { createFilterOptions } from "@mui/material/Autocomplete";
+import { CustomTextField, DropdownTextField } from "./RegisterUI";
 
 const DataRow = React.memo(
   ({
@@ -117,9 +117,8 @@ const DataRow = React.memo(
           setRowData(index, "lastName", nameToAdd, "");
         }
         setRowData(index, "schoolSite", { id: "", label: "" }, "");
-        shouldCreateNewContact(false);
+        setShouldCreateNewContact(false);
       } else if (newValue.id) {
-        shouldCreateNewContact(true);
         const parts = newValue.label.split(" ");
         const firstName = parts[0];
         const lastName = parts[1];
@@ -142,6 +141,7 @@ const DataRow = React.memo(
         setRowData(index, "firstName", firstName, newValue.id);
         setRowData(index, "lastName", lastName, newValue.id);
         setRowData(index, "contactId", newValue.id);
+        setShouldCreateNewContact(true);
       }
     };
 
@@ -183,15 +183,15 @@ const DataRow = React.memo(
       <Grid container spacing={2} sx={{ marginBottom: 2 }}>
         <Grid item xs={12} sm={3}>
           <Autocomplete
-            id="first-name"
-            hiddenLabel
-            fullWidth
-            size="small"
+            id={`first-name-autocomplete-${index}`}
             open={openFirstName}
             onOpen={() => setOpenFirstName(true)}
             onClose={() => setOpenFirstName(false)}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            getOptionLabel={(option) => option.label}
+            isOptionEqualToValue={(option, value) =>
+              option.id === value.id || (!value.id && !option.id)
+            }
+            defaultValue={rowData.firstName}
+            getOptionLabel={(option) => option.label || ""}
             options={firstNameOptions}
             loading={loadingFirstName}
             inputValue={firstNameInput}
@@ -206,10 +206,10 @@ const DataRow = React.memo(
             renderInput={(params) => (
               <CustomTextField
                 {...params}
-                label="Enter First Name"
+                variant="filled"
                 size="small"
                 fullWidth
-                hiddenLabel
+                placeholder="Enter First Name"
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -220,6 +220,10 @@ const DataRow = React.memo(
                       {params.InputProps.endAdornment}
                     </>
                   ),
+                }}
+                InputLabelProps={{
+                  ...params.InputLabelProps,
+                  shrink: false,
                 }}
               />
             )}
@@ -238,16 +242,18 @@ const DataRow = React.memo(
         </Grid>
         <Grid item xs={12} sm={3}>
           <Autocomplete
-            id="last-name"
+            id={`last-name-autocomplete-${index}`}
             variant="filled"
-            hiddenLabel
             fullWidth
             size="small"
             open={openLastName}
             onOpen={() => setOpenLastName(true)}
             onClose={() => setOpenLastName(false)}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            getOptionLabel={(option) => option.label}
+            isOptionEqualToValue={(option, value) =>
+              option.id === value.id || (!value.id && !option.id)
+            }
+            defaultValue={rowData.lastName}
+            getOptionLabel={(option) => option.label || ""}
             options={lastNameOptions}
             loading={loadingLastName}
             inputValue={lastNameInput}
@@ -262,10 +268,10 @@ const DataRow = React.memo(
             renderInput={(params) => (
               <CustomTextField
                 {...params}
-                label="Enter Last Name"
+                variant="filled"
                 size="small"
                 fullWidth
-                hiddenLabel
+                placeholder="Enter Last Name"
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -293,7 +299,7 @@ const DataRow = React.memo(
           />
         </Grid>
         <Grid item xs={12} sm={3}>
-          <CustomTextField
+          <DropdownTextField
             error={!!errors[index].schoolSiteError}
             helperText={errors[index].schoolSiteError}
             select
@@ -337,10 +343,10 @@ const DataRow = React.memo(
             ) : (
               <MenuItem disabled>No schools found</MenuItem>
             )}
-          </CustomTextField>
+          </DropdownTextField>
         </Grid>
         <Grid item xs={12} sm={3}>
-          <CustomTextField
+          <DropdownTextField
             error={!!errors[index].teamSeasonError}
             helperText={errors[index].teamSeasonError}
             select
@@ -374,7 +380,7 @@ const DataRow = React.memo(
                 {option.TeamSeasonName}
               </MenuItem>
             ))}
-          </CustomTextField>
+          </DropdownTextField>
         </Grid>
       </Grid>
     );

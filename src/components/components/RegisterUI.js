@@ -15,11 +15,11 @@ import DataRow from "./DataRow";
 import { ExpandMore } from "@mui/icons-material";
 import EnrollmentDetailsAccordion from "./EnrollmentDetailsAccordion";
 
-export const CustomTextField = styled(TextField)({
+const baseTextFieldStyle = (customStyles) => ({
   backgroundColor: "transparent",
   "& .MuiFilledInput-input": {
     backgroundColor: "transparent",
-    borderBottom: " none !important",
+    borderBottom: "none !important",
   },
   "& .MuiFilledInput-underline:before": {
     borderBottom: "none !important",
@@ -51,8 +51,21 @@ export const CustomTextField = styled(TextField)({
       backgroundColor: "transparent !important",
       color: "#ccc",
     },
+    ...customStyles, // Merge custom styles here
   },
 });
+
+export const CustomTextField = styled(TextField)(
+  baseTextFieldStyle({
+    padding: "6px 10px !important",
+  })
+);
+
+export const DropdownTextField = styled(TextField)(
+  baseTextFieldStyle({
+    padding: "0px !important",
+  })
+);
 
 const RegisterUI = React.memo(
   ({
