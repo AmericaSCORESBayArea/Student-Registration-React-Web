@@ -92,15 +92,13 @@ const DataRow = React.memo(
       return filtered;
     };
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedFetchFirstNameData = useCallback(
-      debounce((input) => fetchData(input, "firstName"), 500),
+    const debouncedFetchFirstNameData = useMemo(
+      () => debounce((input) => fetchData(input, "firstName"), 500),
       [fetchData]
     );
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedFetchLastNameData = useCallback(
-      debounce((input) => fetchData(input, "lastName"), 500),
+    const debouncedFetchLastNameData = useMemo(
+      () => debounce((input) => fetchData(input, "lastName"), 500),
       [fetchData]
     );
 
@@ -117,7 +115,7 @@ const DataRow = React.memo(
           setRowData(index, "lastName", nameToAdd, "");
         }
         setRowData(index, "schoolSite", { id: "", label: "" }, "");
-        setShouldCreateNewContact(false);
+        setShouldCreateNewContact(true);
       } else if (newValue.id) {
         const parts = newValue.label.split(" ");
         const firstName = parts[0];
@@ -141,17 +139,16 @@ const DataRow = React.memo(
         setRowData(index, "firstName", firstName, newValue.id);
         setRowData(index, "lastName", lastName, newValue.id);
         setRowData(index, "contactId", newValue.id);
-        setShouldCreateNewContact(true);
+        setShouldCreateNewContact(false);
       }
     };
 
-    const handleInputChange = (field, value) => {
-      setRowData(index, field, value);
-
-      if (shouldCreateNewContact) {
+    const handleInputChange = (field, value, isNewContact) => {
+      if (isNewContact && shouldCreateNewContact) {
         handleFieldChange(index, field, value);
+      } else if (typeof value === "string" && rowData[field] !== value) {
+        setRowData(index, field, value, "");
       }
-
       setShouldCreateNewContact(false);
     };
 
@@ -223,7 +220,7 @@ const DataRow = React.memo(
                 setRowData(index, "firstName", "", "");
               }
             }}
-            onBlur={() => {
+            onBlur={(newValue) => {
               const inputValue = firstNameInput.trim();
               if (
                 inputValue &&
@@ -233,11 +230,12 @@ const DataRow = React.memo(
                 )
               ) {
                 setRowData(index, "firstName", inputValue, "");
-                handleInputChange("firstName", inputValue);
+                handleNameSelect(newValue, "firstName");
+                handleInputChange("firstName", inputValue, true);
               }
             }}
             onChange={(event, newValue) => {
-              handleInputChange("firstName", newValue);
+              handleInputChange("firstName", newValue, false);
               handleNameSelect(newValue, "firstName");
             }}
             filterOptions={filterOptions}
@@ -310,10 +308,10 @@ const DataRow = React.memo(
               }
             }}
             onChange={(event, newValue) => {
-              handleInputChange("lastName", newValue);
+              handleInputChange("lastName", newValue, false);
               handleNameSelect(newValue, "lastName");
             }}
-            onBlur={() => {
+            onBlur={(newValue) => {
               const inputValue = lastNameInput.trim();
               if (
                 inputValue &&
@@ -323,7 +321,8 @@ const DataRow = React.memo(
                 )
               ) {
                 setRowData(index, "lastName", inputValue, "");
-                handleInputChange("lastName", inputValue);
+                handleNameSelect(newValue, "lastName");
+                handleInputChange("lastName", inputValue, true);
               }
             }}
             filterOptions={filterOptions}
@@ -381,10 +380,14 @@ const DataRow = React.memo(
                 id: selectedSite.id,
                 label: selectedSite.label,
               });
-              handleInputChange("schoolSite", {
-                id: selectedSite.id,
-                label: selectedSite.label,
-              });
+              handleInputChange(
+                "schoolSite",
+                {
+                  id: selectedSite.id,
+                  label: selectedSite.label,
+                },
+                false
+              );
             }}
             disabled={!region}
             SelectProps={{
