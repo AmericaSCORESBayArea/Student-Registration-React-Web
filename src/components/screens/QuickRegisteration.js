@@ -30,7 +30,7 @@ const QuickRegisteration = () => {
   const [isNewContact, setIsNewContact] = useState(false);
 
   const [rows, setRows] = useState(
-    Array(10).fill({
+    Array(5).fill({
       firstName: "",
       lastName: "",
       schoolSite: { id: "", label: "" },
@@ -40,7 +40,7 @@ const QuickRegisteration = () => {
   );
 
   const [errors, setErrors] = useState(
-    Array(10).fill({
+    Array(5).fill({
       firstNameError: "",
       lastNameError: "",
       schoolSiteError: "",
@@ -73,7 +73,7 @@ const QuickRegisteration = () => {
               setErrorAlert({ show: false, message: "" });
               setFormSubmitted(false);
               setRows(
-                Array(10).fill({
+                Array(5).fill({
                   firstName: "",
                   lastName: "",
                   schoolSite: { id: "", label: "" },
@@ -290,6 +290,16 @@ const QuickRegisteration = () => {
     setUserHasInteracted(false);
   }, [rows, isNewContact, region, handleReset]);
 
+  useEffect(() => {
+    if (formSubmitted) {
+      const timer = setTimeout(() => {
+        setFormSubmitted(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [formSubmitted]);
+
   const handleGoBack = useCallback(
     (event) => {
       event.preventDefault();
@@ -311,7 +321,7 @@ const QuickRegisteration = () => {
 
   const resetForm = () => {
     setRows(
-      Array(10).fill({
+      Array(5).fill({
         firstName: "",
         lastName: "",
         schoolSite: { id: "", label: "" },
@@ -320,7 +330,7 @@ const QuickRegisteration = () => {
       })
     );
     setErrors(
-      Array(10).fill({
+      Array(5).fill({
         firstNameError: "",
         lastNameError: "",
         schoolSiteError: "",
@@ -366,14 +376,12 @@ const QuickRegisteration = () => {
       container
       width={"100%"}
       marginX={"auto"}
-      paddingX={"40px"}
+      paddingX={"30px"}
       marginTop={"2%"}
-      marginBottom={"10%"}
       sx={{ maxWidth: 1400 }}
     >
       <Grid
         item
-        container
         xs={12}
         md={12}
         sm={12}

@@ -190,13 +190,35 @@ const DataRow = React.memo(
             isOptionEqualToValue={(option, value) =>
               option.id === value.id || (!value.id && !option.id)
             }
-            defaultValue={rowData.firstName}
+            value={
+              firstNameOptions.find(
+                (option) => option.label === rowData.firstName
+              ) || ""
+            }
             getOptionLabel={(option) => option.label || ""}
             options={firstNameOptions}
             loading={loadingFirstName}
             inputValue={firstNameInput}
             onInputChange={(event, newInputValue, reason) => {
-              if (reason === "input") setFirstNameInput(newInputValue);
+              if (reason === "input") {
+                setFirstNameInput(newInputValue);
+              } else if (reason === "clear") {
+                setFirstNameInput("");
+                setRowData(index, "firstName", "", "");
+              }
+            }}
+            onBlur={() => {
+              // Handle case when user exits the input without selecting "Add"
+              const inputValue = firstNameInput.trim();
+              if (
+                inputValue &&
+                !firstNameOptions.some(
+                  (option) =>
+                    option.label.toLowerCase() === inputValue.toLowerCase()
+                )
+              ) {
+                setRowData(index, "firstName", inputValue, "");
+              }
             }}
             onChange={(event, newValue) => {
               handleInputChange("firstName", newValue);
@@ -252,17 +274,37 @@ const DataRow = React.memo(
             isOptionEqualToValue={(option, value) =>
               option.id === value.id || (!value.id && !option.id)
             }
-            defaultValue={rowData.lastName}
+            value={
+              lastNameOptions.find(
+                (option) => option.label === rowData.lastName
+              ) || ""
+            }
             getOptionLabel={(option) => option.label || ""}
             options={lastNameOptions}
             loading={loadingLastName}
             inputValue={lastNameInput}
             onInputChange={(event, newInputValue, reason) => {
               if (reason === "input") setLastNameInput(newInputValue);
+              else if (reason === "clear") {
+                setLastNameInput("");
+                setRowData(index, "lastName", "", "");
+              }
             }}
             onChange={(event, newValue) => {
               handleInputChange("lastName", newValue);
               handleNameSelect(newValue, "lastName");
+            }}
+            onBlur={() => {
+              const inputValue = lastNameInput.trim();
+              if (
+                inputValue &&
+                !lastNameOptions.some(
+                  (option) =>
+                    option.label.toLowerCase() === inputValue.toLowerCase()
+                )
+              ) {
+                setRowData(index, "lastName", inputValue, "");
+              }
             }}
             filterOptions={filterOptions}
             renderInput={(params) => (
