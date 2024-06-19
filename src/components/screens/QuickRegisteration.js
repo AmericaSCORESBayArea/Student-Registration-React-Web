@@ -27,18 +27,20 @@ const QuickRegisteration = () => {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [enrollmentResults, setEnrollmentResults] = useState([]);
   const [errorAlert, setErrorAlert] = useState({ show: false, message: "" });
+  const [isNewContact, setIsNewContact] = useState(false);
 
   const [rows, setRows] = useState(
-    Array(10).fill({
+    Array(5).fill({
       firstName: "",
       lastName: "",
       schoolSite: { id: "", label: "" },
       teamSeason: { id: "", label: "" },
+      contactId: "",
     })
   );
 
   const [errors, setErrors] = useState(
-    Array(10).fill({
+    Array(5).fill({
       firstNameError: "",
       lastNameError: "",
       schoolSiteError: "",
@@ -71,11 +73,20 @@ const QuickRegisteration = () => {
               setErrorAlert({ show: false, message: "" });
               setFormSubmitted(false);
               setRows(
-                Array(10).fill({
+                Array(5).fill({
                   firstName: "",
                   lastName: "",
                   schoolSite: { id: "", label: "" },
                   teamSeason: { id: "", label: "" },
+                  contactId: "",
+                })
+              );
+              setErrors(
+                Array(5).fill({
+                  firstNameError: "",
+                  lastNameError: "",
+                  schoolSiteError: "",
+                  teamSeasonError: "",
                 })
               );
             })
@@ -117,6 +128,10 @@ const QuickRegisteration = () => {
     );
   }, []);
 
+  const handleFieldChange = () => {
+    setIsNewContact(true);
+  };
+
   const handleAddRow = useCallback(() => {
     setRows([
       ...rows,
@@ -125,6 +140,7 @@ const QuickRegisteration = () => {
         lastName: "",
         schoolSite: { id: "", label: "" },
         teamSeason: { id: "", label: "" },
+        contactId: "",
       },
     ]);
     setErrors([
@@ -210,37 +226,42 @@ const QuickRegisteration = () => {
     );
 
     const contactPromises = filteredAndValidRows.map(async (row) => {
-      try {
-        const contactResponse = await postContact({
-          FirstName: row.firstName,
-          LastName: row.lastName,
-          Birthdate: "2000-01-01",
-          SchoolSiteId: row.schoolSite.id,
-        });
-        if (contactResponse.error) {
-          throw new Error(contactResponse.message);
+      if (row.contactId === "" || isNewContact) {
+        try {
+          const contactResponse = await postContact({
+            FirstName: row.firstName,
+            LastName: row.lastName,
+            SchoolSiteId: row.schoolSite.id,
+          });
+          if (contactResponse.error) {
+            throw new Error(contactResponse.message);
+          }
+          row.contactId = contactResponse.ContactId;
+        } catch (e) {
+          console.error("Failed to create contact:", e);
+          return { error: true, message: e.message };
         }
-
-        const enrollmentData = {
+      }
+      try {
+        const enrollmentResponse = await postEnrollment({
           TeamSeasonId: row.teamSeason.id,
-          StudentId: contactResponse.ContactId,
+          StudentId: row.contactId,
           StartDate: "2023-08-06",
           EndDate: "2024-06-06",
-        };
-        return postEnrollment(enrollmentData).then((enrollmentResponse) => {
-          if (enrollmentResponse.error) {
-            throw new Error(enrollmentResponse.message);
-          }
-          return {
-            ...enrollmentResponse,
-            firstName: row.firstName,
-            lastName: row.lastName,
-            schoolSiteLabel: row.schoolSite.label,
-            teamSeasonLabel: row.teamSeason.label,
-          };
         });
+        if (enrollmentResponse.error) {
+          throw new Error(enrollmentResponse.message);
+        }
+        return {
+          ...enrollmentResponse,
+          firstName: row.firstName,
+          lastName: row.lastName,
+          schoolSiteLabel: row.schoolSite.label,
+          teamSeasonLabel: row.teamSeason.label,
+          region: region,
+        };
       } catch (e) {
-        console.error("Failed to submit contact:", e);
+        console.error("Failed to enroll contact:", e);
         return { error: true, message: e.message };
       }
     });
@@ -258,10 +279,7 @@ const QuickRegisteration = () => {
               "Some entries could not be processed. Please check the data and try again.",
           });
         } else {
-          const enrolledDetails = results.map((result) => ({
-            ...result.value,
-            region: region,
-          }));
+          const enrolledDetails = results.map((result) => result.value);
           setEnrollmentResults(enrolledDetails);
           setFormSubmitted(true);
           handleReset(false);
@@ -270,8 +288,7 @@ const QuickRegisteration = () => {
       .catch((error) => {
         setErrorAlert({
           show: true,
-          message:
-            "There appears to be a problem with the selected Site and/or Team Season. Please try another or inform your Program Manager.",
+          message: error.message,
         });
       })
       .finally(() => {
@@ -279,7 +296,18 @@ const QuickRegisteration = () => {
       });
 
     setUserHasInteracted(false);
-  }, [rows, handleReset, region]);
+  }, [rows, isNewContact, region, handleReset]);
+
+  useEffect(() => {
+    if (errorAlert.show || formSubmitted) {
+      const timer = setTimeout(() => {
+        setErrorAlert({ ...errorAlert, show: false });
+        setFormSubmitted(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [errorAlert, formSubmitted]);
 
   const handleGoBack = useCallback(
     (event) => {
@@ -302,15 +330,16 @@ const QuickRegisteration = () => {
 
   const resetForm = () => {
     setRows(
-      Array(10).fill({
+      Array(5).fill({
         firstName: "",
         lastName: "",
         schoolSite: { id: "", label: "" },
         teamSeason: { id: "", label: "" },
+        contactId: "",
       })
     );
     setErrors(
-      Array(10).fill({
+      Array(5).fill({
         firstNameError: "",
         lastNameError: "",
         schoolSiteError: "",
@@ -356,14 +385,12 @@ const QuickRegisteration = () => {
       container
       width={"100%"}
       marginX={"auto"}
-      paddingX={"40px"}
+      paddingX={"30px"}
       marginTop={"2%"}
-      marginBottom={"10%"}
       sx={{ maxWidth: 1400 }}
     >
       <Grid
         item
-        container
         xs={12}
         md={12}
         sm={12}
@@ -412,6 +439,7 @@ const QuickRegisteration = () => {
         loadingSubmit={loadingSubmit}
         userHasInteracted={userHasInteracted}
         enrollmentResults={enrollmentResults}
+        handleFieldChange={handleFieldChange}
       />
     </Box>
   );

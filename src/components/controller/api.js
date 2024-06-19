@@ -191,15 +191,13 @@ export async function getStudents(student) {
   return fetch(
     `${process.env.REACT_APP_BASEURL}/contacts/search?searchString=${student}`,
     requestOptions
-  ).then((response) => {
-    return response
-      .json()
-      .then((data) => {
-        return data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  ).then(async (response) => {
+    try {
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      console.log(err);
+    }
   });
 }
 
