@@ -92,7 +92,7 @@ const RegisterUI = React.memo(
           flexDirection: "column",
           alignItems: "center",
           width: "100%",
-          padding: 3,
+          paddingY: 2,
           borderRadius: 2,
         }}
       >

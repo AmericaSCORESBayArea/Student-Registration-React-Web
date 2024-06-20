@@ -89,7 +89,7 @@ const EnrollmentDetailsAccordion = ({ enrollmentResults }) => {
                     variant="filled"
                     hiddenLabel
                     size="small"
-                    value={result.teamSeasonLabel}
+                    value={result.schoolSiteLabel}
                     InputLabelProps={{
                       readOnly: true,
                     }}

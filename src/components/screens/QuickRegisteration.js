@@ -246,8 +246,6 @@ const QuickRegisteration = () => {
         const enrollmentResponse = await postEnrollment({
           TeamSeasonId: row.teamSeason.id,
           StudentId: row.contactId,
-          StartDate: "2023-08-06",
-          EndDate: "2024-06-06",
         });
         if (enrollmentResponse.error) {
           throw new Error(enrollmentResponse.message);
