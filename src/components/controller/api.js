@@ -485,7 +485,7 @@ export async function getTeamSeasons() {
       redirect: "follow",
     };
     const response = await fetch(
-      `${process.env.REACT_APP_BASEURL}/teamSeasons?date=2023-08-14`,
+      `${process.env.REACT_APP_BASEURL}/teamSeasons?date=2023-08-14&isWithinDateRange=true`,
       requestOptions
     );
     const json = await response.json();
