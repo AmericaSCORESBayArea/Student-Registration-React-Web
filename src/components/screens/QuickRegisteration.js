@@ -13,9 +13,11 @@ import { ModalwithConfirmation } from "../utils/Modal";
 import { enLanguages } from "../translations/en";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import useStore from "../../store/useStore";
 
 const QuickRegisteration = () => {
   const navigate = useNavigate();
+  const { addStudents } = useStore();
   const [loadingRegions, setLoadingRegions] = useState(true);
   const [loadingTeamSeasons, setLoadingTeamSeasons] = useState(true);
   const [regionsData, setRegionsData] = useState([]);
@@ -25,7 +27,6 @@ const QuickRegisteration = () => {
   const [userHasInteracted, setUserHasInteracted] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
-  const [enrollmentResults, setEnrollmentResults] = useState([]);
   const [errorAlert, setErrorAlert] = useState({ show: false, message: "" });
   const [isNewContact, setIsNewContact] = useState(false);
 
@@ -278,7 +279,7 @@ const QuickRegisteration = () => {
           });
         } else {
           const enrolledDetails = results.map((result) => result.value);
-          setEnrollmentResults(enrolledDetails);
+          addStudents(region, enrolledDetails);
           setFormSubmitted(true);
           handleReset(false);
         }
@@ -294,7 +295,7 @@ const QuickRegisteration = () => {
       });
 
     setUserHasInteracted(false);
-  }, [rows, isNewContact, region, handleReset]);
+  }, [rows, isNewContact, region, addStudents, handleReset]);
 
   useEffect(() => {
     if (errorAlert.show || formSubmitted) {
@@ -406,6 +407,17 @@ const QuickRegisteration = () => {
         </Grid>
         <Grid item xs={12} md={6} sm={12} sx={{ textAlign: "center" }}>
           <Typography variant="h3">Enroll Students</Typography>
+          <Typography
+            variant="body1"
+            sx={{ marginTop: 1 }}
+            fontSize={"default"}
+            fontWeight={"light"}
+            fontStyle={"italic"}
+          >
+            New student names added here will be marked as{" "}
+            <span style={{ color: "red" }}>*</span>
+            Incomplete Records in the SCORES student database.
+          </Typography>
         </Grid>
         <Grid item xs={12} md={3} sm={12} />
       </Grid>
@@ -436,7 +448,6 @@ const QuickRegisteration = () => {
         errors={errors}
         loadingSubmit={loadingSubmit}
         userHasInteracted={userHasInteracted}
-        enrollmentResults={enrollmentResults}
         handleFieldChange={handleFieldChange}
       />
     </Box>

@@ -14,6 +14,7 @@ import {
 import DataRow from "./DataRow";
 import { ExpandMore } from "@mui/icons-material";
 import EnrollmentDetailsAccordion from "./EnrollmentDetailsAccordion";
+import useStore from "../../store/useStore";
 
 const baseTextFieldStyle = (customStyles) => ({
   backgroundColor: "transparent",
@@ -82,9 +83,11 @@ const RegisterUI = React.memo(
     errors,
     loadingSubmit,
     userHasInteracted,
-    enrollmentResults,
     handleFieldChange,
   }) => {
+    const { enrolledStudents } = useStore();
+    const hasEnrollments = Object.keys(enrolledStudents).length > 0;
+
     return (
       <Box
         sx={{
@@ -96,9 +99,7 @@ const RegisterUI = React.memo(
           borderRadius: 2,
         }}
       >
-        {enrollmentResults.length > 0 && (
-          <EnrollmentDetailsAccordion enrollmentResults={enrollmentResults} />
-        )}
+        {hasEnrollments && <EnrollmentDetailsAccordion />}
         <Grid container item alignItems="center" sx={{ marginBlock: 2 }}>
           <Grid item xs={12} md={2} sm={12} />
           <Grid item xs={12} md={3} sm={12}>

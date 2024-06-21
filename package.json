@@ -37,7 +37,8 @@
     "serve": "^14.1.1",
     "sweetalert2": "^11.4.29",
     "web-vitals": "^2.1.4",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "zustand": "^4.5.2"
   },
   "scripts": {
     "start": "serve -s build",
