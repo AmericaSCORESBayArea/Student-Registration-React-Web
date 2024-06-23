@@ -1,5 +1,15 @@
 # Requirements Overview #
 
+## New Objectives: Paper as a reality and Acceptable, if Temporary Medium
+- School districts served by SCORES incorporate paper-based forms and communications in their regular business with students and families. While "paperless" is an objective in many cases, the realities of _Accessibility_ and _the Digital Divide_ dictate that we support paper too.
+- A guardian who chooses to use paper, or has no access to the digital option in this platform, still needs to be able to register their student
+- Parents may give coaches their forms directly, during game day, or they may be delivered, in batch, by a site administrator
+### The UI/UX for the Student Registration App will provide accomodations to help coaches and Site Admins easily transcribe some or all paper-based registration info on behalf of parents
+
+### The Waiver History supports a record of "paper form received" that the user with appropriate privilages can select and add
+
+### Guardians should be able to "bridge the gap" and start using the digital tools to update their records any time. The necessary link is a mobile phone with SMS to complete the authentication. The guardian primary phone number needs to be set in the Student Contact record for this to work properly.
+
 # registration
 ### America SCORES Registration Form ###
 Scores Program relationshiops with school districts, liability insurancxe, and impact reporting goals, require us to colelcting indentifying information, safely and securey, and provide student families/guardians secure access to update or delete records, and accept waivers at any time. The geographic, social, cultural, and economic diversity of the students make _Accessibility_ a key, and evolving, objective.
