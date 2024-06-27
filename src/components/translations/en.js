@@ -106,6 +106,8 @@ export const enLanguages = {
     schoolName_region_field_placeholder: "Select...",
     schoolName_schoolname_field: "School or Facility Name*",
     schoolName_schoolname_field_placeholder: "Select...",
+    schoolName_teamname_field: "Team*",
+    schoolName_teamname_field_placeholder: "Select...",
     attendingSchool_field: "School Attending*",
     attendingSchool_field_placeholder: "Enter school attending",
     studentEmail_field: "Student Email",

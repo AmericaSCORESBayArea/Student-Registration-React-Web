@@ -31,6 +31,11 @@ function MissingFieldsValidation(props) {
       position: props.fieldsRef.schoolName_field,
     },
     {
+      label: props.formTranslations.schoolName_team_field,
+      value: props.values.schoolName.teamname,
+      position: props.fieldsRef.schoolName_field,
+    },
+    {
       label: props.formTranslations.attendingSchool_field,
       value: props.values.attendingSchool,
       position: props.fieldsRef.schoolAttending_field,

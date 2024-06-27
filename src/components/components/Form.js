@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import { ModalwithConfirmation, ErrorModal } from "../utils/Modal";
 import { WaiverModal } from "../utils/WaiverModal";
 import "../styles/RadioButton.css";
-import { gradesArray } from "./multiplesArray";
+import { gradesArray, schoolsName } from "./multiplesArray";
 import { MissingFieldsValidation } from "./MissingFieldsValidation";
 import Select from "react-select";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
@@ -28,8 +28,9 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { blue } from "@mui/material/colors";
 import Loading from "../components/Loading";
-import { getRegionsData, getSchoolData } from "../controller/api";
+import { getRegionsData, getSchoolData,getTeamSeasons} from "../controller/api";
 import Input from "./Input";
+import { Construction } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -75,11 +76,14 @@ export default function Form(props) {
   const [datepicker, setDatePicker] = useState(false);
   const [regionProps, setRegionProps] = useState("");
   const [schoolProps, setSchoolProps] = useState("");
+  const [teamProps, setTeamProps] = useState("");
   const [regionsArray, setRegionsArray] = useState("");
   const [submitBoolean, setSubmitBoolean] = useState(false);
   const [myvalue, setMyValue] = useState(true);
   const [schoolsArray, setSchoolsArray] = useState("");
+  const [teamSeason,setTeamSeasons]= useState([]);
   const [isWaiverAccepted, setIsWaiverAccepted] = useState(false);
+
   const [waiverInfo, setWaiverInfo] = useState({
     name: "",
     waiverResponse: "",
@@ -129,6 +133,7 @@ export default function Form(props) {
   useEffect(() => {
     setRegionProps("");
     setSchoolProps("");
+    setTeamProps("");
     if (props.studentProps) {
       try {
         const region = props.studentProps.Region;
@@ -177,7 +182,9 @@ export default function Form(props) {
             setSchoolsArray(response);
             setSchoolProps(
               response.find((s) => s.id === props.studentProps.SchoolSiteId)
+              
             );
+            
             setTimeout(() => {
               setMyValue(false);
               setLoading(false);
@@ -186,16 +193,39 @@ export default function Form(props) {
           .catch((e) => {
             console.log(e);
           });
+         
       } else {
         setSchoolProps(undefined);
+        setTeamProps(undefined);
         setMyValue(false);
         setLoading(false);
       }
     } else {
       setSchoolProps(undefined);
+      setTeamProps(undefined);
       setMyValue(false);
       setLoading(false);
     }
+   getTeamSeasons()
+   .then(async (response) => {
+    setTeamSeasons(response.map((value)=>{
+      return {
+        ...value,
+        id:value.SeasonId,
+        label:value.TeamName,
+        value:value.TeamName
+      }
+    }));
+    
+    
+    setTimeout(() => {
+      setMyValue(false);
+      setLoading(false);
+    }, 3000);
+  })
+  .catch((e) => {
+    console.log(e);
+  });
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
@@ -235,6 +265,8 @@ export default function Form(props) {
   const [rectLName, refLName_field] = useClientRect();
   const [rectRegion, refRegion] = useClientRect();
   const [rectSchoolName, refSchoolName] = useClientRect();
+  const [rectTeamName, refTeamName] = useClientRect();
+
   const [rectSchoolAttending, refSchoolAttending] = useClientRect();
   const [rectBirthdate, refBirthdate] = useClientRect();
   const [rectGender, refGender] = useClientRect();
@@ -289,6 +321,7 @@ export default function Form(props) {
     lastName_field: rectLName,
     region_field: rectRegion,
     schoolName_field: rectSchoolName,
+    TeamName_field: rectTeamName,
     schoolAttending_field: rectSchoolAttending,
     birthdate_field: rectBirthdate,
     gender_field: rectGender,
@@ -720,6 +753,7 @@ export default function Form(props) {
                           onChange={async (selectedOption) => {
                             setRegionProps(undefined);
                             setSchoolProps(undefined);
+                            setTeamProps(undefined);
                             setShow(false);
                             const school = await getSchoolData(
                               selectedOption.value
@@ -729,6 +763,7 @@ export default function Form(props) {
                               "schoolName.region",
                               selectedOption.value
                             );
+                            setFieldValue("schoolName.teamName",undefined)
                           }}
                         />
                         <ErrorMessage
@@ -777,10 +812,74 @@ export default function Form(props) {
                                 : "")
                             }
                             onChange={(selectedOption) =>
+                              
+                             {
+                             
+                              setTeamProps(undefined)
                               setFieldValue(
                                 "schoolName.schoolname",
                                 selectedOption.value
                               )
+                            setFieldValue("schoolName.teamName",undefined)}}
+                            
+                          />
+                        </div>
+                        <ErrorMessage
+                          name="schoolName.schoolname"
+                          component="div"
+                          className="invalid-feedback"
+                        />
+                        <div
+                          className={classes.label}
+                          style={{ marginTop: "20px" }}
+                          ref={refTeamName}
+                        >
+                          <label htmlFor="schoolName.schoolname">
+                            {props.formTranslations.schoolName_team_field}
+                          </label>
+                          <Select
+                            isSearchable={false}
+                            value={
+                              
+                              teamProps
+                              ? teamProps
+                              : teamSeason
+                              ? teamSeason.filter(
+                                    (s) =>{
+                                     
+                                    return s.SchoolSite === values.schoolName.teamName
+                                    }
+                                      
+                                  )
+                               : ""
+                            }
+                            styles={customStyles}
+                            menuPlacement="auto"
+                            placeholder={
+                              props.formTranslations
+                                .schoolTeam_field_placeholder
+                            }
+                            name="schoolName.teamName"
+                            options={ teamSeason.filter(
+                              (s) =>{
+                               
+                              return s.SchoolSite === values.schoolName.schoolname
+                              }
+                                
+                            )}
+                            className={
+                              "form-control" +
+                              (errors.schoolName?.teamName &&
+                              touched.schoolName?.teamName
+                                ? " is-invalid"
+                                : "")
+                            }
+                            onChange={(selectedOption) =>
+                             { 
+                             
+                              setFieldValue(
+                                "schoolName.teamName",
+                                selectedOption.SchoolSite)}
                             }
                           />
                         </div>
