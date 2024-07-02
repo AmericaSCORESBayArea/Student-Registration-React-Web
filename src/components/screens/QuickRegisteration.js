@@ -40,6 +40,28 @@ const QuickRegisteration = () => {
     })
   );
 
+  const { pastedData, clearPastedData } = useStore((state) => ({
+    pastedData: state.pastedData,
+    clearPastedData: state.clearPastedData,
+  }));
+
+  console.log("pastedData:", pastedData);
+
+  // useEffect(() => {
+  //   if (pastedData.length > 0) {
+  //     setRows((currentRows) =>
+  //       currentRows.map((row, index) => ({
+  //         ...row,
+  //         ...pastedData[index % pastedData.length],
+  //       }))
+  //     );
+
+  //     clearPastedData();
+  //   }
+  // }, [pastedData, clearPastedData]);
+
+  // console.log("rows:", rows);
+
   const [errors, setErrors] = useState(
     Array(5).fill({
       firstNameError: "",

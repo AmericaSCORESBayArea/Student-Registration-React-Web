@@ -15,6 +15,7 @@ import DataRow from "./DataRow";
 import { ExpandMore } from "@mui/icons-material";
 import EnrollmentDetailsAccordion from "./EnrollmentDetailsAccordion";
 import useStore from "../../store/useStore";
+import PasteModal from "./PasteModal";
 
 const baseTextFieldStyle = (customStyles) => ({
   backgroundColor: "transparent",
@@ -148,6 +149,7 @@ const RegisterUI = React.memo(
               backgroundColor: "#f8f5f4",
             }}
           >
+            <PasteModal />
             <Box sx={{ width: "100%", marginY: 2 }}>
               <Accordion defaultExpanded>
                 <AccordionSummary

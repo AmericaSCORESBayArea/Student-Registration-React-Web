@@ -1,4 +1,3 @@
-// src/store/useStore.js
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -6,6 +5,7 @@ const useStore = create(
   persist(
     (set) => ({
       enrolledStudents: {},
+      pastedData: [],
 
       addStudents: (region, newStudents) =>
         set((state) => {
@@ -18,6 +18,8 @@ const useStore = create(
             },
           };
         }),
+      setPastedData: (newData) => set({ pastedData: newData }),
+      clearPastedData: () => set({ pastedData: [] }),
     }),
     {
       name: "enrollment-data-store",
