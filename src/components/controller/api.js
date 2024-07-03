@@ -96,7 +96,7 @@ export async function submitForm(
   };
 
   let response = await fetch(
-    `${process.env.REACT_APP_BASEURL}`,
+    `${process.env.REACT_APP_BASEURL}/contacts`,
     requestOptions
   );
   if (response.status === 200) {
