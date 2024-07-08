@@ -1,7 +1,7 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter } from "react-router-dom";
 import Route from "./Routes";
-
+import "./App.css";
 const baseTheme = createTheme();
 if (`${process.env.REACT_APP_NODE_ENV}` === "production") {
   console.log = () => {};
