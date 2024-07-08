@@ -16,6 +16,7 @@ import {
   dotsContainer,
   dot,
   activeDot,
+  textFieldStyle,
 } from "../componentsStyle/registrationFormStyle";
 import { Paper, Typography, Box, TextField, Button } from "@mui/material";
 import scores_img from "../../assets/scores.png";
@@ -125,16 +126,24 @@ export default function RegistrationForm() {
         ) : step === 6 ? (
           <>
             <h1 className={title}>Need Help?</h1>
-            <Typography className={subTitle}>Send us a message</Typography>
+            <Typography className={subTitle}>
+              Send us a message immediately
+            </Typography>
             <TextField
               fullWidth
               label="Your Message"
               multiline
-              rows={4}
+              rows={8}
               variant="outlined"
+              className={textFieldStyle}
             />
             <Box
-              sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}
+              sx={{
+                mt: 2,
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
             >
               <Button
                 variant="contained"
