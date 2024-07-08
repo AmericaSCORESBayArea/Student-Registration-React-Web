@@ -20,6 +20,8 @@ import ShareYourConcern from "../components/Steps/ShareYourConcern";
 import AcceptWaiver from "../components/Steps/AcceptWaiver";
 import AllDone from "../components/Steps/AllDone";
 import OhNoSorry from "../components/Steps/OhNoSorry";
+import logo from "../../assets/SCORESLogo.png";
+import { Container } from "react-bootstrap";
 
 const AddStudents = () => {
   const steps = [
@@ -36,6 +38,7 @@ const AddStudents = () => {
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery("(min-width:600px) and (max-width:991px)");
 
   const totalSteps = () => steps.length;
 
@@ -83,131 +86,196 @@ const AddStudents = () => {
   };
 
   return (
-    <div>
-      <Box sx={{ width: "100%" }}>
-        {!isMobile ? (
-          <>
-            <Stepper
-              nonLinear
-              alternativeLabel
-              activeStep={activeStep}
-              sx={{
-                maxWidth: "1200px",
-                width: "100%",
-                margin: "auto",
-              }}
-            >
-              {steps.map((label, index) => (
-                <Step key={label} completed={completed[index]}>
-                  <StepButton color="inherit" onClick={handleStep(index)}>
-                    {label}
-                  </StepButton>
-                </Step>
-              ))}
-            </Stepper>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                pt: 2,
-              }}
-            >
-              <Box sx={{ height: "65vh", maxWidth: 1200, width: "100%", p: 2 }}>
-                <Typography>{stepContent(activeStep)}</Typography>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Button
-                  color="inherit"
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  sx={{ mr: 1 }}
-                >
-                  Back
-                </Button>
-                <Button onClick={handleNext} sx={{ mr: 1 }}>
-                  {isLastStep() ? "Finish" : "Next"}
-                </Button>
-              </Box>
+    <Container
+      style={{
+        backgroundColor: "#FFFADF",
+      }}
+    >
+      {!isMobile && !isTablet ? (
+        <>
+          <Container
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: " 0 20px",
+            }}
+          >
+            <Box>Help Us Connect Your Student</Box>
+            <Box>
+              <Stepper
+                nonLinear
+                alternativeLabel
+                activeStep={activeStep}
+                style={{
+                  marginTop: "40px",
+                }}
+              >
+                {steps.map((label, index) => (
+                  <Step key={label} completed={completed[index]}>
+                    <StepButton color="inherit" onClick={handleStep(index)}>
+                      {label}
+                    </StepButton>
+                  </Step>
+                ))}
+              </Stepper>
             </Box>
-          </>
-        ) : (
-          <Box sx={{ maxWidth: 400, display: "flex", flexDirection: "column" }}>
-            <Paper
-              square
-              elevation={0}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                height: 50,
-                pl: 2,
-                bgcolor: "#f8f5f4",
-              }}
-            >
-              <Typography>{steps[activeStep]}</Typography>
-            </Paper>
-            <Box sx={{ height: "60vh", maxWidth: 400, width: "100%", p: 2 }}>
+            <Box>
+              <img src={logo} alt="logo" width={250} height={95} />
+            </Box>
+          </Container>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              pt: 2,
+            }}
+          >
+            <Box sx={{ height: "65vh", maxWidth: 1200, width: "100%", p: 2 }}>
               <Typography>{stepContent(activeStep)}</Typography>
             </Box>
-            <MobileStepper
-              variant="text"
-              steps={totalSteps()}
-              position="static"
-              activeStep={activeStep}
-              nextButton={
-                <Button
-                  size="small"
-                  onClick={handleNext}
-                  disabled={activeStep === totalSteps() - 1}
-                >
-                  Next
-                  {theme.direction === "rtl" ? (
-                    <KeyboardArrowLeft />
-                  ) : (
-                    <KeyboardArrowRight />
-                  )}
-                </Button>
-              }
-              backButton={
-                <Button
-                  size="small"
-                  onClick={handleBack}
-                  disabled={activeStep === 0}
-                >
-                  {theme.direction === "rtl" ? (
-                    <KeyboardArrowRight />
-                  ) : (
-                    <KeyboardArrowLeft />
-                  )}
-                  Back
-                </Button>
-              }
-              //   nextButton={
-              //     <Button
-              //       size="small"
-              //       onClick={handleNext}
-              //       disabled={isLastStep()}
-              //     >
-              //       Next
-              //       <KeyboardArrowRight />
-              //     </Button>
-              //   }
-              //   backButton={
-              //     <Button
-              //       size="small"
-              //       onClick={handleBack}
-              //       disabled={activeStep === 0}
-              //     >
-              //       <KeyboardArrowLeft />
-              //       Back
-              //     </Button>
-              //   }
-            />
+            <Box sx={{ mb: 2 }}>
+              <Button
+                color="inherit"
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                sx={{ mr: 1 }}
+              >
+                Back
+              </Button>
+              <Button onClick={handleNext} sx={{ mr: 1 }}>
+                {isLastStep() ? "Finish" : "Next"}
+              </Button>
+            </Box>
           </Box>
-        )}
-      </Box>
-    </div>
+        </>
+      ) : isTablet ? (
+        <>
+          <Container
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 20px",
+            }}
+          >
+            <Box
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+                padding: "0 20px",
+                marginBottom: "20px",
+              }}
+            >
+              <Typography variant="h6">Help Us Connect Your Student</Typography>
+              <img src={logo} alt="logo" width={250} height={95} />
+            </Box>
+            <Box style={{ width: "100%" }}>
+              <Stepper
+                nonLinear
+                alternativeLabel
+                activeStep={activeStep}
+                style={{
+                  marginTop: "40px",
+                  width: "100%",
+                }}
+              >
+                {steps.map((label, index) => (
+                  <Step key={label} completed={completed[index]}>
+                    <StepButton color="inherit" onClick={handleStep(index)}>
+                      {label}
+                    </StepButton>
+                  </Step>
+                ))}
+              </Stepper>
+            </Box>
+          </Container>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              pt: 2,
+            }}
+          >
+            <Box sx={{ height: "65vh", width: "100%", p: 2 }}>
+              <Typography>{stepContent(activeStep)}</Typography>
+            </Box>
+            <Box sx={{ mb: 2 }}>
+              <Button
+                color="inherit"
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                sx={{ mr: 1 }}
+              >
+                Back
+              </Button>
+              <Button onClick={handleNext} sx={{ mr: 1 }}>
+                {isLastStep() ? "Finish" : "Next"}
+              </Button>
+            </Box>
+          </Box>
+        </>
+      ) : (
+        <Box sx={{ width: "100%", display: "flex", flexDirection: "column" }}>
+          <Paper
+            square
+            elevation={0}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: 50,
+              pl: 2,
+              bgcolor: "#f8f5f4",
+            }}
+          >
+            <Typography>{steps[activeStep]}</Typography>
+          </Paper>
+          <Box sx={{ height: "60vh", width: "100%", p: 2 }}>
+            <Typography>{stepContent(activeStep)}</Typography>
+          </Box>
+          <MobileStepper
+            variant="text"
+            steps={totalSteps()}
+            position="static"
+            activeStep={activeStep}
+            nextButton={
+              <Button
+                size="small"
+                onClick={handleNext}
+                disabled={activeStep === totalSteps() - 1}
+              >
+                Next
+                {theme.direction === "rtl" ? (
+                  <KeyboardArrowLeft />
+                ) : (
+                  <KeyboardArrowRight />
+                )}
+              </Button>
+            }
+            backButton={
+              <Button
+                size="small"
+                onClick={handleBack}
+                disabled={activeStep === 0}
+              >
+                {theme.direction === "rtl" ? (
+                  <KeyboardArrowRight />
+                ) : (
+                  <KeyboardArrowLeft />
+                )}
+                Back
+              </Button>
+            }
+          />
+        </Box>
+      )}
+    </Container>
   );
 };
 
