@@ -83,9 +83,15 @@ export const titleContainer = css`
   align-items: center;
   justify-content: center;
 `;
+export const introductionContainer = css`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
 
 export const title = css`
-  font-size: 25px;
+  font-size: 22px;
 `;
 
 export const subTitle = css`
@@ -271,7 +277,7 @@ export const waiverSubTitle = css`
 export const textFieldStyle = css`
   &.${textFieldClasses.root} {
     max-height: 600px;
-    height: 100%;
+    /* height: 100%; */
     margin-top: 30px;
     background-color: whitesmoke;
 
@@ -308,4 +314,27 @@ export const dot = css`
 
 export const activeDot = css`
   background-color: #717171;
+`;
+
+export const programSiteContainer = css`
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 5px;
+  width: 100%;
+  background-color: lightskyblue;
+  padding: 10px 10px;
+  border-radius: 10px;
+
+  /* height: 600px; */
+`;
+
+export const step2LeftContainer = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  /* scroll-behavior: auto; */
+  /* border: 1px solid red; */
 `;

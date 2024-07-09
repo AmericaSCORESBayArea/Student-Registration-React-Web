@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
-
+import IntroductionRight from "./IntroductionRight";
 const Introduction = () => {
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
@@ -47,7 +47,7 @@ const Introduction = () => {
               flexDirection: "column",
               alignItems: "center",
               height: "100%",
-              backgroundColor: "red",
+              // backgroundColor: "red",
               "@media (max-width: 600px)": {
                 display: showRight ? "none" : "flex",
               },
@@ -63,13 +63,14 @@ const Introduction = () => {
               flexDirection: "column",
               alignItems: "center",
               height: "100%",
-              backgroundColor: "blue",
+              // backgroundColor: "blue",
               "@media (max-width: 600px)": {
                 display: showRight ? "flex" : "none",
               },
             }}
           >
-            <Typography variant="h6">Right Section</Typography>
+            {/* <Typography variant="h6">Right Section</Typography> */}
+            <IntroductionRight />
           </Box>
         </Col>
       </Row>

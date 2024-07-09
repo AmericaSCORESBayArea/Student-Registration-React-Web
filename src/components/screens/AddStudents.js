@@ -13,13 +13,13 @@ import {
 import React, { useState } from "react";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import Introduction from "../components/Steps/Introduction";
-import ConnectYourStudent from "../components/Steps/ConnectYourStudent";
-import SafetyConcern from "../components/Steps/SafetyConcern";
-import ShareYourConcern from "../components/Steps/ShareYourConcern";
-import AcceptWaiver from "../components/Steps/AcceptWaiver";
-import AllDone from "../components/Steps/AllDone";
-import OhNoSorry from "../components/Steps/OhNoSorry";
+import Introduction from "../components/Steps/Step1/Introduction";
+import ConnectYourStudent from "../components/Steps/Step2/ConnectYourStudent";
+import SafetyConcern from "../components/Steps/Step3/SafetyConcern";
+import ShareYourConcern from "../components/Steps/step4/ShareYourConcern";
+import AcceptWaiver from "../components/Steps/Step5/AcceptWaiver";
+import AllDone from "../components/Steps/Step6/AllDone";
+import OhNoSorry from "../components/Steps/Step7/OhNoSorry";
 import logo from "../../assets/SCORESLogo.png";
 import { Container } from "react-bootstrap";
 
