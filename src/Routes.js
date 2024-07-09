@@ -15,7 +15,6 @@ import { esLanguages } from "./components/translations/es";
 import { cnLanguages } from "./components/translations/cn";
 import firebase from "./firebase/firebaseConfig";
 import QuickRegisteration from "./components/screens/QuickRegisteration";
-import RegistrationFormScreen from "./components/screens/RegistrationFormScreen";
 import AddStudents from "./components/screens/AddStudents";
 
 export default function RoutesWeb() {
@@ -91,14 +90,6 @@ export default function RoutesWeb() {
             element={
               <PrivateRoute>
                 <HomeScreen translations={auxTranslation} />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/registration-form"
-            element={
-              <PrivateRoute>
-                <RegistrationFormScreen />
               </PrivateRoute>
             }
           />

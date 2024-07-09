@@ -55,6 +55,9 @@ const ShareYourConcern = () => {
             }}
           >
             <Typography>All Done! Thanks!</Typography>
+            <Typography>
+              There’s a great school year ahead with SCORES!
+            </Typography>
           </Box>
         </Col>
         <Col xs={12} md={12} lg={5}>

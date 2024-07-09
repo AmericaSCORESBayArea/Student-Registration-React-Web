@@ -1,7 +1,13 @@
 import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import ShareYourConcernRight from "./ShareYourConcernRight";
+import {
+  container,
+  subTitle,
+  textFieldStyle,
+  title,
+} from "../../../componentsStyle/registrationFormStyle";
 
 const ShareYourConcern = () => {
   const [showRight, setShowRight] = useState(false);
@@ -55,6 +61,37 @@ const ShareYourConcern = () => {
             }}
           >
             <Typography>Share Your Concerns and Goals</Typography>
+
+            <div className={container}>
+              <h1 className={title}>Student Needs</h1>
+              <Typography className={subTitle}>
+                Tell us if you student has allergies or any other needs weh
+                should be aware of
+              </Typography>
+              <TextField
+                fullWidth
+                label="Your Message"
+                multiline
+                rows={8}
+                variant="outlined"
+                className={textFieldStyle}
+              />
+              <Box
+                sx={{
+                  mt: 2,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "100%",
+                }}
+              >
+                <Button variant="contained" color="secondary">
+                  Back
+                </Button>
+                <Button variant="contained" color="primary">
+                  Send
+                </Button>
+              </Box>
+            </div>
           </Box>
         </Col>
         <Col xs={12} md={12} lg={5}>

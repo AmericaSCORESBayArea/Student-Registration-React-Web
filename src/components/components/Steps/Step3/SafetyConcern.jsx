@@ -1,31 +1,43 @@
 import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, FormControl, MenuItem, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
-import * as Yup from "yup";
 
-import CustomTextField from "../../field/TextField";
-import CustomSelectField from "../../field/CustomSelectField";
 import { relationshipArray } from "../../multiplesArray";
 import SafetyConcernRight from "./SafetyConcernRight";
-
-const initialValues = {
-  parentGuardianFirstName: "",
-  parentGuardianLastName: "",
-  parentGuardianEmail: "",
-  relationshipToChild: "",
-  parentGuardianPhone1: "",
-  parentGuardianPhone2: "",
-};
-
-const relationshipOptions = relationshipArray.map(
-  (relationship) => relationship.value
-);
+import { makeStyles } from "@mui/styles";
+import { CustomTextField } from "../../RegisterUI";
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    display: "flex",
+    flexDirection: "column",
+    borderColor: "gray",
+    width: "100%",
+    marginTop: 5,
+  },
+  label: {
+    textAlign: "left",
+    paddingTop: "5px",
+    width: "100%",
+  },
+  textFieldContainer: {
+    backgroundColor: "white",
+  },
+}));
 
 const SafetyConcern = () => {
+  const classes = useStyles();
+
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
-  const [formData, setFormData] = useState(initialValues);
+  const [formData, setFormData] = useState({
+    parentGuardianFirstName: "",
+    parentGuardianLastName: "",
+    parentGuardianEmail: "",
+    relationshipToChild: "",
+    parentGuardianPhone1: "",
+    parentGuardianPhone2: "",
+  });
   const [errors, setErrors] = useState({});
 
   const minSwipeDistance = 50;
@@ -88,44 +100,100 @@ const SafetyConcern = () => {
               }}
             >
               <Typography>Help Us Connect Your Student</Typography>
-              <CustomTextField
-                fieldName="parentGuardianFirstName"
-                label="Parent/Guardian First Name*"
-                value={formData.parentGuardianFirstName}
-                onChange={handleChange}
-              />
-              <CustomTextField
-                fieldName="parentGuardianLastName"
-                label="Parent/Guardian Last Name*"
-                value={formData.parentGuardianLastName}
-                onChange={handleChange}
-              />
+              <FormControl className={classes.formControl}>
+                <Typography className={classes.label}>
+                  Parent/Guardian First Name*
+                </Typography>
+                <CustomTextField
+                  hiddenLabel
+                  fullWidth
+                  variant="filled"
+                  size="small"
+                  value={formData.parentGuardianFirstName}
+                  onChange={handleChange}
+                  className={classes.textFieldContainer}
+                ></CustomTextField>
+                <Typography className={classes.label}>
+                  Parent/Guardian Last Name*
+                </Typography>
+                <CustomTextField
+                  hiddenLabel
+                  fullWidth
+                  variant="filled"
+                  size="small"
+                  value={formData.parentGuardianLastName}
+                  onChange={handleChange}
+                  className={classes.textFieldContainer}
+                ></CustomTextField>
+                <Typography className={classes.label}>
+                  Parent/Guardian Email
+                </Typography>
+                <CustomTextField
+                  hiddenLabel
+                  fullWidth
+                  variant="filled"
+                  size="small"
+                  value={formData.parentGuardianEmail}
+                  onChange={handleChange}
+                  className={classes.textFieldContainer}
+                ></CustomTextField>
+                <Typography className={classes.label}>
+                  Relationship to Child*
+                </Typography>
+                <CustomTextField
+                  select
+                  hiddenLabel
+                  fullWidth
+                  variant="filled"
+                  size="small"
+                  value={formData.relationshipToChild}
+                  onChange={handleChange}
+                  className={classes.textFieldContainer}
+                  SelectProps={{
+                    displayEmpty: true,
+                    renderValue: (selected) => {
+                      if (selected === "") {
+                        return <span style={{ opacity: 0.5 }}>Select</span>;
+                      }
+                      return relationshipArray.find(
+                        (option) => option.value === selected
+                      )?.label;
+                    },
+                  }}
+                >
+                  {relationshipArray &&
+                    relationshipArray.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                </CustomTextField>
+                <Typography className={classes.label}>
+                  Parent/Guardian Phone 1
+                </Typography>
+                <CustomTextField
+                  hiddenLabel
+                  fullWidth
+                  variant="filled"
+                  size="small"
+                  value={formData.parentGuardianPhone1}
+                  onChange={handleChange}
+                  className={classes.textFieldContainer}
+                ></CustomTextField>
+                <Typography className={classes.label}>
+                  Parent/Guardian Phone 2
+                </Typography>
+                <CustomTextField
+                  hiddenLabel
+                  fullWidth
+                  variant="filled"
+                  size="small"
+                  value={formData.parentGuardianPhone2}
+                  onChange={handleChange}
+                  className={classes.textFieldContainer}
+                ></CustomTextField>
+              </FormControl>
 
-              <CustomTextField
-                fieldName="parentGuardianEmail"
-                label="Parent/Guardian Email"
-                value={formData.parentGuardianEmail}
-                onChange={handleChange}
-              />
-              <CustomSelectField
-                fieldName="relationshipToChild"
-                label="Relationship to Child*"
-                options={relationshipOptions}
-                value={formData.relationshipToChild}
-                onChange={handleChange}
-              />
-              <CustomTextField
-                fieldName="parentGuardianPhone1"
-                label="Parent/Guardian Phone 1"
-                value={formData.parentGuardianPhone1}
-                onChange={handleChange}
-              />
-              <CustomTextField
-                fieldName="parentGuardianPhone2"
-                label="Parent/Guardian Phone 2"
-                value={formData.parentGuardianPhone2}
-                onChange={handleChange}
-              />
               <button onClick={handlerNavigation}>Submit</button>
             </Box>
           </Col>

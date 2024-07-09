@@ -1,14 +1,9 @@
 import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, FormControl, MenuItem, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import ConnectYourStudentRight from "./ConnectYourStudentRight";
 
-import CustomTextField from "../../field/TextField";
-import CustomSelectField from "../../field/CustomSelectField";
-import {
-  programSiteContainer,
-  step2LeftContainer,
-} from "../../../componentsStyle/registrationFormStyle";
+import { programSiteContainer } from "../../../componentsStyle/registrationFormStyle";
 import {
   genderArray,
   gradesArray,
@@ -16,8 +11,29 @@ import {
   schoolsName,
   TeamArray,
 } from "../../multiplesArray";
+import { CustomTextField } from "../../RegisterUI";
+import { makeStyles } from "@mui/styles";
 
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    display: "flex",
+    flexDirection: "column",
+    borderColor: "gray",
+    width: "100%",
+    marginTop: 5,
+  },
+  label: {
+    textAlign: "left",
+    paddingBottom: "5px",
+    width: "100%",
+  },
+  textFieldContainer: {
+    backgroundColor: "white",
+  },
+}));
 const ConnectYourStudent = () => {
+  const classes = useStyles();
+
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
@@ -31,9 +47,6 @@ const ConnectYourStudent = () => {
     team: "",
   });
 
-  const regionOptions = regionsArray.map((region) => region.value);
-  const teamOptions = TeamArray.map((team) => team.value);
-
   const schoolFacilityOptions = Object.entries(schoolsName).reduce(
     (acc, [region, data]) => {
       const schoolValues = data.schools.map((school) => school.value);
@@ -43,8 +56,6 @@ const ConnectYourStudent = () => {
     {}
   );
 
-  const genderOptions = genderArray.map((gender) => gender.value);
-  const gradeOptions = gradesArray.map((grades) => grades.value);
   const minSwipeDistance = 50;
 
   const onTouchStart = (e) => {
@@ -104,55 +115,190 @@ const ConnectYourStudent = () => {
             }}
           >
             <Typography>Help Us Connect Your Student</Typography>
-            <CustomTextField
-              fieldName="firstName"
-              label="First Name*"
-              value={formData.firstName}
-              onChange={handleChange}
-            />
-            <CustomTextField
-              fieldName="lastName"
-              label="Last Name or Initial"
-              value={formData.lastName}
-              onChange={handleChange}
-            />
-            <CustomSelectField
-              fieldName="gender"
-              label="Gender"
-              options={genderOptions}
-              value={formData.gender}
-              onChange={handleChange}
-            />
-            <CustomSelectField
-              fieldName="grade"
-              label="Grade"
-              options={gradeOptions}
-              value={formData.grade}
-              onChange={handleChange}
-            />
-            <div className={programSiteContainer}>
-              <CustomSelectField
-                fieldName="region"
-                label="Region*"
-                options={regionOptions}
-                value={formData.region}
+            <FormControl className={classes.formControl}>
+              <Typography className={classes.label}>First Name*</Typography>
+              <CustomTextField
+                hiddenLabel
+                fullWidth
+                variant="filled"
+                size="small"
+                value={formData.firstName}
                 onChange={handleChange}
-              />
-              <CustomSelectField
-                fieldName="schoolFacility"
-                label="School or Facility Name*"
-                options={schoolFacilityOptions[formData.region] || []}
-                value={formData.schoolFacility}
+                className={classes.textFieldContainer}
+              ></CustomTextField>
+              <Typography className={classes.label}>
+                Last Name or inital*
+              </Typography>
+
+              <CustomTextField
+                hiddenLabel
+                fullWidth
+                variant="filled"
+                size="small"
+                value={formData.lastName}
                 onChange={handleChange}
-              />
-              <CustomSelectField
-                fieldName="team"
-                label="Team"
-                options={teamOptions}
-                value={formData.team}
+                className={classes.textFieldContainer}
+              ></CustomTextField>
+              <Typography className={classes.label}>Gender</Typography>
+              <CustomTextField
+                select
+                hiddenLabel
+                fullWidth
+                variant="filled"
+                size="small"
+                value={formData.gender}
                 onChange={handleChange}
-              />
-            </div>
+                className={classes.textFieldContainer}
+                SelectProps={{
+                  displayEmpty: true,
+                  renderValue: (selected) => {
+                    if (selected === "") {
+                      return (
+                        <span style={{ opacity: 0.5 }}>Select a Gender</span>
+                      );
+                    }
+                    return genderArray.find(
+                      (option) => option.value === selected
+                    )?.label;
+                  },
+                }}
+              >
+                {genderArray &&
+                  genderArray.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+              </CustomTextField>
+              <Typography className={classes.label}>Grade</Typography>
+              <CustomTextField
+                select
+                hiddenLabel
+                fullWidth
+                variant="filled"
+                size="small"
+                value={formData.grade}
+                onChange={handleChange}
+                className={classes.textFieldContainer}
+                SelectProps={{
+                  displayEmpty: true,
+                  renderValue: (selected) => {
+                    if (selected === "") {
+                      return (
+                        <span style={{ opacity: 0.5 }}>Select a Grade</span>
+                      );
+                    }
+                    return gradesArray.find(
+                      (option) => option.value === selected
+                    )?.label;
+                  },
+                }}
+              >
+                {gradesArray &&
+                  gradesArray.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+              </CustomTextField>
+              <div className={programSiteContainer}>
+                <Typography className={classes.label}>Region*</Typography>
+                <CustomTextField
+                  select
+                  hiddenLabel
+                  fullWidth
+                  variant="filled"
+                  size="small"
+                  value={formData.region}
+                  onChange={handleChange}
+                  className={classes.textFieldContainer}
+                  SelectProps={{
+                    displayEmpty: true,
+                    renderValue: (selected) => {
+                      if (selected === "") {
+                        return (
+                          <span style={{ opacity: 0.5 }}>Select a Region</span>
+                        );
+                      }
+                      return regionsArray.find(
+                        (option) => option.value === selected
+                      )?.label;
+                    },
+                  }}
+                >
+                  {regionsArray &&
+                    regionsArray.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                </CustomTextField>
+                <Typography className={classes.label}>
+                  School or Facility Name*
+                </Typography>
+                <CustomTextField
+                  select
+                  hiddenLabel
+                  fullWidth
+                  variant="filled"
+                  size="small"
+                  value={formData.team}
+                  onChange={handleChange}
+                  className={classes.textFieldContainer}
+                  SelectProps={{
+                    displayEmpty: true,
+                    renderValue: (selected) => {
+                      if (selected === "") {
+                        return (
+                          <span style={{ opacity: 0.5 }}>Select a Team</span>
+                        );
+                      }
+                      return TeamArray.find(
+                        (option) => option.value === selected
+                      )?.label;
+                    },
+                  }}
+                >
+                  {TeamArray &&
+                    TeamArray.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                </CustomTextField>
+                <Typography className={classes.label}>Team</Typography>
+                <CustomTextField
+                  select
+                  hiddenLabel
+                  fullWidth
+                  variant="filled"
+                  size="small"
+                  value={formData.team}
+                  onChange={handleChange}
+                  className={classes.textFieldContainer}
+                  SelectProps={{
+                    displayEmpty: true,
+                    renderValue: (selected) => {
+                      if (selected === "") {
+                        return (
+                          <span style={{ opacity: 0.5 }}>Select a Team</span>
+                        );
+                      }
+                      return TeamArray.find(
+                        (option) => option.value === selected
+                      )?.label;
+                    },
+                  }}
+                >
+                  {TeamArray &&
+                    TeamArray.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                </CustomTextField>
+              </div>
+            </FormControl>
             <button onClick={handlerNavigation}>press</button>
           </Box>
         </Col>
