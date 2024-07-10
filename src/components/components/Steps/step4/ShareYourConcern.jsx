@@ -3,13 +3,20 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import ShareYourConcernRight from "./ShareYourConcernRight";
 import {
-  container,
-  subTitle,
-  textFieldStyle,
-  title,
+  Container,
+  Title,
 } from "../../../componentsStyle/registrationFormStyle";
+import { styled } from "@mui/system";
 
 const ShareYourConcern = () => {
+  const SubTitle = styled("p")({
+    fontSize: "18px",
+  });
+  const TextFields = styled(TextField)({
+    maxHeight: "600px",
+    marginTop: "30px",
+    backgroundColor: "whitesmoke",
+  });
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
@@ -62,19 +69,19 @@ const ShareYourConcern = () => {
           >
             <Typography>Share Your Concerns and Goals</Typography>
 
-            <div className={container}>
-              <h1 className={title}>Student Needs</h1>
-              <Typography className={subTitle}>
+            <Container>
+              <Title>Student Needs</Title>
+              <SubTitle>
                 Tell us if you student has allergies or any other needs weh
                 should be aware of
-              </Typography>
-              <TextField
+              </SubTitle>
+              <TextFields
                 fullWidth
                 label="Your Message"
                 multiline
                 rows={8}
                 variant="outlined"
-                className={textFieldStyle}
+                // className={textFieldStyle}
               />
               <Box
                 sx={{
@@ -91,7 +98,7 @@ const ShareYourConcern = () => {
                   Send
                 </Button>
               </Box>
-            </div>
+            </Container>
           </Box>
         </Col>
         <Col xs={12} md={12} lg={5}>

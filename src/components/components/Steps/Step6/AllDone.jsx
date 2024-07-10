@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import AllDoneRight from "./AllDoneRight";
+import {
+  SubTitle,
+  Title,
+} from "../../../componentsStyle/registrationFormStyle";
 
 const ShareYourConcern = () => {
   const [showRight, setShowRight] = useState(false);
@@ -54,10 +58,8 @@ const ShareYourConcern = () => {
               },
             }}
           >
-            <Typography>All Done! Thanks!</Typography>
-            <Typography>
-              There’s a great school year ahead with SCORES!
-            </Typography>
+            <Title>All Done! Thanks!</Title>
+            <SubTitle>There’s a great school year ahead with SCORES!</SubTitle>
           </Box>
         </Col>
         <Col xs={12} md={12} lg={5}>
@@ -73,7 +75,6 @@ const ShareYourConcern = () => {
               },
             }}
           >
-            {/* <Typography variant="h6">Right</Typography> */}
             <AllDoneRight />
           </Box>
         </Col>

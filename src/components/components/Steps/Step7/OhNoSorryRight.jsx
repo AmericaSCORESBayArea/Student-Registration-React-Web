@@ -1,27 +1,28 @@
 import React from "react";
 import {
-  container,
-  title,
-  subTitle,
-  textFieldStyle,
+  Container,
+  Title,
+  SubTitle,
 } from "../../../componentsStyle/registrationFormStyle";
 import { Typography, Box, TextField, Button } from "@mui/material";
-
 import "@egjs/react-flicking/dist/flicking-inline.css";
+import { styled } from "@mui/system";
 function OhNoSorryRight() {
+  const TextFields = styled(TextField)({
+    maxHeight: "600px",
+    marginTop: "30px",
+    backgroundColor: "whitesmoke",
+  });
   return (
-    <div className={container}>
-      <h1 className={title}>Need Help?</h1>
-      <Typography className={subTitle}>
-        Send us a message immediately
-      </Typography>
-      <TextField
+    <Container>
+      <Title>Need Help?</Title>
+      <SubTitle>Send us a message immediately</SubTitle>
+      <TextFields
         fullWidth
         label="Your Message"
         multiline
         rows={8}
         variant="outlined"
-        className={textFieldStyle}
       />
       <Box
         sx={{
@@ -38,7 +39,7 @@ function OhNoSorryRight() {
           Send
         </Button>
       </Box>
-    </div>
+    </Container>
   );
 }
 

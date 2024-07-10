@@ -1,63 +1,70 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import {
-  container,
-  introductionContainer,
-  title,
-  subTitle,
+  Container,
+  Title,
 } from "../../../componentsStyle/registrationFormStyle";
 import helpPoint from "../../../../assets/help_point.png";
 import helpMe from "../../../../assets/help_me.png";
 import arrow from "../../../../assets/arrow.png";
 import "@egjs/react-flicking/dist/flicking-inline.css";
 import { useTheme, useMediaQuery } from "@mui/material";
+import { styled } from "@mui/system";
+
 function IntroductionRight() {
+  const IntroductionContainer = styled("div")({
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  });
+  const ImageArrow = styled("img")({
+    height: 80,
+    width: 100,
+    marginTop: -100,
+  });
+  const ImageHelpPoint = styled("img")({
+    height: 90,
+    width: 90,
+  });
+  const ImageHelpMe = styled("img")({
+    height: 60,
+    width: 60,
+  });
+  const TitleContainer = styled("div")({
+    width: "80%",
+  });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
-    <div className={container}>
-      <div className={introductionContainer}>
+    <Container>
+      <IntroductionContainer>
         {!isMobile ? (
           <>
-            <img
-              height={80}
-              width={100}
-              style={{ marginTop: -100 }}
-              src={arrow}
-              alt="Community service learning concept"
-            />
-            <p className={[title]}>
+            <ImageArrow src={arrow} alt="Community service learning concept" />
+            <Title>
               This shows how much is left to complete or if there are issues.
-            </p>
+            </Title>
           </>
         ) : (
           <></>
         )}
-      </div>
-      <div className={introductionContainer}>
-        <img
-          height={90}
-          width={90}
+      </IntroductionContainer>
+      <IntroductionContainer>
+        <ImageHelpPoint
           src={helpPoint}
           alt="Community service learning concept"
         />
-        <div style={{ width: "80%" }}>
-          <p className={title}>
-            Tap this icon for more information where it apperars.
-          </p>
-        </div>
-      </div>
-      <div className={[introductionContainer]}>
-        <img
-          height={60}
-          width={60}
-          src={helpMe}
-          alt="Community service learning concept"
-        />
-        <div style={{ width: "80%" }}>
-          <p className={title}>Tap this to get help at any time</p>
-        </div>
-      </div>
-    </div>
+        <TitleContainer>
+          <Title>Tap this icon for more information where it apperars.</Title>
+        </TitleContainer>
+      </IntroductionContainer>
+      <IntroductionContainer>
+        <ImageHelpMe src={helpMe} alt="Community service learning concept" />
+        <TitleContainer>
+          <Title>Tap this to get help at any time</Title>
+        </TitleContainer>
+      </IntroductionContainer>
+    </Container>
   );
 }
 

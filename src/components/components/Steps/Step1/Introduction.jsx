@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { Row, Col } from "react-bootstrap";
 import IntroductionRight from "./IntroductionRight";
-import { container } from "../../../componentsStyle/registrationFormStyle";
 import { styled } from "@mui/system";
 
 const Introduction = () => {
@@ -17,7 +15,7 @@ const Introduction = () => {
     width: "100%",
     height: "400px",
   });
-  const Typography = styled("div")({
+  const Typographys = styled(Typography)({
     fontWeight: "bold",
     fontSize: "22px",
   });
@@ -71,20 +69,20 @@ const Introduction = () => {
               },
             }}
           >
-            <Typography>Introduction</Typography>
-            <TypographyContainer className={container}>
-              <Typography className={TypographyContainer}>
+            <Typographys>Introduction</Typographys>
+            <TypographyContainer>
+              <Typographys>
                 Completing this form will enable your student to become a SCORES
                 player, poet, and take part in our game days and activites.
-              </Typography>
-              <Typography className={TypographyContainer}>
+              </Typographys>
+              <Typographys>
                 You need to be an adult guardian to accept the waiver at the
                 end.
-              </Typography>
-              <Typography className={TypographyContainer}>
+              </Typographys>
+              <Typographys>
                 Use a mobile phone number to get started and this will enable
                 you to access these records in the future.
-              </Typography>
+              </Typographys>
 
               <Box
                 sx={{

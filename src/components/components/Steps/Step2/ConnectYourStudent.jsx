@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { Box, FormControl, MenuItem, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import ConnectYourStudentRight from "./ConnectYourStudentRight";
-
-import { programSiteContainer } from "../../../componentsStyle/registrationFormStyle";
 import {
   genderArray,
   gradesArray,
@@ -12,27 +10,39 @@ import {
   TeamArray,
 } from "../../multiplesArray";
 import { CustomTextField } from "../../RegisterUI";
-import { makeStyles } from "@mui/styles";
+import { styled } from "@mui/system";
 
-const useStyles = makeStyles((theme) => ({
-  formControl: {
+const ConnectYourStudent = () => {
+  const FormControls = styled(FormControl)({
     display: "flex",
     flexDirection: "column",
     borderColor: "gray",
     width: "100%",
     marginTop: 5,
-  },
-  label: {
+    height: "57vh",
+
+    overflowY: "scroll",
+  });
+
+  const Typographys = styled(Typography)({
     textAlign: "left",
     paddingBottom: "5px",
     width: "100%",
-  },
-  textFieldContainer: {
+  });
+  const CustomTextFields = styled(CustomTextField)({
     backgroundColor: "white",
-  },
-}));
-const ConnectYourStudent = () => {
-  const classes = useStyles();
+  });
+  const ProgramSiteContainer = styled("div")({
+    display: "flex",
+    /* align-items: center, */
+    justifyContent: "center",
+    flexDirection: "column",
+    marginTop: "5px",
+    width: "100%",
+    backgroundColor: "lightskyblue",
+    padding: "10px 10px",
+    borderRadius: "10px",
+  });
 
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
@@ -115,32 +125,28 @@ const ConnectYourStudent = () => {
             }}
           >
             <Typography>Help Us Connect Your Student</Typography>
-            <FormControl className={classes.formControl}>
-              <Typography className={classes.label}>First Name*</Typography>
-              <CustomTextField
+            <FormControls>
+              <Typographys>First Name*</Typographys>
+              <CustomTextFields
                 hiddenLabel
                 fullWidth
                 variant="filled"
                 size="small"
                 value={formData.firstName}
                 onChange={handleChange}
-                className={classes.textFieldContainer}
-              ></CustomTextField>
-              <Typography className={classes.label}>
-                Last Name or inital*
-              </Typography>
+              ></CustomTextFields>
+              <Typographys>Last Name or inital*</Typographys>
 
-              <CustomTextField
+              <CustomTextFields
                 hiddenLabel
                 fullWidth
                 variant="filled"
                 size="small"
                 value={formData.lastName}
                 onChange={handleChange}
-                className={classes.textFieldContainer}
-              ></CustomTextField>
-              <Typography className={classes.label}>Gender</Typography>
-              <CustomTextField
+              ></CustomTextFields>
+              <Typographys>Gender</Typographys>
+              <CustomTextFields
                 select
                 hiddenLabel
                 fullWidth
@@ -148,7 +154,6 @@ const ConnectYourStudent = () => {
                 size="small"
                 value={formData.gender}
                 onChange={handleChange}
-                className={classes.textFieldContainer}
                 SelectProps={{
                   displayEmpty: true,
                   renderValue: (selected) => {
@@ -169,9 +174,9 @@ const ConnectYourStudent = () => {
                       {option.label}
                     </MenuItem>
                   ))}
-              </CustomTextField>
-              <Typography className={classes.label}>Grade</Typography>
-              <CustomTextField
+              </CustomTextFields>
+              <Typographys>Grade</Typographys>
+              <CustomTextFields
                 select
                 hiddenLabel
                 fullWidth
@@ -179,7 +184,6 @@ const ConnectYourStudent = () => {
                 size="small"
                 value={formData.grade}
                 onChange={handleChange}
-                className={classes.textFieldContainer}
                 SelectProps={{
                   displayEmpty: true,
                   renderValue: (selected) => {
@@ -200,10 +204,10 @@ const ConnectYourStudent = () => {
                       {option.label}
                     </MenuItem>
                   ))}
-              </CustomTextField>
-              <div className={programSiteContainer}>
-                <Typography className={classes.label}>Region*</Typography>
-                <CustomTextField
+              </CustomTextFields>
+              <ProgramSiteContainer>
+                <Typographys>Region*</Typographys>
+                <CustomTextFields
                   select
                   hiddenLabel
                   fullWidth
@@ -211,7 +215,6 @@ const ConnectYourStudent = () => {
                   size="small"
                   value={formData.region}
                   onChange={handleChange}
-                  className={classes.textFieldContainer}
                   SelectProps={{
                     displayEmpty: true,
                     renderValue: (selected) => {
@@ -232,11 +235,9 @@ const ConnectYourStudent = () => {
                         {option.label}
                       </MenuItem>
                     ))}
-                </CustomTextField>
-                <Typography className={classes.label}>
-                  School or Facility Name*
-                </Typography>
-                <CustomTextField
+                </CustomTextFields>
+                <Typographys>School or Facility Name*</Typographys>
+                <CustomTextFields
                   select
                   hiddenLabel
                   fullWidth
@@ -244,7 +245,6 @@ const ConnectYourStudent = () => {
                   size="small"
                   value={formData.team}
                   onChange={handleChange}
-                  className={classes.textFieldContainer}
                   SelectProps={{
                     displayEmpty: true,
                     renderValue: (selected) => {
@@ -265,9 +265,9 @@ const ConnectYourStudent = () => {
                         {option.label}
                       </MenuItem>
                     ))}
-                </CustomTextField>
-                <Typography className={classes.label}>Team</Typography>
-                <CustomTextField
+                </CustomTextFields>
+                <Typographys>Team</Typographys>
+                <CustomTextFields
                   select
                   hiddenLabel
                   fullWidth
@@ -275,7 +275,6 @@ const ConnectYourStudent = () => {
                   size="small"
                   value={formData.team}
                   onChange={handleChange}
-                  className={classes.textFieldContainer}
                   SelectProps={{
                     displayEmpty: true,
                     renderValue: (selected) => {
@@ -296,9 +295,9 @@ const ConnectYourStudent = () => {
                         {option.label}
                       </MenuItem>
                     ))}
-                </CustomTextField>
-              </div>
-            </FormControl>
+                </CustomTextFields>
+              </ProgramSiteContainer>
+            </FormControls>
             <button onClick={handlerNavigation}>press</button>
           </Box>
         </Col>

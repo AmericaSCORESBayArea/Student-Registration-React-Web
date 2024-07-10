@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import AcceptWaiverRight from "./AcceptWaiverRight";
-import { container } from "../../../componentsStyle/registrationFormStyle";
+import {
+  Container,
+  SubTitle,
+} from "../../../componentsStyle/registrationFormStyle";
 
 const ShareYourConcern = () => {
   const [showRight, setShowRight] = useState(false);
@@ -55,13 +58,13 @@ const ShareYourConcern = () => {
               },
             }}
           >
-            <Typography>Accpet the Waiver</Typography>
-            <div className={container}>
-              <Typography>
+            {/* <Title>Accpet the Waiver</Title> */}
+            <Container>
+              <SubTitle>
                 SCORES an the _______ School District require a guardian’s
                 signature on this waiver for your student to participate. Please
                 have a look and, if it’s ok, click Accept.
-              </Typography>
+              </SubTitle>
 
               <Box
                 sx={{
@@ -78,7 +81,7 @@ const ShareYourConcern = () => {
                   I Need To Think About It
                 </Button>
               </Box>
-            </div>
+            </Container>
           </Box>
         </Col>
         <Col xs={12} md={12} lg={5}>
@@ -94,7 +97,6 @@ const ShareYourConcern = () => {
               },
             }}
           >
-            {/* <Typography variant="h6">Right</Typography> */}
             <AcceptWaiverRight />
           </Box>
         </Col>

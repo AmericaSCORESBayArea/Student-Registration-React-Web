@@ -1,17 +1,27 @@
 import React from "react";
-import {
-  container,
-  waiverContainer,
-  waiverTitle,
-  waiverSubTitle,
-} from "../../../componentsStyle/registrationFormStyle";
+import { Container } from "../../../componentsStyle/registrationFormStyle";
 import { Paper, Typography, Box } from "@mui/material";
+import { styled } from "@mui/system";
 
 import "@egjs/react-flicking/dist/flicking-inline.css";
 function AcceptWaiverRight() {
+  const WaiverContainer = styled(Typography)({
+    padding: "20px",
+    height: "400px",
+    borderRadius: "30px",
+  });
+  const WaiverTitle = styled(Typography)({
+    fontWeight: "600",
+    fontSize: "22px",
+    textAlign: "left",
+  });
+  const WaiverSubTitle = styled(Typography)({
+    fontSize: "15px",
+    textAlign: "left",
+  });
   return (
-    <div className={container}>
-      <div className={waiverContainer}>
+    <Container>
+      <WaiverContainer>
         <Box
           sx={{
             p: 2,
@@ -24,11 +34,9 @@ function AcceptWaiverRight() {
           }}
         >
           <Paper elevation={0}>
-            <Typography className={waiverTitle}>Oakland Waiver</Typography>
-            <Typography className={waiverTitle}>
-              Waiver & Indemnity Agreement
-            </Typography>
-            <Typography variant="body1" className={waiverSubTitle}>
+            <WaiverTitle>Oakland Waiver</WaiverTitle>
+            <WaiverTitle>Waiver & Indemnity Agreement</WaiverTitle>
+            <WaiverSubTitle variant="body1">
               In legal terms, a parent or legal guardian holds significant
               responsibilities and rights concerning the care, well-being, and
               upbringing of a child. These responsibilities are fundamental to
@@ -54,11 +62,11 @@ function AcceptWaiverRight() {
               guardian assumes responsibility for the child's personal care,
               upbringing, and property management until the child reaches
               adulthood or the guardianship is terminated.
-            </Typography>
+            </WaiverSubTitle>
           </Paper>
         </Box>
-      </div>
-    </div>
+      </WaiverContainer>
+    </Container>
   );
 }
 

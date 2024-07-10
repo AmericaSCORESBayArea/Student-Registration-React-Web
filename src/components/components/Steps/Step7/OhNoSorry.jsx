@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import OhNoSorryRight from "./OhNoSorryRight";
+import { Title } from "../../../componentsStyle/registrationFormStyle";
 
 const OhNoSorry = () => {
   const [showRight, setShowRight] = useState(false);
@@ -46,15 +47,24 @@ const OhNoSorry = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "center",
+              alignItems: "flex-start",
               height: "100%",
+              marginLeft: "20px",
               // backgroundColor: "red",
               "@media (max-width: 600px)": {
                 display: showRight ? "none" : "flex",
               },
             }}
           >
-            <Typography>Oh no! Sorry!</Typography>
+            <Title>Oh no! Sorry!</Title>
+            <Title>Let us help you.</Title>
+            <Title>Please choose one of the following options...</Title>
+            <Title>I’d like to start over</Title>
+            <Title>Send a message to my SCORES Coach</Title>
+            <Title>I’d like my SCORES Coach to contact me</Title>
+            <Title>I’d like a SCORES Program Manager to contact me</Title>
+            <Title>I need help with translation</Title>
+            <Title>I don’t have all the information required</Title>
           </Box>
         </Col>
         <Col xs={12} md={12} lg={5}>
@@ -70,7 +80,6 @@ const OhNoSorry = () => {
               },
             }}
           >
-            {/* <Typography variant="h6">Right</Typography> */}
             <OhNoSorryRight />
           </Box>
         </Col>
