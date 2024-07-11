@@ -12,7 +12,7 @@ function ConnectYourStudentRight() {
   const VideoResponsive = styled("div")({
     position: "relative",
     width: "100%",
-    marginTop: "30px",
+    // marginTop: "30px",
 
     "&::before, &::after": {
       content: '""',
@@ -69,7 +69,7 @@ function ConnectYourStudentRight() {
   return (
     <Container>
       <TitleContainer>
-        <Title>2024 Oakland</Title>
+        <Title>2024 Oakland Poetry Slam</Title>
         <SubTitle>
           SCORES Student develop language skills, confidence and self-advocacy
           through poetry

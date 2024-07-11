@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Container,
+  SubTitle,
   Title,
 } from "../../../componentsStyle/registrationFormStyle";
 import helpPoint from "../../../../assets/help_point.png";
@@ -13,58 +14,73 @@ import { styled } from "@mui/system";
 function IntroductionRight() {
   const IntroductionContainer = styled("div")({
     display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    padding: "10px",
+    maxWidth: "600px",
+    width: "100%",
+    height: "90%",
+  });
+  const Introduction = styled("div")(({ marginLeft }) => ({
+    display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-  });
+    width: "100%",
+    paddingLeft: marginLeft || "0",
+  }));
   const ImageArrow = styled("img")({
     height: 80,
     width: 100,
-    marginTop: -100,
+    marginTop: -160,
   });
   const ImageHelpPoint = styled("img")({
-    height: 90,
-    width: 90,
+    height: 80,
+    width: 80,
   });
   const ImageHelpMe = styled("img")({
-    height: 60,
-    width: 60,
+    height: 50,
+    width: 50,
   });
   const TitleContainer = styled("div")({
-    width: "80%",
+    width: "60%",
+    paddingLeft: "15px",
   });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
-    <Container>
-      <IntroductionContainer>
+    <IntroductionContainer>
+      <Introduction marginLeft="50px">
         {!isMobile ? (
           <>
             <ImageArrow src={arrow} alt="Community service learning concept" />
-            <Title>
-              This shows how much is left to complete or if there are issues.
-            </Title>
+            <TitleContainer>
+              <SubTitle>
+                This shows how much is left to complete or if there are issues.
+              </SubTitle>
+            </TitleContainer>
           </>
         ) : (
           <></>
         )}
-      </IntroductionContainer>
-      <IntroductionContainer>
+      </Introduction>
+      <Introduction>
         <ImageHelpPoint
           src={helpPoint}
           alt="Community service learning concept"
         />
         <TitleContainer>
-          <Title>Tap this icon for more information where it apperars.</Title>
+          <SubTitle>
+            Tap this icon for more information where it apperars.
+          </SubTitle>
         </TitleContainer>
-      </IntroductionContainer>
-      <IntroductionContainer>
+      </Introduction>
+      <Introduction marginLeft="100px">
         <ImageHelpMe src={helpMe} alt="Community service learning concept" />
         <TitleContainer>
-          <Title>Tap this to get help at any time</Title>
+          <SubTitle>Tap this to get help at any time</SubTitle>
         </TitleContainer>
-      </IntroductionContainer>
-    </Container>
+      </Introduction>
+    </IntroductionContainer>
   );
 }
 

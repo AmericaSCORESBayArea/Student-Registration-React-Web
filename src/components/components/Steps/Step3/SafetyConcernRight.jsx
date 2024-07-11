@@ -14,7 +14,7 @@ function SafetyConcernRight() {
     position: "relative",
 
     width: "100%",
-    marginTop: "30px",
+    // marginTop: "10px",
 
     /* Top left corner */
     "&::before": {

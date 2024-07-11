@@ -14,8 +14,13 @@ const ShareYourConcern = () => {
   });
   const TextFields = styled(TextField)({
     maxHeight: "600px",
+    // marginTop: "30px",
+    backgroundColor: "white",
+  });
+  const CustomButton = styled(Button)({
     marginTop: "30px",
-    backgroundColor: "whitesmoke",
+    marginLeft: "5px",
+    // border: "1px solid green",
   });
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
@@ -67,10 +72,8 @@ const ShareYourConcern = () => {
               },
             }}
           >
-            <Typography>Share Your Concerns and Goals</Typography>
-
             <Container>
-              <Title>Student Needs</Title>
+              <Title textAlign="center">Student Needs</Title>
               <SubTitle>
                 Tell us if you student has allergies or any other needs weh
                 should be aware of
@@ -79,7 +82,7 @@ const ShareYourConcern = () => {
                 fullWidth
                 label="Your Message"
                 multiline
-                rows={8}
+                rows={6}
                 variant="outlined"
                 // className={textFieldStyle}
               />
@@ -87,16 +90,19 @@ const ShareYourConcern = () => {
                 sx={{
                   mt: 2,
                   display: "flex",
-                  justifyContent: "space-between",
-                  width: "100%",
+                  // border: "1px solid red",
+                  // justifyContent: "space-between",
+                  width: "80%",
+                  marginLeft: "20%",
+                  // paddingLeft: "3px",
                 }}
               >
-                <Button variant="contained" color="secondary">
+                <CustomButton variant="contained" color="secondary">
                   Back
-                </Button>
-                <Button variant="contained" color="primary">
-                  Send
-                </Button>
+                </CustomButton>
+                <CustomButton variant="contained" color="primary">
+                  Conitnue
+                </CustomButton>
               </Box>
             </Container>
           </Box>

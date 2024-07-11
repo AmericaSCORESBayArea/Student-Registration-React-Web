@@ -3,10 +3,13 @@ import { Typography } from "@mui/material";
 import { styled } from "@mui/system";
 
 export const Container = styled("div")({
-  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
   padding: "10px",
   maxWidth: "600px",
   width: "100%",
+  // border: "1px solid red",
 });
 
 export const Corners1 = styled("div")({
@@ -63,15 +66,20 @@ export const Corners2 = styled("div")({
     transform: "rotate(45deg)",
   },
 });
-export const Title = styled(Typography)({
-  fontSize: "22px",
-});
+export const Title = styled(Typography)(({ textAlign }) => ({
+  fontSize: "25px",
+  textAlign: textAlign || "left",
+  fontWeight: "bold",
+  width: "100%",
+}));
 
-export const subTitle = css`
-  font-size: 17px;
-`;
+// export const subTitle = css`
+//   font-size: 17px;
+// `;
 export const SubTitle = styled(Typography)({
   fontSize: "22px",
+  textAlign: "left",
+  marginBlock: "20px",
 });
 
 export const dotsContainer = css`

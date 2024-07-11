@@ -102,7 +102,7 @@ const AddStudents = () => {
               padding: " 0 20px",
             }}
           >
-            <Box>Help Us Connect Your Student</Box>
+            <Box>{steps[activeStep]}</Box>
             <Box>
               <Stepper
                 nonLinear
@@ -133,10 +133,10 @@ const AddStudents = () => {
               pt: 2,
             }}
           >
-            <Box sx={{ height: "65vh", maxWidth: 1200, width: "100%", p: 2 }}>
+            <Box sx={{ height: "70vh", maxWidth: 1200, width: "100%", p: 2 }}>
               <Typography>{stepContent(activeStep)}</Typography>
             </Box>
-            <Box sx={{ mb: 2 }}>
+            {/* <Box sx={{ mb: 2 }}>
               <Button
                 color="inherit"
                 disabled={activeStep === 0}
@@ -146,9 +146,9 @@ const AddStudents = () => {
                 Back
               </Button>
               <Button onClick={handleNext} sx={{ mr: 1 }}>
-                {isLastStep() ? "Finish" : "Next"}
+                {isLastStep() ? "Finish" : "Nexts"}
               </Button>
-            </Box>
+            </Box> */}
           </Box>
         </>
       ) : isTablet ? (

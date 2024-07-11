@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, ButtonBase, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import IntroductionRight from "./IntroductionRight";
 import { styled } from "@mui/system";
@@ -11,13 +11,18 @@ const Introduction = () => {
     justifyContent: "space-between",
     position: "relative",
     padding: "10px",
-    maxWidth: "800px",
+    maxWidth: "700px",
     width: "100%",
     height: "400px",
   });
   const Typographys = styled(Typography)({
     fontWeight: "bold",
     fontSize: "22px",
+    textAlign: "left",
+  });
+  const CustomButton = styled(Button)({
+    marginLeft: "5px",
+    // border: "1px solid green",
   });
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
@@ -69,7 +74,6 @@ const Introduction = () => {
               },
             }}
           >
-            <Typographys>Introduction</Typographys>
             <TypographyContainer>
               <Typographys>
                 Completing this form will enable your student to become a SCORES
@@ -88,16 +92,19 @@ const Introduction = () => {
                 sx={{
                   mt: 2,
                   display: "flex",
-                  justifyContent: "space-between",
-                  width: "100%",
+                  // border: "1px solid red",
+                  // justifyContent: "space-between",
+                  width: "80%",
+                  marginLeft: "20%",
+                  // paddingLeft: "3px",
                 }}
               >
-                <Button variant="contained" color="secondary">
+                <CustomButton variant="contained" color="secondary">
                   Back
-                </Button>
-                <Button variant="contained" color="primary">
+                </CustomButton>
+                <CustomButton variant="contained" color="primary">
                   Get Started
-                </Button>
+                </CustomButton>
               </Box>
             </TypographyContainer>
           </Box>

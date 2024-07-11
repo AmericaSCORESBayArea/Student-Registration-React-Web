@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, FormControl, MenuItem, Typography } from "@mui/material";
+import { Box, Button, FormControl, MenuItem, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 
 import { relationshipArray } from "../../multiplesArray";
@@ -25,6 +25,10 @@ const SafetyConcern = () => {
   });
   const CustomTextFields = styled(CustomTextField)({
     backgroundColor: "white",
+  });
+  const CustomButton = styled(Button)({
+    marginLeft: "5px",
+    // border: "1px solid green",
   });
 
   const [showRight, setShowRight] = useState(false);
@@ -98,7 +102,6 @@ const SafetyConcern = () => {
               },
             }}
           >
-            <Typography>Help Us Connect Your Student</Typography>
             <FormControls>
               <Typographys>Parent/Guardian First Name*</Typographys>
               <CustomTextFields
@@ -175,7 +178,24 @@ const SafetyConcern = () => {
               ></CustomTextFields>
             </FormControls>
 
-            <button onClick={handlerNavigation}>Submit</button>
+            <Box
+              sx={{
+                mt: 2,
+                display: "flex",
+                // border: "1px solid red",
+                // justifyContent: "space-between",
+                width: "80%",
+                marginLeft: "20%",
+                // paddingLeft: "3px",
+              }}
+            >
+              <CustomButton variant="contained" color="secondary">
+                Back
+              </CustomButton>
+              <CustomButton variant="contained" color="primary">
+                Get Started
+              </CustomButton>
+            </Box>
           </Box>
         </Col>
         <Col xs={12} md={12} lg={5}>
@@ -190,7 +210,6 @@ const SafetyConcern = () => {
               },
             }}
           >
-            <Typography variant="h6">Right Section</Typography>
             <SafetyConcernRight />
           </Box>
         </Col>

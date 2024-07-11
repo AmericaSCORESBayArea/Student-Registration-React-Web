@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, FormControl, MenuItem, Typography } from "@mui/material";
+import { Box, Button, FormControl, MenuItem, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import ConnectYourStudentRight from "./ConnectYourStudentRight";
 import {
@@ -42,6 +42,10 @@ const ConnectYourStudent = () => {
     backgroundColor: "lightskyblue",
     padding: "10px 10px",
     borderRadius: "10px",
+  });
+  const CustomButton = styled(Button)({
+    marginLeft: "5px",
+    // border: "1px solid green",
   });
 
   const [showRight, setShowRight] = useState(false);
@@ -124,7 +128,6 @@ const ConnectYourStudent = () => {
               },
             }}
           >
-            <Typography>Help Us Connect Your Student</Typography>
             <FormControls>
               <Typographys>First Name*</Typographys>
               <CustomTextFields
@@ -298,7 +301,24 @@ const ConnectYourStudent = () => {
                 </CustomTextFields>
               </ProgramSiteContainer>
             </FormControls>
-            <button onClick={handlerNavigation}>press</button>
+            <Box
+              sx={{
+                mt: 2,
+                display: "flex",
+                // border: "1px solid red",
+                // justifyContent: "space-between",
+                width: "80%",
+                marginLeft: "20%",
+                // paddingLeft: "3px",
+              }}
+            >
+              <CustomButton variant="contained" color="secondary">
+                Back
+              </CustomButton>
+              <CustomButton variant="contained" color="primary">
+                Get Started
+              </CustomButton>
+            </Box>
           </Box>
         </Col>
         <Col xs={12} md={12} lg={5}>
@@ -313,7 +333,6 @@ const ConnectYourStudent = () => {
               },
             }}
           >
-            <Typography variant="h6">Right Section</Typography>
             <ConnectYourStudentRight />
           </Box>
         </Col>

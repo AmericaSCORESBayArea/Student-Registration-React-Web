@@ -6,8 +6,13 @@ import {
   Container,
   SubTitle,
 } from "../../../componentsStyle/registrationFormStyle";
+import { styled } from "@mui/system";
 
 const ShareYourConcern = () => {
+  const CustomButton = styled(Button)({
+    marginLeft: "5px",
+    // border: "1px solid green",
+  });
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
@@ -70,16 +75,19 @@ const ShareYourConcern = () => {
                 sx={{
                   mt: 2,
                   display: "flex",
-                  justifyContent: "space-between",
-                  width: "100%",
+                  // border: "1px solid red",
+                  // justifyContent: "space-between",
+                  width: "80%",
+                  marginLeft: "20%",
+                  // paddingLeft: "3px",
                 }}
               >
-                <Button variant="contained" color="secondary">
-                  Accpet
-                </Button>
-                <Button variant="contained" color="primary">
+                <CustomButton variant="contained" color="secondary">
+                  Back
+                </CustomButton>
+                <CustomButton variant="contained" color="primary">
                   I Need To Think About It
-                </Button>
+                </CustomButton>
               </Box>
             </Container>
           </Box>

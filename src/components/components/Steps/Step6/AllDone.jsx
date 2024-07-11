@@ -58,7 +58,6 @@ const ShareYourConcern = () => {
               },
             }}
           >
-            <Title>All Done! Thanks!</Title>
             <SubTitle>There’s a great school year ahead with SCORES!</SubTitle>
           </Box>
         </Col>
