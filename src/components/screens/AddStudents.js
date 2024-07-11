@@ -16,7 +16,7 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import Introduction from "../components/Steps/Step1/Introduction";
 import ConnectYourStudent from "../components/Steps/Step2/ConnectYourStudent";
 import SafetyConcern from "../components/Steps/Step3/SafetyConcern";
-import ShareYourConcern from "../components/Steps/step4/ShareYourConcern";
+import ShareYourConcern from "../components/Steps/Step4/ShareYourConcern";
 import AcceptWaiver from "../components/Steps/Step5/AcceptWaiver";
 import AllDone from "../components/Steps/Step6/AllDone";
 import OhNoSorry from "../components/Steps/Step7/OhNoSorry";
@@ -205,6 +205,7 @@ const AddStudents = () => {
             <Box sx={{ height: "65vh", width: "100%", p: 2 }}>
               <Typography>{stepContent(activeStep)}</Typography>
             </Box>
+
             <Box sx={{ mb: 2 }}>
               <Button
                 color="inherit"
@@ -236,7 +237,7 @@ const AddStudents = () => {
           >
             <Typography>{steps[activeStep]}</Typography>
           </Paper>
-          <Box sx={{ height: "60vh", width: "100%", p: 2 }}>
+          <Box sx={{ height: "100vh", width: "100%", p: 2 }}>
             <Typography>{stepContent(activeStep)}</Typography>
           </Box>
           <MobileStepper
