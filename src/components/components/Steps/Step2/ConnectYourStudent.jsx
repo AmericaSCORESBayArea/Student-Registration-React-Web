@@ -30,7 +30,6 @@ const Typographys = styled(Typography)({
 
 const CustomTextFields = styled(CustomTextField)({
   backgroundColor: "white",
-  paddingInline: "1%",
   borderRadius: 10,
 });
 
@@ -101,7 +100,6 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
     const { name, value } = e.target;
     setFormData((prevData) => {
       const updatedData = { ...prevData, [name]: value };
-      console.log("formData :", updatedData);
       return updatedData;
     });
   }, []);

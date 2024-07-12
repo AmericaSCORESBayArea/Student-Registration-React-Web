@@ -98,7 +98,11 @@ const AddStudents = () => {
       }}
     >
       {!isMobile && !isTablet ? (
-        <>
+        <Box
+          sx={{
+            marginBottom: "30px",
+          }}
+        >
           <Container
             style={{
               display: "flex",
@@ -110,9 +114,9 @@ const AddStudents = () => {
           >
             <Box
               sx={{
-                // height: "70vh",
-                // maxWidth: 1200,
                 width: "15%",
+                fontSize: "20px",
+                fontWeight: "bold",
               }}
             >
               {steps[activeStep]}
@@ -144,7 +148,6 @@ const AddStudents = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              pt: 2,
             }}
           >
             <Box
@@ -157,21 +160,8 @@ const AddStudents = () => {
             >
               <Typography>{stepContent(activeStep)}</Typography>
             </Box>
-            {/* <Box sx={{ mb: 2 }}>
-              <Button
-                color="inherit"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={{ mr: 1 }}
-              >
-                Back
-              </Button>
-              <Button onClick={handleNext} sx={{ mr: 1 }}>
-                {isLastStep() ? "Finish" : "Nexts"}
-              </Button>
-            </Box> */}
           </Box>
-        </>
+        </Box>
       ) : isTablet ? (
         <>
           <Container

@@ -42,7 +42,6 @@ const SafetyConcern = ({ handleNext, handleBack }) => {
     parentGuardianPhone1: "",
     parentGuardianPhone2: "",
   });
-  const [errors, setErrors] = useState({});
 
   const minSwipeDistance = 50;
 
@@ -70,15 +69,10 @@ const SafetyConcern = ({ handleNext, handleBack }) => {
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-    console.log("formData : ", formData);
-  };
-  const Submit = () => {
-    console.log("submit data : ", formData);
   };
 
   return (
