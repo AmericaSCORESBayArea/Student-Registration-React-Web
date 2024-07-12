@@ -93,6 +93,7 @@ const SafetyConcern = ({ handleNext, handleBack }) => {
               width: "60%",
               "@media (max-width: 600px)": {
                 display: showRight ? "none" : "flex",
+                width: "100%",
               },
             }}
           >

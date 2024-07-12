@@ -249,7 +249,7 @@ const AddStudents = () => {
             <Typography>{steps[activeStep]}</Typography>
           </Paper>
           <Box sx={{ height: "100vh", width: "100%", p: 2 }}>
-            <Typography>{stepContent(activeStep)}</Typography>
+            {stepContent(activeStep)}
           </Box>
           <MobileStepper
             variant="text"

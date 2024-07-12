@@ -122,6 +122,7 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
               width: "60%",
               "@media (max-width: 600px)": {
                 display: showRight ? "none" : "flex",
+                width: "100%",
               },
             }}
           >
@@ -367,6 +368,7 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
               height: "100%",
               "@media (max-width: 600px)": {
                 display: showRight ? "flex" : "none",
+                width: "100%",
               },
             }}
           >

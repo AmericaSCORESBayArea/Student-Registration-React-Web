@@ -65,36 +65,42 @@ const ShareYourConcern = ({ handleNext, handleBack }) => {
               flexDirection: "column",
               alignItems: "center",
               height: "100%",
-              // backgroundColor: "red",
               "@media (max-width: 600px)": {
                 display: showRight ? "none" : "flex",
               },
             }}
           >
-            <Container width="70%" marginRight="25%">
+            <Container
+              width="70%"
+              marginRight="25%"
+              sx={{
+                "@media (max-width: 600px)": {
+                  width: "100%",
+                  marginRight: "0",
+                },
+              }}
+            >
               <Title textAlign="center">Student Needs</Title>
               <SubTitle>
                 Tell us if you student has allergies or any other needs weh
                 should be aware of
               </SubTitle>
               <TextFields
-                // fullwWidth
                 label="Your Message"
                 multiline
                 rows={6}
                 variant="outlined"
-
-                // className={textFieldStyle}
               />
               <Box
                 sx={{
                   mt: 2,
                   display: "flex",
-                  // border: "1px solid red",
-                  // justifyContent: "space-between",
                   width: "80%",
                   marginLeft: "20%",
-                  // paddingLeft: "3px",
+                  "@media (max-width: 600px)": {
+                    width: "100%",
+                    marginLeft: "0",
+                  },
                 }}
               >
                 <CustomButton
