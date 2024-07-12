@@ -2,10 +2,7 @@ import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import AllDoneRight from "./AllDoneRight";
-import {
-  SubTitle,
-  Title,
-} from "../../../componentsStyle/registrationFormStyle";
+import { SubTitle } from "../../../componentsStyle/registrationFormStyle";
 
 const ShareYourConcern = () => {
   const [showRight, setShowRight] = useState(false);

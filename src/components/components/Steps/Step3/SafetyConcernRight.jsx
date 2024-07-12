@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   Container,
   Title,
@@ -8,71 +8,68 @@ import {
 } from "../../../componentsStyle/registrationFormStyle";
 import { styled } from "@mui/system";
 
-import "@egjs/react-flicking/dist/flicking-inline.css";
-function SafetyConcernRight() {
-  const ImageContainer = styled("div")({
-    position: "relative",
+const ImageContainer = styled("div")({
+  position: "relative",
 
-    width: "100%",
-    // marginTop: "10px",
+  width: "100%",
 
-    /* Top left corner */
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      top: "-10px",
-      left: "-10px",
-      width: "40px",
-      height: "40px",
-      background: "rgba(200, 200, 200, 0.8)" /* Grey color for tape */,
-      transform: "rotate(-45deg)",
-      boxShadow: " 0px 4px 8px rgba(0, 0, 0, 0.1)" /* Shadow for tape */,
-      zIndex: 1,
-    },
+  /* Top left corner */
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    top: "-10px",
+    left: "-10px",
+    width: "40px",
+    height: "40px",
+    background: "rgba(200, 200, 200, 0.8)" /* Grey color for tape */,
+    transform: "rotate(-45deg)",
+    boxShadow: " 0px 4px 8px rgba(0, 0, 0, 0.1)" /* Shadow for tape */,
+    zIndex: 1,
+  },
 
-    /* Bottom left corner */
-    "&::after": {
-      content: '""',
-      position: "absolute",
-      bottom: "-10px",
-      left: "-10px",
-      width: "40px",
-      height: "40px",
-      background: "rgba(200, 200, 200, 0.8)" /* Grey color for tape */,
-      transform: "rotate(45deg)",
-      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" /* Shadow for tape */,
-      zIndex: "1",
-    },
+  /* Bottom left corner */
+  "&::after": {
+    content: '""',
+    position: "absolute",
+    bottom: "-10px",
+    left: "-10px",
+    width: "40px",
+    height: "40px",
+    background: "rgba(200, 200, 200, 0.8)" /* Grey color for tape */,
+    transform: "rotate(45deg)",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" /* Shadow for tape */,
+    zIndex: "1",
+  },
 
-    /* Top right corner */
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      top: "-10px",
-      right: "-10px",
-      width: "40px",
-      height: "40px",
-      background: "rgba(200, 200, 200, 0.8)" /* Grey color for tape */,
-      transform: "rotate(45deg)",
-      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" /* Shadow for tape */,
-      zIndex: "1",
-    },
+  /* Top right corner */
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    top: "-10px",
+    right: "-10px",
+    width: "40px",
+    height: "40px",
+    background: "rgba(200, 200, 200, 0.8)" /* Grey color for tape */,
+    transform: "rotate(45deg)",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" /* Shadow for tape */,
+    zIndex: "1",
+  },
 
-    /* Bottom right corner */
-    "&::after": {
-      content: '""',
-      position: "absolute",
-      bottom: "-10px",
-      right: "-10px",
-      width: "40px",
-      height: "40px",
-      background: "rgba(200, 200, 200, 0.8)" /* Grey color for tape */,
-      transform: "rotate(-45deg)",
-      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" /* Shadow for tape */,
-      zIndex: "1",
-    },
-  });
-
+  /* Bottom right corner */
+  "&::after": {
+    content: '""',
+    position: "absolute",
+    bottom: "-10px",
+    right: "-10px",
+    width: "40px",
+    height: "40px",
+    background: "rgba(200, 200, 200, 0.8)" /* Grey color for tape */,
+    transform: "rotate(-45deg)",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" /* Shadow for tape */,
+    zIndex: "1",
+  },
+});
+const SafetyConcernRight = memo(() => {
   return (
     <Container>
       <Title>Parents need to Know</Title>
@@ -92,6 +89,6 @@ function SafetyConcernRight() {
       </ImageContainer>
     </Container>
   );
-}
+});
 
 export default SafetyConcernRight;

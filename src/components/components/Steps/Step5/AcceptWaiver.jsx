@@ -8,11 +8,10 @@ import {
 } from "../../../componentsStyle/registrationFormStyle";
 import { styled } from "@mui/system";
 
+const CustomButton = styled(Button)({
+  marginLeft: "5px",
+});
 const ShareYourConcern = ({ handleNext, handleBack }) => {
-  const CustomButton = styled(Button)({
-    marginLeft: "5px",
-    // border: "1px solid green",
-  });
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);

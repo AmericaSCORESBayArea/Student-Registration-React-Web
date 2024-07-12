@@ -1,50 +1,44 @@
-import React from "react";
-import {
-  Container,
-  SubTitle,
-  Title,
-} from "../../../componentsStyle/registrationFormStyle";
+import React, { memo } from "react";
+import { SubTitle } from "../../../componentsStyle/registrationFormStyle";
 import helpPoint from "../../../../assets/help_point.png";
 import helpMe from "../../../../assets/help_me.png";
 import arrow from "../../../../assets/arrow.png";
-import "@egjs/react-flicking/dist/flicking-inline.css";
 import { useTheme, useMediaQuery } from "@mui/material";
 import { styled } from "@mui/system";
-
-function IntroductionRight() {
-  const IntroductionContainer = styled("div")({
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    padding: "10px",
-    maxWidth: "600px",
-    width: "100%",
-    height: "90%",
-  });
-  const Introduction = styled("div")(({ marginLeft }) => ({
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    paddingLeft: marginLeft || "0",
-  }));
-  const ImageArrow = styled("img")({
-    height: 80,
-    width: 100,
-    marginTop: -160,
-  });
-  const ImageHelpPoint = styled("img")({
-    height: 80,
-    width: 80,
-  });
-  const ImageHelpMe = styled("img")({
-    height: 50,
-    width: 50,
-  });
-  const TitleContainer = styled("div")({
-    width: "60%",
-    paddingLeft: "15px",
-  });
+const IntroductionContainer = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  padding: "10px",
+  maxWidth: "600px",
+  width: "100%",
+  height: "90%",
+});
+const Introduction = styled("div")(({ marginLeft }) => ({
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  width: "100%",
+  paddingLeft: marginLeft || "0",
+}));
+const ImageArrow = styled("img")({
+  height: 80,
+  width: 100,
+  marginTop: -160,
+});
+const ImageHelpPoint = styled("img")({
+  height: 80,
+  width: 80,
+});
+const ImageHelpMe = styled("img")({
+  height: 50,
+  width: 50,
+});
+const TitleContainer = styled("div")({
+  width: "60%",
+  paddingLeft: "15px",
+});
+const IntroductionRight = memo(() => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
@@ -82,6 +76,6 @@ function IntroductionRight() {
       </Introduction>
     </IntroductionContainer>
   );
-}
+});
 
 export default IntroductionRight;

@@ -1,24 +1,23 @@
-import React from "react";
+import React, { memo } from "react";
 import { Container } from "../../../componentsStyle/registrationFormStyle";
 import { Paper, Typography, Box } from "@mui/material";
 import { styled } from "@mui/system";
 
-import "@egjs/react-flicking/dist/flicking-inline.css";
-function AcceptWaiverRight() {
-  const WaiverContainer = styled(Typography)({
-    padding: "20px",
-    height: "400px",
-    borderRadius: "30px",
-  });
-  const WaiverTitle = styled(Typography)({
-    fontWeight: "600",
-    fontSize: "22px",
-    textAlign: "left",
-  });
-  const WaiverSubTitle = styled(Typography)({
-    fontSize: "15px",
-    textAlign: "left",
-  });
+const WaiverContainer = styled(Typography)({
+  padding: "20px",
+  height: "400px",
+  borderRadius: "30px",
+});
+const WaiverTitle = styled(Typography)({
+  fontWeight: "600",
+  fontSize: "22px",
+  textAlign: "left",
+});
+const WaiverSubTitle = styled(Typography)({
+  fontSize: "15px",
+  textAlign: "left",
+});
+const AcceptWaiverRight = memo(() => {
   return (
     <Container>
       <WaiverContainer>
@@ -68,6 +67,6 @@ function AcceptWaiverRight() {
       </WaiverContainer>
     </Container>
   );
-}
+});
 
 export default AcceptWaiverRight;

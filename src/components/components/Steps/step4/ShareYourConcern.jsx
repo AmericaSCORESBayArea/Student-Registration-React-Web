@@ -9,21 +9,18 @@ import {
 import { styled } from "@mui/system";
 import ShareYourConcernRight from "./ShareYourConcernRight";
 
+const SubTitle = styled("p")({
+  fontSize: "18px",
+});
+const TextFields = styled(TextField)({
+  maxHeight: "600px",
+  backgroundColor: "white",
+});
+const CustomButton = styled(Button)({
+  marginTop: "30px",
+  marginLeft: "5px",
+});
 const ShareYourConcern = ({ handleNext, handleBack }) => {
-  const SubTitle = styled("p")({
-    fontSize: "18px",
-  });
-  const TextFields = styled(TextField)({
-    maxHeight: "600px",
-    // marginTop: "30px",
-    // width: "50%",
-    backgroundColor: "white",
-  });
-  const CustomButton = styled(Button)({
-    marginTop: "30px",
-    marginLeft: "5px",
-    // border: "1px solid green",
-  });
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);

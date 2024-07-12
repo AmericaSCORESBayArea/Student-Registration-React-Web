@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   Title,
   SubTitle,
@@ -10,16 +10,16 @@ import "@egjs/flicking-plugins/dist/pagination.css";
 import "@egjs/flicking-plugins/dist/flicking-plugins.css";
 import { Container } from "react-bootstrap";
 
-const ShareYourConcernRight = () => {
+const VideoFrame = styled("iframe")({
+  width: "100%",
+  height: "100%",
+  border: "none",
+});
+
+const ShareYourConcernRight = memo(() => {
   const plugins = [
     new AutoPlay({ duration: 2000, direction: "NEXT", stopOnHover: false }),
   ];
-
-  const VideoFrame = styled("iframe")({
-    width: "100%",
-    height: "100%",
-    border: "none",
-  });
 
   const videoUrls = [
     "https://www.youtube.com/embed/30LWjhZzg50",
@@ -46,6 +46,6 @@ const ShareYourConcernRight = () => {
       </Flicking>
     </Container>
   );
-};
+});
 
 export default ShareYourConcernRight;

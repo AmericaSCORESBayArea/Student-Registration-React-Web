@@ -6,33 +6,31 @@ import { relationshipArray } from "../../multiplesArray";
 import SafetyConcernRight from "./SafetyConcernRight";
 import { CustomTextField } from "../../RegisterUI";
 import { styled } from "@mui/system";
+const FormControls = styled(FormControl)({
+  display: "flex",
+  flexDirection: "column",
+  borderColor: "gray",
+  width: "100%",
+  marginTop: 5,
+  height: "57vh",
+  overflowY: "scroll",
+});
+
+const Typographys = styled(Typography)({
+  textAlign: "left",
+  paddingBottom: "5px",
+  width: "100%",
+});
+const CustomTextFields = styled(CustomTextField)({
+  backgroundColor: "white",
+  paddingInline: "1%",
+  borderRadius: 10,
+});
+const CustomButton = styled(Button)({
+  marginLeft: "5px",
+});
 
 const SafetyConcern = ({ handleNext, handleBack }) => {
-  const FormControls = styled(FormControl)({
-    display: "flex",
-    flexDirection: "column",
-    borderColor: "gray",
-    width: "100%",
-    marginTop: 5,
-    height: "57vh",
-    overflowY: "scroll",
-  });
-
-  const Typographys = styled(Typography)({
-    textAlign: "left",
-    paddingBottom: "5px",
-    width: "100%",
-  });
-  const CustomTextFields = styled(CustomTextField)({
-    backgroundColor: "white",
-    paddingInline: "1%",
-    borderRadius: 10,
-  });
-  const CustomButton = styled(Button)({
-    marginLeft: "5px",
-    // border: "1px solid green",
-  });
-
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);

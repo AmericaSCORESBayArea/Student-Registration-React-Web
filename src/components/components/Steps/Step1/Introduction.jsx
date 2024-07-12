@@ -3,27 +3,25 @@ import { Box, Button, ButtonBase, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import IntroductionRight from "./IntroductionRight";
 import { styled } from "@mui/system";
-
+const TypographyContainer = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  position: "relative",
+  padding: "10px",
+  maxWidth: "700px",
+  width: "100%",
+  height: "400px",
+});
+const Typographys = styled(Typography)({
+  fontWeight: "bold",
+  fontSize: "22px",
+  textAlign: "left",
+});
+const CustomButton = styled(Button)({
+  marginLeft: "5px",
+});
 const Introduction = ({ handleNext, handleBack }) => {
-  const TypographyContainer = styled("div")({
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    position: "relative",
-    padding: "10px",
-    maxWidth: "700px",
-    width: "100%",
-    height: "400px",
-  });
-  const Typographys = styled(Typography)({
-    fontWeight: "bold",
-    fontSize: "22px",
-    textAlign: "left",
-  });
-  const CustomButton = styled(Button)({
-    marginLeft: "5px",
-    // border: "1px solid green",
-  });
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);

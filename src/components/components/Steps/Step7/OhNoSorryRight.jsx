@@ -1,18 +1,17 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   Container,
   Title,
   SubTitle,
 } from "../../../componentsStyle/registrationFormStyle";
-import { Typography, Box, TextField, Button } from "@mui/material";
-import "@egjs/react-flicking/dist/flicking-inline.css";
+import { Box, TextField, Button } from "@mui/material";
 import { styled } from "@mui/system";
-function OhNoSorryRight() {
-  const TextFields = styled(TextField)({
-    maxHeight: "600px",
-    marginTop: "30px",
-    backgroundColor: "whitesmoke",
-  });
+const TextFields = styled(TextField)({
+  maxHeight: "600px",
+  marginTop: "30px",
+  backgroundColor: "whitesmoke",
+});
+const OhNoSorryRight = memo(() => {
   return (
     <Container>
       <Title>Need Help?</Title>
@@ -41,6 +40,6 @@ function OhNoSorryRight() {
       </Box>
     </Container>
   );
-}
+});
 
 export default OhNoSorryRight;
