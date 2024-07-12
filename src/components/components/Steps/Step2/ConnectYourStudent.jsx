@@ -12,44 +12,44 @@ import {
 import { CustomTextField } from "../../RegisterUI";
 import { styled } from "@mui/system";
 
+const FormControls = styled(FormControl)({
+  display: "flex",
+  flexDirection: "column",
+  borderColor: "gray",
+  width: "100%",
+  marginTop: 5,
+  height: "57vh",
+  overflowY: "scroll",
+});
+
+const Typographys = styled(Typography)({
+  textAlign: "left",
+  paddingBottom: "5px",
+  width: "100%",
+});
+
+const CustomTextFields = styled(CustomTextField)({
+  backgroundColor: "white",
+  paddingInline: "1%",
+  borderRadius: 10,
+});
+
+const ProgramSiteContainer = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: "column",
+  marginTop: "5px",
+  width: "100%",
+  backgroundColor: "lightskyblue",
+  padding: "10px 10px",
+  borderRadius: "10px",
+});
+
+const CustomButton = styled(Button)({
+  marginLeft: "5px",
+});
+
 const ConnectYourStudent = ({ handleNext, handleBack }) => {
-  const FormControls = styled(FormControl)({
-    display: "flex",
-    flexDirection: "column",
-    borderColor: "gray",
-    width: "100%",
-    marginTop: 5,
-    height: "57vh",
-    overflowY: "scroll",
-  });
-
-  const Typographys = styled(Typography)({
-    textAlign: "left",
-    paddingBottom: "5px",
-    width: "100%",
-  });
-
-  const CustomTextFields = styled(CustomTextField)({
-    backgroundColor: "white",
-    paddingInline: "1%",
-    borderRadius: 10,
-  });
-
-  const ProgramSiteContainer = styled("div")({
-    display: "flex",
-    justifyContent: "center",
-    flexDirection: "column",
-    marginTop: "5px",
-    width: "100%",
-    backgroundColor: "lightskyblue",
-    padding: "10px 10px",
-    borderRadius: "10px",
-  });
-
-  const CustomButton = styled(Button)({
-    marginLeft: "5px",
-  });
-
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
@@ -97,18 +97,14 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
     }
   }, [touchStart, touchEnd]);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    console.log(name, value);
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-    console.log("formData  : ", formData);
-  };
-  const Submit = () => {
-    console.log("Submit data : ", formData);
-  };
+    setFormData((prevData) => {
+      const updatedData = { ...prevData, [name]: value };
+      console.log("formData :", updatedData);
+      return updatedData;
+    });
+  }, []);
 
   return (
     <Box
@@ -134,6 +130,7 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
             <FormControls>
               <Typographys>First Name*</Typographys>
               <CustomTextFields
+                id="firstName"
                 name="firstName"
                 hiddenLabel
                 fullWidth
@@ -144,6 +141,7 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
               />
               <Typographys>Last Name or Initial*</Typographys>
               <CustomTextFields
+                id="lastName"
                 name="lastName"
                 hiddenLabel
                 fullWidth
@@ -176,12 +174,17 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                   },
                 }}
               >
-                {genderArray &&
+                {genderArray && genderArray.length > 0 ? (
                   genderArray.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
-                  ))}
+                  ))
+                ) : (
+                  <MenuItem value="" disabled>
+                    Loading...
+                  </MenuItem>
+                )}
               </CustomTextFields>
               <Typographys>Grade</Typographys>
               <CustomTextFields
@@ -207,12 +210,17 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                   },
                 }}
               >
-                {gradesArray &&
+                {gradesArray && gradesArray.length > 0 ? (
                   gradesArray.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
-                  ))}
+                  ))
+                ) : (
+                  <MenuItem value="" disabled>
+                    Loading...
+                  </MenuItem>
+                )}
               </CustomTextFields>
               <ProgramSiteContainer>
                 <Typographys>Region*</Typographys>
@@ -239,12 +247,17 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                     },
                   }}
                 >
-                  {regionsArray &&
+                  {regionsArray && regionsArray.length > 0 ? (
                     regionsArray.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
                       </MenuItem>
-                    ))}
+                    ))
+                  ) : (
+                    <MenuItem value="" disabled>
+                      Loading...
+                    </MenuItem>
+                  )}
                 </CustomTextFields>
                 <Typographys>School or Facility Name*</Typographys>
                 <CustomTextFields
@@ -272,11 +285,17 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                     },
                   }}
                 >
-                  {schoolFacilityOptions[formData.region]?.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
+                  {schoolFacilityOptions[formData.region]?.length > 0 ? (
+                    schoolFacilityOptions[formData.region]?.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem value="" disabled>
+                      Loading...
                     </MenuItem>
-                  ))}
+                  )}
                 </CustomTextFields>
                 <Typographys>Team</Typographys>
                 <CustomTextFields
@@ -302,12 +321,17 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                     },
                   }}
                 >
-                  {TeamArray &&
+                  {TeamArray && TeamArray.length > 0 ? (
                     TeamArray.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
                       </MenuItem>
-                    ))}
+                    ))
+                  ) : (
+                    <MenuItem value="" disabled>
+                      Loading...
+                    </MenuItem>
+                  )}
                 </CustomTextFields>
               </ProgramSiteContainer>
             </FormControls>

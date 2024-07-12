@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   Container,
   Title,
@@ -8,7 +8,8 @@ import {
 } from "../../../componentsStyle/registrationFormStyle";
 import { styled } from "@mui/system";
 import "@egjs/react-flicking/dist/flicking-inline.css";
-function ConnectYourStudentRight() {
+
+const ConnectYourStudentRight = memo(() => {
   const VideoResponsive = styled("div")({
     position: "relative",
     width: "100%",
@@ -59,12 +60,7 @@ function ConnectYourStudentRight() {
     alignItems: "center",
     justifyContent: "center",
   });
-  const videoUrls = [
-    "https://www.youtube.com/embed/30LWjhZzg50",
-    "https://www.youtube.com/embed/ANOTHER_VIDEO_ID",
-    "https://www.youtube.com/embed/YET_ANOTHER_VIDEO_ID",
-    // Add more video URLs as needed
-  ];
+  const videoUrls = ["https://www.youtube.com/embed/30LWjhZzg50"];
 
   return (
     <Container>
@@ -81,8 +77,7 @@ function ConnectYourStudentRight() {
         <Iframe
           width="100%"
           height="250"
-          src={videoUrls[0]} // Display the first video in the array
-          frameBorder="0"
+          src={videoUrls[0]}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           title="Embedded YouTube"
@@ -90,6 +85,6 @@ function ConnectYourStudentRight() {
       </VideoResponsive>
     </Container>
   );
-}
+});
 
 export default ConnectYourStudentRight;
