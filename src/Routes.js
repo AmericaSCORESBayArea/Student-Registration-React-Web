@@ -15,6 +15,7 @@ import { esLanguages } from "./components/translations/es";
 import { cnLanguages } from "./components/translations/cn";
 import firebase from "./firebase/firebaseConfig";
 import QuickRegisteration from "./components/screens/QuickRegisteration";
+import AddStudents from "./components/screens/AddStudents";
 
 export default function RoutesWeb() {
   const lang = navigator.language || navigator.userLanguage;
@@ -97,6 +98,14 @@ export default function RoutesWeb() {
             element={
               <PrivateRoute>
                 <QuickRegisteration />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/AddStudents"
+            element={
+              <PrivateRoute>
+                <AddStudents />
               </PrivateRoute>
             }
           />

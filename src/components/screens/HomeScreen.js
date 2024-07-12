@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-//import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -7,12 +7,14 @@ import StepButton from "@mui/material/StepButton";
 import RoleType from "./../components/RoleType";
 import Registration from "./../components/Registration_Status";
 import Form from "./../components/Form";
+import { Button } from "@mui/material";
 export default function HomeScreen(props) {
   const steps = [
     props.translations.steps_1,
     props.translations.steps_2,
     props.translations.steps_3,
   ];
+  const navigate = useNavigate();
   //const history = useNavigate();
   const [student, setStudent] = useState("");
   const [activeStep, setActiveStep] = React.useState(0);
@@ -161,6 +163,15 @@ export default function HomeScreen(props) {
       >
         {getScreen()}
       </Box>
+      <Button
+        variant="contained"
+        style={{ marginRight: "2%", backgroundColor: "#5c6370" }}
+        onClick={() => {
+          navigate("/AddStudents");
+        }}
+      >
+        ADD STUDENTS
+      </Button>
     </React.Fragment>
   );
 }

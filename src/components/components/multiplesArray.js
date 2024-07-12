@@ -487,6 +487,20 @@ export const relationshipArray = [
     value: "Sibling/Other relative",
   },
 ];
+export const TeamArray = [
+  {
+    label: "Team1",
+    value: "Team1",
+  },
+  {
+    label: "Team2",
+    value: "Team2",
+  },
+  {
+    label: "Team3",
+    value: "Team3",
+  },
+];
 export const parent_Home_Lang_Array = [
   {
     label: "Arabic",
