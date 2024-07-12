@@ -89,6 +89,9 @@ export default function Registration_Status(props) {
     if (categoryName === "Quick Registration" && props.roleType === "Coach") {
       navigate("/QuickRegistration");
     }
+    if (categoryName === "New Layout" && props.roleType === "Coach") {
+      navigate("/AddStudents");
+    }
   };
 
   const showToast = (message) => {
@@ -154,6 +157,8 @@ export default function Registration_Status(props) {
         return <GroupAddIcon {...iconProps} />;
       case "Enroll":
         return <NoteAltIcon {...iconProps} />;
+      case "New Layout":
+        return <PersonAddIcon {...iconProps} />;
       default:
         return <PersonAddIcon {...iconProps} />;
     }

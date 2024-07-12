@@ -393,6 +393,7 @@ const QuickRegisteration = () => {
         xs={12}
         md={12}
         sm={12}
+        display="flex"
         justifyContent="space-between"
         alignItems="center"
       >

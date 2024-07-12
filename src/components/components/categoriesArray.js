@@ -25,4 +25,8 @@ export const statusArray = [
     id: 3,
     name: "Enroll",
   },
+  {
+    id: 4,
+    name: "New Layout",
+  },
 ];
