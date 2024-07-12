@@ -114,8 +114,24 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/m
 This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
 ### Deployment
+#### Working with Heroku
 The Heroku environment debug instance points to the /debug branch https://github.com/AmericaSCORESBayArea/Student-Registration-React-Web/tree/debug and will auto-deploy.
 Likewise Master directs to the Production instance. Commit to /debug first and then /master only after testing is completed.
+#### Manual Test and Deploy
+1. develop in a new branch
+2. make a PR to /debug
+3. merge immediately and allow the heroku build and deploy 10 minutes to run
+4. test on the debug instance
+5. after review/test make a PR /debug -> /master
+6. merge
+7. verify on prod the config is working
+#### Rollback Method
+There is a potential for a build to fail in production due to the different environment configurations. We should always maintain the same config var names across both builds to minimize descrepancies. If a roll back can't be avoided, the suggested approach is:
+1. Identify the commit SHA of the last known working build on /master
+2. make a PR of that commit for /master. _Include the source SHA in the notes for easy reference in the future
+3. merge the rollback commit to /master
+_we would prefer the above over altering a local branch and recommitting as the above approach will allow everyone to see where the working build came from._
+   
 
 Additional information can be found here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
