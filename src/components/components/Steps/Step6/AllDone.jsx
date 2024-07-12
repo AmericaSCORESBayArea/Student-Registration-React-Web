@@ -4,7 +4,7 @@ import { Row, Col } from "react-bootstrap";
 import AllDoneRight from "./AllDoneRight";
 import { SubTitle } from "../../../componentsStyle/registrationFormStyle";
 
-const ShareYourConcern = () => {
+const AllDone = () => {
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
@@ -79,4 +79,4 @@ const ShareYourConcern = () => {
   );
 };
 
-export default ShareYourConcern;
+export default AllDone;

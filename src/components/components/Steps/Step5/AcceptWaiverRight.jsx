@@ -17,6 +17,7 @@ const WaiverSubTitle = styled(Typography)({
   fontSize: "15px",
   textAlign: "left",
 });
+
 const AcceptWaiverRight = memo(() => {
   return (
     <Container>

@@ -11,7 +11,7 @@ import { styled } from "@mui/system";
 const CustomButton = styled(Button)({
   marginLeft: "5px",
 });
-const ShareYourConcern = ({ handleNext, handleBack }) => {
+const AcceptWaiver = ({ handleNext, handleBack }) => {
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
@@ -120,4 +120,4 @@ const ShareYourConcern = ({ handleNext, handleBack }) => {
   );
 };
 
-export default ShareYourConcern;
+export default AcceptWaiver;
