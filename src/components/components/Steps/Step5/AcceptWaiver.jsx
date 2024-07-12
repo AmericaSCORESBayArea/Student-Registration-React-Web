@@ -8,7 +8,7 @@ import {
 } from "../../../componentsStyle/registrationFormStyle";
 import { styled } from "@mui/system";
 
-const ShareYourConcern = () => {
+const ShareYourConcern = ({ handleNext, handleBack }) => {
   const CustomButton = styled(Button)({
     marginLeft: "5px",
     // border: "1px solid green",
@@ -82,10 +82,18 @@ const ShareYourConcern = () => {
                   // paddingLeft: "3px",
                 }}
               >
-                <CustomButton variant="contained" color="secondary">
+                <CustomButton
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleBack}
+                >
                   Back
                 </CustomButton>
-                <CustomButton variant="contained" color="primary">
+                <CustomButton
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNext}
+                >
                   I Need To Think About It
                 </CustomButton>
               </Box>

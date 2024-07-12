@@ -69,15 +69,21 @@ const AddStudents = () => {
   const stepContent = (index) => {
     switch (index) {
       case 0:
-        return <Introduction />;
+        return <Introduction handleNext={handleNext} handleBack={handleBack} />;
       case 1:
-        return <ConnectYourStudent />;
+        return (
+          <ConnectYourStudent handleNext={handleNext} handleBack={handleBack} />
+        );
       case 2:
-        return <SafetyConcern />;
+        return (
+          <SafetyConcern handleNext={handleNext} handleBack={handleBack} />
+        );
       case 3:
-        return <ShareYourConcern />;
+        return (
+          <ShareYourConcern handleNext={handleNext} handleBack={handleBack} />
+        );
       case 4:
-        return <AcceptWaiver />;
+        return <AcceptWaiver handleNext={handleNext} handleBack={handleBack} />;
       case 5:
         return <AllDone />;
       default:
@@ -102,7 +108,15 @@ const AddStudents = () => {
               padding: " 0 20px",
             }}
           >
-            <Box>{steps[activeStep]}</Box>
+            <Box
+              sx={{
+                // height: "70vh",
+                // maxWidth: 1200,
+                width: "15%",
+              }}
+            >
+              {steps[activeStep]}
+            </Box>
             <Box>
               <Stepper
                 nonLinear
@@ -133,7 +147,14 @@ const AddStudents = () => {
               pt: 2,
             }}
           >
-            <Box sx={{ height: "70vh", maxWidth: 1200, width: "100%", p: 2 }}>
+            <Box
+              sx={{
+                height: "70vh",
+                maxWidth: 1200,
+                width: "100%",
+                p: 2,
+              }}
+            >
               <Typography>{stepContent(activeStep)}</Typography>
             </Box>
             {/* <Box sx={{ mb: 2 }}>

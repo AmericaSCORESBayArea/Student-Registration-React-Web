@@ -7,7 +7,7 @@ import SafetyConcernRight from "./SafetyConcernRight";
 import { CustomTextField } from "../../RegisterUI";
 import { styled } from "@mui/system";
 
-const SafetyConcern = () => {
+const SafetyConcern = ({ handleNext, handleBack }) => {
   const FormControls = styled(FormControl)({
     display: "flex",
     flexDirection: "column",
@@ -25,6 +25,8 @@ const SafetyConcern = () => {
   });
   const CustomTextFields = styled(CustomTextField)({
     backgroundColor: "white",
+    paddingInline: "1%",
+    borderRadius: 10,
   });
   const CustomButton = styled(Button)({
     marginLeft: "5px",
@@ -68,17 +70,17 @@ const SafetyConcern = () => {
       setShowRight(false);
     }
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    console.log(name, value);
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
+    console.log("formData : ", formData);
   };
-
-  const handlerNavigation = () => {
-    console.log("form data : ", formData);
+  const Submit = () => {
+    console.log("submit data : ", formData);
   };
 
   return (
@@ -105,6 +107,7 @@ const SafetyConcern = () => {
             <FormControls>
               <Typographys>Parent/Guardian First Name*</Typographys>
               <CustomTextFields
+                name="parentGuardianFirstName"
                 hiddenLabel
                 fullWidth
                 variant="filled"
@@ -114,6 +117,7 @@ const SafetyConcern = () => {
               ></CustomTextFields>
               <Typographys>Parent/Guardian Last Name*</Typographys>
               <CustomTextFields
+                name="parentGuardianLastName"
                 hiddenLabel
                 fullWidth
                 variant="filled"
@@ -123,6 +127,7 @@ const SafetyConcern = () => {
               ></CustomTextFields>
               <Typographys>Parent/Guardian Email</Typographys>
               <CustomTextFields
+                name="parentGuardianEmail"
                 hiddenLabel
                 fullWidth
                 variant="filled"
@@ -132,6 +137,7 @@ const SafetyConcern = () => {
               ></CustomTextFields>
               <Typographys>Relationship to Child*</Typographys>
               <CustomTextFields
+                name="relationshipToChild"
                 select
                 hiddenLabel
                 fullWidth
@@ -160,6 +166,7 @@ const SafetyConcern = () => {
               </CustomTextFields>
               <Typographys>Parent/Guardian Phone 1</Typographys>
               <CustomTextFields
+                name="parentGuardianPhone1"
                 hiddenLabel
                 fullWidth
                 variant="filled"
@@ -169,6 +176,7 @@ const SafetyConcern = () => {
               ></CustomTextFields>
               <Typographys>Parent/Guardian Phone 2</Typographys>
               <CustomTextFields
+                name="parentGuardianPhone2"
                 hiddenLabel
                 fullWidth
                 variant="filled"
@@ -189,10 +197,18 @@ const SafetyConcern = () => {
                 // paddingLeft: "3px",
               }}
             >
-              <CustomButton variant="contained" color="secondary">
+              <CustomButton
+                variant="contained"
+                color="secondary"
+                onClick={handleBack}
+              >
                 Back
               </CustomButton>
-              <CustomButton variant="contained" color="primary">
+              <CustomButton
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+              >
                 Get Started
               </CustomButton>
             </Box>

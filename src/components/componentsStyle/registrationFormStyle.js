@@ -2,15 +2,17 @@ import { css } from "@emotion/css";
 import { Typography } from "@mui/material";
 import { styled } from "@mui/system";
 
-export const Container = styled("div")({
+export const Container = styled("div")(({ width, marginRight }) => ({
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
   padding: "10px",
   maxWidth: "600px",
-  width: "100%",
+  width: width || "100%",
+
   // border: "1px solid red",
-});
+  marginRight: marginRight || "0%",
+}));
 
 export const Corners1 = styled("div")({
   "&::before, &::after": {

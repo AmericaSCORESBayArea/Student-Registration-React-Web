@@ -4,7 +4,7 @@ import { Row, Col } from "react-bootstrap";
 import IntroductionRight from "./IntroductionRight";
 import { styled } from "@mui/system";
 
-const Introduction = () => {
+const Introduction = ({ handleNext, handleBack }) => {
   const TypographyContainer = styled("div")({
     display: "flex",
     flexDirection: "column",
@@ -99,10 +99,18 @@ const Introduction = () => {
                   // paddingLeft: "3px",
                 }}
               >
-                <CustomButton variant="contained" color="secondary">
+                <CustomButton
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleBack}
+                >
                   Back
                 </CustomButton>
-                <CustomButton variant="contained" color="primary">
+                <CustomButton
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNext}
+                >
                   Get Started
                 </CustomButton>
               </Box>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Box, Button, FormControl, MenuItem, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import ConnectYourStudentRight from "./ConnectYourStudentRight";
@@ -12,7 +12,7 @@ import {
 import { CustomTextField } from "../../RegisterUI";
 import { styled } from "@mui/system";
 
-const ConnectYourStudent = () => {
+const ConnectYourStudent = ({ handleNext, handleBack }) => {
   const FormControls = styled(FormControl)({
     display: "flex",
     flexDirection: "column",
@@ -20,7 +20,6 @@ const ConnectYourStudent = () => {
     width: "100%",
     marginTop: 5,
     height: "57vh",
-
     overflowY: "scroll",
   });
 
@@ -29,12 +28,15 @@ const ConnectYourStudent = () => {
     paddingBottom: "5px",
     width: "100%",
   });
+
   const CustomTextFields = styled(CustomTextField)({
     backgroundColor: "white",
+    paddingInline: "1%",
+    borderRadius: 10,
   });
+
   const ProgramSiteContainer = styled("div")({
     display: "flex",
-    /* align-items: center, */
     justifyContent: "center",
     flexDirection: "column",
     marginTop: "5px",
@@ -43,9 +45,9 @@ const ConnectYourStudent = () => {
     padding: "10px 10px",
     borderRadius: "10px",
   });
+
   const CustomButton = styled(Button)({
     marginLeft: "5px",
-    // border: "1px solid green",
   });
 
   const [showRight, setShowRight] = useState(false);
@@ -72,16 +74,16 @@ const ConnectYourStudent = () => {
 
   const minSwipeDistance = 50;
 
-  const onTouchStart = (e) => {
+  const onTouchStart = useCallback((e) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
-  };
+  }, []);
 
-  const onTouchMove = (e) => {
+  const onTouchMove = useCallback((e) => {
     setTouchEnd(e.targetTouches[0].clientX);
-  };
+  }, []);
 
-  const onTouchEnd = () => {
+  const onTouchEnd = useCallback(() => {
     if (!touchStart || !touchEnd) return;
 
     const distance = touchStart - touchEnd;
@@ -93,18 +95,19 @@ const ConnectYourStudent = () => {
     } else if (isRightSwipe) {
       setShowRight(false);
     }
-  };
+  }, [touchStart, touchEnd]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    console.log(name, value);
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
+    console.log("formData  : ", formData);
   };
-
-  const handlerNavigation = () => {
-    console.log("form data : ", formData);
+  const Submit = () => {
+    console.log("Submit data : ", formData);
   };
 
   return (
@@ -131,25 +134,27 @@ const ConnectYourStudent = () => {
             <FormControls>
               <Typographys>First Name*</Typographys>
               <CustomTextFields
+                name="firstName"
                 hiddenLabel
                 fullWidth
                 variant="filled"
                 size="small"
                 value={formData.firstName}
                 onChange={handleChange}
-              ></CustomTextFields>
-              <Typographys>Last Name or inital*</Typographys>
-
+              />
+              <Typographys>Last Name or Initial*</Typographys>
               <CustomTextFields
+                name="lastName"
                 hiddenLabel
                 fullWidth
                 variant="filled"
                 size="small"
                 value={formData.lastName}
                 onChange={handleChange}
-              ></CustomTextFields>
+              />
               <Typographys>Gender</Typographys>
               <CustomTextFields
+                name="gender"
                 select
                 hiddenLabel
                 fullWidth
@@ -180,6 +185,7 @@ const ConnectYourStudent = () => {
               </CustomTextFields>
               <Typographys>Grade</Typographys>
               <CustomTextFields
+                name="grade"
                 select
                 hiddenLabel
                 fullWidth
@@ -211,6 +217,7 @@ const ConnectYourStudent = () => {
               <ProgramSiteContainer>
                 <Typographys>Region*</Typographys>
                 <CustomTextFields
+                  name="region"
                   select
                   hiddenLabel
                   fullWidth
@@ -241,36 +248,39 @@ const ConnectYourStudent = () => {
                 </CustomTextFields>
                 <Typographys>School or Facility Name*</Typographys>
                 <CustomTextFields
+                  name="schoolFacility"
                   select
                   hiddenLabel
                   fullWidth
                   variant="filled"
                   size="small"
-                  value={formData.team}
+                  value={formData.schoolFacility}
                   onChange={handleChange}
                   SelectProps={{
                     displayEmpty: true,
                     renderValue: (selected) => {
                       if (selected === "") {
                         return (
-                          <span style={{ opacity: 0.5 }}>Select a Team</span>
+                          <span style={{ opacity: 0.5 }}>
+                            Select a School or Facility
+                          </span>
                         );
                       }
-                      return TeamArray.find(
-                        (option) => option.value === selected
-                      )?.label;
+                      return schoolFacilityOptions[formData.region]?.find(
+                        (option) => option === selected
+                      );
                     },
                   }}
                 >
-                  {TeamArray &&
-                    TeamArray.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
+                  {schoolFacilityOptions[formData.region]?.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
                 </CustomTextFields>
                 <Typographys>Team</Typographys>
                 <CustomTextFields
+                  name="team"
                   select
                   hiddenLabel
                   fullWidth
@@ -305,17 +315,22 @@ const ConnectYourStudent = () => {
               sx={{
                 mt: 2,
                 display: "flex",
-                // border: "1px solid red",
-                // justifyContent: "space-between",
                 width: "80%",
                 marginLeft: "20%",
-                // paddingLeft: "3px",
               }}
             >
-              <CustomButton variant="contained" color="secondary">
+              <CustomButton
+                variant="contained"
+                color="secondary"
+                onClick={handleBack}
+              >
                 Back
               </CustomButton>
-              <CustomButton variant="contained" color="primary">
+              <CustomButton
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+              >
                 Get Started
               </CustomButton>
             </Box>

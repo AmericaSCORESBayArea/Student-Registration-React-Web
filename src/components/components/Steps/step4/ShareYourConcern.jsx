@@ -1,20 +1,22 @@
 import React, { useState } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
-import ShareYourConcernRight from "./ShareYourConcernRight";
+
 import {
   Container,
   Title,
 } from "../../../componentsStyle/registrationFormStyle";
 import { styled } from "@mui/system";
+import ShareYourConcernRight from "./ShareYourConcernRight";
 
-const ShareYourConcern = () => {
+const ShareYourConcern = ({ handleNext, handleBack }) => {
   const SubTitle = styled("p")({
     fontSize: "18px",
   });
   const TextFields = styled(TextField)({
     maxHeight: "600px",
     // marginTop: "30px",
+    // width: "50%",
     backgroundColor: "white",
   });
   const CustomButton = styled(Button)({
@@ -72,18 +74,19 @@ const ShareYourConcern = () => {
               },
             }}
           >
-            <Container>
+            <Container width="70%" marginRight="25%">
               <Title textAlign="center">Student Needs</Title>
               <SubTitle>
                 Tell us if you student has allergies or any other needs weh
                 should be aware of
               </SubTitle>
               <TextFields
-                fullWidth
+                // fullwWidth
                 label="Your Message"
                 multiline
                 rows={6}
                 variant="outlined"
+
                 // className={textFieldStyle}
               />
               <Box
@@ -97,10 +100,18 @@ const ShareYourConcern = () => {
                   // paddingLeft: "3px",
                 }}
               >
-                <CustomButton variant="contained" color="secondary">
+                <CustomButton
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleBack}
+                >
                   Back
                 </CustomButton>
-                <CustomButton variant="contained" color="primary">
+                <CustomButton
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNext}
+                >
                   Conitnue
                 </CustomButton>
               </Box>

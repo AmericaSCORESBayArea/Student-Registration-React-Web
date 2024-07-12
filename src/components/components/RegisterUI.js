@@ -58,7 +58,7 @@ const baseTextFieldStyle = (customStyles) => ({
 
 export const CustomTextField = styled(TextField)(
   baseTextFieldStyle({
-    padding: "6px 10px !important",
+    padding: "4px 10px !important",
   })
 );
 
