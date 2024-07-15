@@ -16,7 +16,7 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import Introduction from "../components/Steps/Step1/Introduction";
 import ConnectYourStudent from "../components/Steps/Step2/ConnectYourStudent";
 import SafetyConcern from "../components/Steps/Step3/SafetyConcern";
-import ShareYourConcern from "../components/Steps/step4/ShareYourConcern";
+import ShareYourConcern from "../components/Steps/Step4/ShareYourConcern";
 import AcceptWaiver from "../components/Steps/Step5/AcceptWaiver";
 import AllDone from "../components/Steps/Step6/AllDone";
 import OhNoSorry from "../components/Steps/Step7/OhNoSorry";
@@ -94,7 +94,7 @@ const AddStudents = () => {
   return (
     <Container
       style={{
-        backgroundColor: "#FFFADF",
+        backgroundColor: isMobile ? "#FFFFFF" : "#FFFADF",
       }}
     >
       {!isMobile && !isTablet ? (
@@ -152,7 +152,7 @@ const AddStudents = () => {
           >
             <Box
               sx={{
-                height: "70vh",
+                height: "75vh",
                 maxWidth: 1200,
                 width: "100%",
                 p: 2,
