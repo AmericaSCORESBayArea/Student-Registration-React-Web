@@ -21,6 +21,11 @@ import {
 } from "../../multiplesArray";
 import { CustomTextField } from "../../RegisterUI";
 import { styled } from "@mui/system";
+import {
+  getRegionsData,
+  getSchoolData,
+  getTeamSeasons,
+} from "../../../controller/api";
 
 const FormControls = styled(FormControl)({
   display: "flex",
@@ -93,6 +98,10 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [regionData, setRegionData] = useState([]);
+  const [schoolData, setSchoolData] = useState([]);
+  const [TeamData, setTeamData] = useState([]);
+  const [selectedRegionData, setSelectedRegionData] = useState(null);
   const genderArray_mob = ["Boy", "Non-Declared", "Girl"];
   const gradeArray_mob = ["3", "4", "5", "6", "7", "8"];
   const [formData, setFormData] = useState({
@@ -106,6 +115,16 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
   });
   const [selectedGrade, setSelectedGrade] = useState(null);
   const [selectedGender, setSelectedGender] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      let data = await getRegionsData();
+
+      setRegionData(data);
+      console.log(data);
+    };
+
+    fetchData();
+  }, []);
 
   const getGradeHandler = (grade) => {
     setSelectedGrade(grade);
@@ -151,14 +170,41 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
     }
   }, [touchStart, touchEnd]);
 
-  const handleChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => {
-      const updatedData = { ...prevData, [name]: value };
-      console.log("formData :", updatedData);
-      return updatedData;
-    });
-  }, []);
+  const handleChange = useCallback(
+    async (e) => {
+      const { name, value } = e.target;
+      console.log("name :", name, value);
+
+      setFormData((prevData) => {
+        const updatedData = { ...prevData, [name]: value };
+        return updatedData;
+      });
+
+      if (name === "region") {
+        await getSchoolData(value).then((data) => {
+          setSchoolData(data);
+        });
+      }
+
+      if (name === "schoolFacility") {
+        await getTeamSeasons().then((data) => {
+          const schoolSite = value;
+          const matchedTeams = data.filter(
+            (team) => team.SchoolSite === schoolSite
+          );
+
+          const teamData = matchedTeams.map((team) => ({
+            label: team.TeamName,
+            value: team.TeamName,
+          }));
+
+          console.log("TeamData: ", teamData);
+          setTeamData(teamData);
+        });
+      }
+    },
+    [formData]
+  );
 
   return (
     <>
@@ -301,14 +347,14 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                               </span>
                             );
                           }
-                          return regionsArray.find(
+                          return regionData.find(
                             (option) => option.value === selected
                           )?.label;
                         },
                       }}
                     >
-                      {regionsArray && regionsArray.length > 0 ? (
-                        regionsArray.map((option) => (
+                      {regionData && regionData.length > 0 ? (
+                        regionData.map((option) => (
                           <MenuItem key={option.value} value={option.value}>
                             {option.label}
                           </MenuItem>
@@ -335,24 +381,22 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                           if (selected === "") {
                             return (
                               <span style={{ opacity: 0.5 }}>
-                                Select a School or Facility
+                                Select a School
                               </span>
                             );
                           }
-                          return schoolFacilityOptions[formData.region]?.find(
-                            (option) => option === selected
-                          );
+                          return schoolData.find(
+                            (option) => option.value === selected
+                          )?.label;
                         },
                       }}
                     >
-                      {schoolFacilityOptions[formData.region]?.length > 0 ? (
-                        schoolFacilityOptions[formData.region]?.map(
-                          (option) => (
-                            <MenuItem key={option} value={option}>
-                              {option}
-                            </MenuItem>
-                          )
-                        )
+                      {schoolData && schoolData.length > 0 ? (
+                        schoolData.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))
                       ) : (
                         <MenuItem value="" disabled>
                           Loading...
@@ -379,14 +423,14 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                               </span>
                             );
                           }
-                          return TeamArray.find(
+                          return TeamData.find(
                             (option) => option.value === selected
                           )?.label;
                         },
                       }}
                     >
-                      {TeamArray && TeamArray.length > 0 ? (
-                        TeamArray.map((option) => (
+                      {TeamData && TeamData.length > 0 ? (
+                        TeamData.map((option) => (
                           <MenuItem key={option.value} value={option.value}>
                             {option.label}
                           </MenuItem>
