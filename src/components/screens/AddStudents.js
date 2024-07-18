@@ -248,10 +248,31 @@ const AddStudents = () => {
           >
             <Typography>{steps[activeStep]}</Typography>
           </Paper>
+          <Box>
+            <Stepper
+              nonLinear
+              alternativeLabel
+              activeStep={activeStep}
+              style={{
+                marginTop: "40px",
+                marginInline: "10px",
+              }}
+            >
+              {steps.map((label, index) => (
+                <Step key={label} completed={completed[index]}>
+                  <StepButton
+                    color="inherit"
+                    onClick={handleStep(index)}
+                  ></StepButton>
+                </Step>
+              ))}
+            </Stepper>
+          </Box>
           <Box sx={{ height: "100vh", width: "100%", p: 2 }}>
             {stepContent(activeStep)}
           </Box>
-          <MobileStepper
+
+          {/* <MobileStepper
             variant="text"
             steps={totalSteps()}
             position="static"
@@ -284,7 +305,7 @@ const AddStudents = () => {
                 Back
               </Button>
             }
-          />
+          /> */}
         </Box>
       )}
     </Container>
