@@ -29,6 +29,7 @@ import {
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { SubTitle } from "../../../componentsStyle/registrationFormStyle";
+import axios from "axios";
 
 const FormControls = styled(FormControl)({
   display: "flex",
@@ -39,17 +40,29 @@ const FormControls = styled(FormControl)({
   height: "57vh",
   overflowY: "scroll",
 });
+const FormControlsMobile = styled(FormControl)({
+  display: "flex",
+  flexDirection: "column",
+  borderColor: "gray",
+  width: "100%",
+  marginTop: 5,
+
+  overflowY: "scroll",
+});
 
 const Typographys = styled(Typography)({
   textAlign: "left",
   paddingBottom: "5px",
   width: "100%",
+  marginBlock: "5px",
+  fontSize: "22px",
 });
 
 const CustomTextFields = styled(CustomTextField)({
   backgroundColor: "white",
   paddingInline: "1%",
   borderRadius: 10,
+  marginBlock: "5px",
 });
 
 const ProgramSiteContainer = styled("div")({
@@ -61,10 +74,12 @@ const ProgramSiteContainer = styled("div")({
   backgroundColor: "lightskyblue",
   padding: "10px 10px",
   borderRadius: "10px",
+  marginBlock: "5px",
 });
 
 const CustomButton = styled(Button)({
   marginLeft: "5px",
+  marginBlock: "5px",
 });
 const FabButton = styled(Fab)(({ selected }) => ({
   paddingInline: "10px",
@@ -72,6 +87,7 @@ const FabButton = styled(Fab)(({ selected }) => ({
   color: "white",
   height: "100px",
   width: "100px",
+  marginBlock: "5px",
 }));
 // CustomFabButton component
 const CustomFabButton = ({ field, form, gender, selectedGender }) => (
@@ -79,7 +95,6 @@ const CustomFabButton = ({ field, form, gender, selectedGender }) => (
     size="large"
     onClick={() => {
       form.setFieldValue(field.name, gender);
-      console.log("Gender selected:", gender);
     }}
     selected={selectedGender === gender}
   >
@@ -91,7 +106,6 @@ const CustomGradeButton = ({ field, form, grade, selectedGrade }) => (
   <GradeButton
     onClick={() => {
       form.setFieldValue(field.name, grade);
-      console.log("Grade selected:", grade);
     }}
     selected={selectedGrade === grade}
   >
@@ -102,24 +116,33 @@ const GradeButtonContainer = styled(ButtonGroup)({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  marginBlock: "5px",
 });
 const GradeButton = styled(Button)(({ selected }) => ({
   marginInline: "5px",
   backgroundColor: selected ? "grey" : "#03467F",
   color: "white",
+  marginBlock: "5px",
 }));
 const TypographyGender = styled(Typography)({
   fontSize: "18px",
   color: "white",
+  marginBlock: "5px",
 });
 const BoxContainer = styled("div")({
   boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
   backgroundColor: "#DFEDF9",
   padding: "10px",
   borderRadius: "20px",
+  marginBlock: "5px",
 });
 
-const ConnectYourStudent = ({ handleNext, handleBack }) => {
+const ConnectYourStudent = ({
+  handleNext,
+  handleBack,
+  handleContact,
+  handleRegion,
+}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -133,15 +156,17 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
   const [selectedRegionData, setSelectedRegionData] = useState(null);
   const genderArray_mob = ["Boy", "Non-Declared", "Girl"];
   const gradeArray_mob = ["3", "4", "5", "6", "7", "8"];
-  const [selectedGrade, setSelectedGrade] = useState(null);
-  const [selectedGender, setSelectedGender] = useState(null);
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     gender: "",
     grade: "",
     region: "",
-    schoolFacility: "",
+    schoolName: {
+      id: "",
+      schoolFacility: "",
+    },
     team: "",
   });
   const validationSchema = Yup.object({
@@ -152,39 +177,22 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
       .matches(/^[A-Za-z]+$/, "Last Name must contain only letters")
       .required("Last Name is required"),
     region: Yup.string().required("Region is required"),
-    schoolFacility: Yup.string().required(
-      "School or Facility Name is required"
-    ),
+    schoolName: Yup.object({
+      schoolFacility: Yup.string().required(
+        "School or Facility Name is required"
+      ),
+    }),
   });
+
   useEffect(() => {
     const fetchData = async () => {
       let data = await getRegionsData();
 
       setRegionData(data);
-      console.log(data);
     };
 
     fetchData();
   }, []);
-
-  const getGradeHandler = (grade) => {
-    setSelectedGrade(grade);
-  };
-  const getGenderHandler = (gender) => {
-    setSelectedGender(gender);
-  };
-
-  // useEffect(() => {
-  //   console.log("selectedGrade : ", selectedGrade);
-  // }, [selectedGrade]);
-  const schoolFacilityOptions = Object.entries(schoolsName).reduce(
-    (acc, [region, data]) => {
-      const schoolValues = data.schools.map((school) => school.value);
-      acc[region] = schoolValues;
-      return acc;
-    },
-    {}
-  );
 
   const minSwipeDistance = 50;
 
@@ -211,65 +219,49 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
     }
   }, [touchStart, touchEnd]);
 
-  const handleChanges = useCallback(
-    async (e) => {
-      const { name, value } = e.target;
-      console.log("name :", name, value);
-
-      setFormData((prevData) => {
-        const updatedData = { ...prevData, [name]: value };
-        return updatedData;
+  async function postDataHandler(data) {
+    try {
+      const response = await axios({
+        method: "post",
+        url: `${process.env.REACT_APP_BASEURL}/contacts`,
+        data: {
+          FirstName: data.firstName,
+          LastName: data.lastName,
+          Gender__c: data.gender,
+          Grade__c: data.grade,
+          Region__c: data.region,
+          School_Attending__c: data.schoolName.schoolFacility,
+          SchoolSiteId: data.schoolName.id,
+        },
       });
 
-      if (name === "region") {
-        await getSchoolData(value).then((data) => {
-          setSchoolData(data);
-        });
-      }
-
-      if (name === "schoolFacility") {
-        await getTeamSeasons().then((data) => {
-          // console.log("Data : ", data);
-          const schoolSite = value;
-          const matchedTeams = data.filter(
-            (team) => team.SchoolSite == schoolSite
-          );
-
-          const teamData = matchedTeams.map((team) => ({
-            label: team.TeamName,
-            value: team.TeamName,
-          }));
-
-          if (teamData.length === 0) {
-            setIsTeamData(true);
-            setTeamData([]);
-          } else {
-            setIsTeamData(false);
-            setTeamData(teamData);
-          }
-        });
-      }
-    },
-    [formData, isTeamData]
-  );
+      handleContact(response.data.ContactId);
+      handleRegion(data.region);
+      return response;
+    } catch (error) {
+      console.log("Post Form Submit Error : ", error);
+    }
+  }
+  const onSumbitHandler = async (data) => {
+    if (
+      data.firstName &&
+      data.lastName &&
+      data.region &&
+      data.schoolName.schoolFacility
+    ) {
+      postDataHandler(data).then(() => {
+        handleNext();
+      });
+    }
+  };
 
   return (
     <Formik
       initialValues={formData}
       validationSchema={validationSchema}
-      onSubmit={(data) => {
-        console.log("Form submitted with values:", data);
-        if (
-          data.firstName &&
-          data.lastName &&
-          data.region &&
-          data.schoolFacility
-        ) {
-          handleNext();
-        }
-      }}
+      onSubmit={onSumbitHandler}
     >
-      {({ values, handleChange }) => (
+      {({ values, handleChange, setFieldValue }) => (
         <Form>
           {!isMobile ? (
             <Box
@@ -419,7 +411,6 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                           onChange={async (e) => {
                             handleChange(e);
                             const { name, value } = e.target;
-                            console.log("First Name changed:", value);
 
                             if (name === "region") {
                               await getSchoolData(value).then((data) => {
@@ -464,21 +455,31 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                         <Typographys>School or Facility Name*</Typographys>
                         <Field
                           as={CustomTextFields}
-                          name="schoolFacility"
+                          name="schoolName.schoolFacility"
                           select
                           hiddenLabel
                           fullWidth
                           variant="filled"
                           size="small"
-                          value={values.schoolFacility}
+                          value={values.schoolName.schoolFacility}
                           onChange={async (e) => {
                             handleChange(e);
                             const { name, value } = e.target;
-                            console.log("First Name changed:", value);
 
-                            if (name === "schoolFacility") {
+                            if (name === "schoolName.schoolFacility") {
+                              const matchedSchool = schoolData.find(
+                                (school) => school.value === value
+                              );
+
+                              if (matchedSchool) {
+                                setFieldValue(
+                                  "schoolName.id",
+                                  matchedSchool.id
+                                );
+                              }
+                            }
+                            if (name === "schoolName.schoolFacility") {
                               await getTeamSeasons().then((data) => {
-                                // console.log("Data : ", data);
                                 const schoolSite = value;
                                 const matchedTeams = data.filter(
                                   (team) => team.SchoolSite == schoolSite
@@ -528,7 +529,7 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                           )}
                         </Field>
                         <ErrorMessage
-                          name="schoolFacility"
+                          name="schoolName.schoolFacility"
                           component="div"
                           style={{ color: "red" }}
                         />
@@ -642,7 +643,7 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                     }}
                   >
                     <BoxContainer>
-                      <FormControls>
+                      <FormControlsMobile>
                         <Typographys>First Name*</Typographys>
                         <Field
                           as={CustomTextFields}
@@ -725,7 +726,6 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                             onChange={async (e) => {
                               handleChange(e);
                               const { name, value } = e.target;
-                              console.log("Region changed:", value);
 
                               if (name === "region") {
                                 await getSchoolData(value).then((data) => {
@@ -773,19 +773,30 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                           <Typographys>School or Facility Name*</Typographys>
                           <Field
                             as={CustomTextFields}
-                            name="schoolFacility"
+                            name="schoolName.schoolFacility"
                             select
                             hiddenLabel
                             fullWidth
                             variant="filled"
                             size="small"
-                            value={values.schoolFacility}
+                            value={values.schoolName.schoolFacility}
                             onChange={async (e) => {
                               handleChange(e);
                               const { name, value } = e.target;
-                              console.log("School Facility changed:", value);
 
-                              if (name === "schoolFacility") {
+                              if (name === "schoolName.schoolFacility") {
+                                const matchedSchool = schoolData.find(
+                                  (school) => school.value === value
+                                );
+
+                                if (matchedSchool) {
+                                  setFieldValue(
+                                    "schoolName.id",
+                                    matchedSchool.id
+                                  );
+                                }
+                              }
+                              if (name === "schoolName.schoolFacility") {
                                 await getTeamSeasons().then((data) => {
                                   const schoolSite = value;
                                   const matchedTeams = data.filter(
@@ -839,7 +850,7 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                             )}
                           </Field>
                           <ErrorMessage
-                            name="schoolFacility"
+                            name="schoolName.schoolFacility"
                             component="div"
                             style={{ color: "red" }}
                           />
@@ -893,7 +904,7 @@ const ConnectYourStudent = ({ handleNext, handleBack }) => {
                           Not sure What to Select? It’s OK to leave this page
                           blank and let us figure it out.
                         </SubTitle>
-                      </FormControls>
+                      </FormControlsMobile>
                       <Box
                         sx={{
                           mt: 2,

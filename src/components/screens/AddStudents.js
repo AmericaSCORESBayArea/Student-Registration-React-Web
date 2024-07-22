@@ -35,7 +35,9 @@ const AddStudents = () => {
 
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState({});
-
+  const [contactId, setContactId] = useState("");
+  const [region, setRegion] = useState("");
+  const [waiverId, setWaiverId] = useState("");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery("(min-width:600px) and (max-width:991px)");
@@ -65,6 +67,15 @@ const AddStudents = () => {
   const handleStep = (step) => () => {
     setActiveStep(step);
   };
+  const handleContact = (val) => {
+    val ? setContactId(val) : setContactId("");
+  };
+  const handleRegion = (val) => {
+    val ? setRegion(val) : setRegion("");
+  };
+  const handleWaiver = (val) => {
+    val ? setWaiverId(val) : setWaiverId("");
+  };
 
   const stepContent = (index) => {
     switch (index) {
@@ -72,20 +83,48 @@ const AddStudents = () => {
         return <Introduction handleNext={handleNext} handleBack={handleBack} />;
       case 1:
         return (
-          <ConnectYourStudent handleNext={handleNext} handleBack={handleBack} />
+          <ConnectYourStudent
+            handleNext={handleNext}
+            handleBack={handleBack}
+            handleContact={handleContact}
+            handleRegion={handleRegion}
+          />
         );
       case 2:
         return (
-          <SafetyConcern handleNext={handleNext} handleBack={handleBack} />
+          <SafetyConcern
+            handleNext={handleNext}
+            handleBack={handleBack}
+            contactId={contactId}
+          />
         );
       case 3:
         return (
-          <ShareYourConcern handleNext={handleNext} handleBack={handleBack} />
+          <ShareYourConcern
+            handleNext={handleNext}
+            handleBack={handleBack}
+            contactId={contactId}
+          />
         );
       case 4:
-        return <AcceptWaiver handleNext={handleNext} handleBack={handleBack} />;
+        return (
+          <AcceptWaiver
+            handleNext={handleNext}
+            handleBack={handleBack}
+            contactId={contactId}
+            region={region}
+            handleWaiver={handleWaiver}
+          />
+        );
       case 5:
-        return <AllDone />;
+        return (
+          <AllDone
+            handleBack={handleBack}
+            handleNext={handleNext}
+            contactId={contactId}
+            waiverId={waiverId}
+          />
+        );
       default:
         return <OhNoSorry />;
     }
@@ -268,7 +307,7 @@ const AddStudents = () => {
               ))}
             </Stepper>
           </Box>
-          <Box sx={{ height: "100vh", width: "100%", p: 2 }}>
+          <Box sx={{ minHeight: "65vh", height: "100%", width: "100%", p: 2 }}>
             {stepContent(activeStep)}
           </Box>
 

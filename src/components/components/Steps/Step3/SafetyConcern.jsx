@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -23,13 +23,14 @@ import { styled } from "@mui/system";
 import { SubTitle } from "../../../componentsStyle/registrationFormStyle";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 const FormControls = styled(FormControl)({
   display: "flex",
   flexDirection: "column",
   borderColor: "gray",
   width: "100%",
   marginTop: 5,
-  height: "57vh",
+  // height: "57vh",
   overflowY: "scroll",
 });
 
@@ -63,7 +64,7 @@ const CustomButton = styled(Button)({
   marginLeft: "5px",
 });
 
-const SafetyConcern = ({ handleNext, handleBack }) => {
+const SafetyConcern = ({ handleNext, handleBack, contactId }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [showRight, setShowRight] = useState(false);
@@ -126,16 +127,38 @@ const SafetyConcern = ({ handleNext, handleBack }) => {
     }));
   };
 
+  async function postDataHandler(data) {
+    try {
+      const response = await axios({
+        method: "PATCH",
+        url: `${process.env.REACT_APP_BASEURL}/contacts/${contactId}`,
+        data: {
+          ParentFName: data.parentGuardianFirstName,
+          ParentLName: data.parentGuardianLastName,
+          Relationship: data.relationshipToChild,
+          ParentEmail: data.parentGuardianEmail,
+          ParentPhone1: data.parentGuardianPhone1,
+          ParentPhone2: data.parentGuardianPhone2,
+        },
+      });
+
+      return response;
+    } catch (error) {
+      console.log("Post Form Submit Error : ", error);
+    }
+  }
+  const onSumbitHandler = async (data) => {
+    if (data.parentGuardianFirstName && data.parentGuardianLastName) {
+      postDataHandler(data).then((data) => {
+        handleNext();
+      });
+    }
+  };
   return (
     <Formik
       initialValues={formData}
       validationSchema={validationSchema}
-      onSubmit={(data) => {
-        console.log("Form submitted with values:", data);
-        if (data.parentGuardianFirstName && data.parentGuardianLastName) {
-          handleNext();
-        }
-      }}
+      onSubmit={onSumbitHandler}
     >
       {({ values, handleChange }) => (
         <Form>
@@ -280,6 +303,13 @@ const SafetyConcern = ({ handleNext, handleBack }) => {
                     >
                       Continue
                     </CustomButton>
+                    {/* <CustomButton
+                      variant="contained"
+                      color="primary"
+                      onClick={handleNext}
+                    >
+                      Next
+                    </CustomButton> */}
                   </Box>
                 </Box>
               </Col>
