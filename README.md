@@ -70,7 +70,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
     `npm install --force`
 
-    Note: this creates a node_modules folder and a package-lock.json
+    Note: creates a node_modules folder and may update or create a package-lock.json file. Using `--force` overrides certain dependencies to resolve conflicts.
 
 4. Setting up environment variables:
    
