@@ -66,13 +66,17 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
   
     `cd <project-name>`
 
-3. Install project dependencies:
+3. Switch to the `debug` branch before setting up the project:
+    
+    `git checkout debug`
+
+4. Install project dependencies:
 
     `npm install --force`
 
     Note: creates a node_modules folder and may update or create a package-lock.json file. Using `--force` overrides certain dependencies to resolve conflicts.
 
-4. Setting up environment variables:
+5. Setting up environment variables:
    
    To configure the environment variables necessary for the project:
    - locate the `.env.example` file at the root of the project
@@ -81,7 +85,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
    - paste the contents into the `.env` file
    - Modify the `.env` file with the specific values for the environment variables
 
-5. Start the application:
+6. Start the application:
   
     `npm run dev`
 
