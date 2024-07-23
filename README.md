@@ -54,6 +54,39 @@ https://medium.com/javascript-in-plain-english/easy-authentication-system-with-r
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Running the App Locally
+
+1. Clone the repository (Student-Registration-React-Web) to your local machine:
+
+    (using SSH url provided is a good choice)
+
+    `git clone <repository-url>`
+
+2. Navigate to the project directory:
+  
+    `cd <project-name>`
+
+3. Install project dependencies:
+
+    `npm install --force`
+
+    Note: this creates a node_modules folder and a package-lock.json
+
+4. Setting up environment variables:
+   
+   To configure the environment variables necessary for the project:
+   - locate the `.env.example` file at the root of the project
+   - copy the contents of `.env.example` file
+   - create a new file named `.env` in the root directory of the project
+   - paste the contents into the `.env` file
+   - Modify the `.env` file with the specific values for the environment variables
+
+5. Start the application:
+  
+    `npm run dev`
+
+
+
 ## Available Scripts
 
 In the project directory, you can run:
