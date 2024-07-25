@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Box, Button } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import AcceptWaiverRight from "./AcceptWaiverRight";
 import {
@@ -7,14 +15,38 @@ import {
   SubTitle,
 } from "../../../componentsStyle/registrationFormStyle";
 import { styled } from "@mui/system";
+import axios from "axios";
 
 const CustomButton = styled(Button)({
   marginLeft: "5px",
 });
-const AcceptWaiver = ({ handleNext, handleBack }) => {
+
+const CustomDialog = styled(Dialog)({
+  border: "1px solid red",
+});
+const CustomDialogActions = styled(DialogActions)({
+  display: "flex",
+  justifyContent: "space-between",
+});
+const CustomDialogTitle = styled(DialogTitle)({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontWeight: "bold",
+  color: "red",
+});
+
+const AcceptWaiver = ({
+  handleNext,
+  handleBack,
+  contactId,
+  region,
+  handleWaiver,
+}) => {
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
 
   const minSwipeDistance = 50;
 
@@ -41,6 +73,36 @@ const AcceptWaiver = ({ handleNext, handleBack }) => {
     }
   };
 
+  async function getDataHandler() {
+    try {
+      const response = await axios({
+        method: "GET",
+        url: `${process.env.REACT_APP_BASEURL}/waiver?region=${region}`,
+      });
+
+      handleWaiver(response.data[0].WaiverId);
+      return response;
+    } catch (error) {}
+  }
+
+  const submitHandler = () => {
+    setOpenModal(true);
+  };
+
+  const handleAccept = () => {
+    setOpenModal(false);
+    getDataHandler().then(() => {
+      handleNext();
+    });
+  };
+
+  const handleDecline = () => {
+    setOpenModal(false);
+  };
+  const withoutSubmitHandler = () => {
+    handleNext();
+  };
+
   return (
     <Box
       sx={{ pt: 2 }}
@@ -56,16 +118,14 @@ const AcceptWaiver = ({ handleNext, handleBack }) => {
               flexDirection: "column",
               alignItems: "center",
               height: "100%",
-              // backgroundColor: "red",
               "@media (max-width: 600px)": {
                 display: showRight ? "none" : "flex",
               },
             }}
           >
-            {/* <Title>Accpet the Waiver</Title> */}
             <Container>
               <SubTitle>
-                SCORES an the _______ School District require a guardian’s
+                SCORES and the _______ School District require a guardian’s
                 signature on this waiver for your student to participate. Please
                 have a look and, if it’s ok, click Accept.
               </SubTitle>
@@ -74,24 +134,21 @@ const AcceptWaiver = ({ handleNext, handleBack }) => {
                 sx={{
                   mt: 2,
                   display: "flex",
-                  // border: "1px solid red",
-                  // justifyContent: "space-between",
                   width: "80%",
                   marginLeft: "20%",
-                  // paddingLeft: "3px",
                 }}
               >
                 <CustomButton
                   variant="contained"
                   color="secondary"
-                  onClick={handleBack}
+                  onClick={submitHandler}
                 >
-                  Back
+                  Accept
                 </CustomButton>
                 <CustomButton
                   variant="contained"
                   color="primary"
-                  onClick={handleNext}
+                  onClick={withoutSubmitHandler}
                 >
                   I Need To Think About It
                 </CustomButton>
@@ -106,7 +163,6 @@ const AcceptWaiver = ({ handleNext, handleBack }) => {
               flexDirection: "column",
               alignItems: "center",
               height: "100%",
-              // backgroundColor: "blue",
               "@media (max-width: 600px)": {
                 display: showRight ? "flex" : "none",
               },
@@ -116,6 +172,40 @@ const AcceptWaiver = ({ handleNext, handleBack }) => {
           </Box>
         </Col>
       </Row>
+
+      <CustomDialog
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        aria-labelledby="waiver-dialog-title"
+        aria-describedby="waiver-dialog-description"
+      >
+        <CustomDialogTitle id="waiver-dialog-title">
+          ARE YOU SURE?
+        </CustomDialogTitle>
+        <DialogContent>
+          <Typography id="waiver-dialog-description" variant="body1">
+            School districts require that we collect this waiver for your
+            student’s safety. This information remains confidential. Without
+            this, your student may not be allowed to participate.
+          </Typography>
+        </DialogContent>
+        <CustomDialogActions>
+          <CustomButton
+            onClick={handleAccept}
+            variant="contained"
+            color="primary"
+          >
+            Accept
+          </CustomButton>
+          <CustomButton
+            onClick={handleDecline}
+            variant="contained"
+            color="secondary"
+          >
+            Decline
+          </CustomButton>
+        </CustomDialogActions>
+      </CustomDialog>
     </Box>
   );
 };

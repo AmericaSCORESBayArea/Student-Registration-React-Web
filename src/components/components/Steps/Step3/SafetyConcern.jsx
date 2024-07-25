@@ -1,18 +1,21 @@
 import React, { useState } from "react";
 import { Box, Button, FormControl, MenuItem, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
-
 import { relationshipArray } from "../../multiplesArray";
 import SafetyConcernRight from "./SafetyConcernRight";
 import { CustomTextField } from "../../RegisterUI";
 import { styled } from "@mui/system";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import axios from "axios";
 const FormControls = styled(FormControl)({
   display: "flex",
   flexDirection: "column",
   borderColor: "gray",
   width: "100%",
-  marginTop: 5,
-  height: "57vh",
+  height: "100%",
+  paddingInline: "1%",
+  maxHeight: "57vh",
   overflowY: "scroll",
 });
 
@@ -23,26 +26,37 @@ const Typographys = styled(Typography)({
 });
 const CustomTextFields = styled(CustomTextField)({
   backgroundColor: "white",
-  paddingInline: "1%",
   borderRadius: 10,
 });
 const CustomButton = styled(Button)({
   marginLeft: "5px",
 });
 
-const SafetyConcern = ({ handleNext, handleBack }) => {
+const SafetyConcern = ({ handleNext, handleBack, contactId }) => {
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
-  const [formData, setFormData] = useState({
+  const formData = {
     parentGuardianFirstName: "",
     parentGuardianLastName: "",
     parentGuardianEmail: "",
     relationshipToChild: "",
     parentGuardianPhone1: "",
     parentGuardianPhone2: "",
-  });
+  };
 
+  const validationSchema = Yup.object({
+    parentGuardianFirstName: Yup.string()
+      .matches(/^[A-Za-z]+$/, "First Name must contain only letters")
+      .required("Parent/Guardian First Name is required"),
+    parentGuardianLastName: Yup.string()
+      .matches(/^[A-Za-z]+$/, "Last Name must contain only letters")
+      .required("Parent/Guardian Last Name is required"),
+    parentGuardianEmail: Yup.string().matches(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      "Email is invalid"
+    ),
+  });
   const minSwipeDistance = 50;
 
   const onTouchStart = (e) => {
@@ -67,163 +81,207 @@ const SafetyConcern = ({ handleNext, handleBack }) => {
       setShowRight(false);
     }
   };
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+  async function postDataHandler(data) {
+    try {
+      const response = await axios({
+        method: "PATCH",
+        url: `${process.env.REACT_APP_BASEURL}/contacts/${contactId}`,
+        data: {
+          ParentFName: data.parentGuardianFirstName,
+          ParentLName: data.parentGuardianLastName,
+          Relationship: data.relationshipToChild,
+          ParentEmail: data.parentGuardianEmail,
+          ParentPhone1: data.parentGuardianPhone1,
+          ParentPhone2: data.parentGuardianPhone2,
+        },
+      });
+
+      return response;
+    } catch (error) {
+      console.log("Post Form Submit Error : ", error);
+    }
+  }
+  const onSumbitHandler = async (data) => {
+    if (data.parentGuardianFirstName && data.parentGuardianLastName) {
+      postDataHandler(data).then((data) => {
+        handleNext();
+      });
+    }
   };
-
   return (
-    <Box
-      sx={{ pt: 2 }}
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
+    <Formik
+      initialValues={formData}
+      validationSchema={validationSchema}
+      onSubmit={onSumbitHandler}
     >
-      <Row>
-        <Col xs={12} md={12} lg={7}>
+      {({ values, handleChange }) => (
+        <Form>
           <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              height: "100%",
-              width: "60%",
-              "@media (max-width: 600px)": {
-                display: showRight ? "none" : "flex",
-                width: "100%",
-              },
-            }}
+            sx={{ pt: 2 }}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
           >
-            <FormControls>
-              <Typographys>Parent/Guardian First Name*</Typographys>
-              <CustomTextFields
-                name="parentGuardianFirstName"
-                hiddenLabel
-                fullWidth
-                variant="filled"
-                size="small"
-                value={formData.parentGuardianFirstName}
-                onChange={handleChange}
-              ></CustomTextFields>
-              <Typographys>Parent/Guardian Last Name*</Typographys>
-              <CustomTextFields
-                name="parentGuardianLastName"
-                hiddenLabel
-                fullWidth
-                variant="filled"
-                size="small"
-                value={formData.parentGuardianLastName}
-                onChange={handleChange}
-              ></CustomTextFields>
-              <Typographys>Parent/Guardian Email</Typographys>
-              <CustomTextFields
-                name="parentGuardianEmail"
-                hiddenLabel
-                fullWidth
-                variant="filled"
-                size="small"
-                value={formData.parentGuardianEmail}
-                onChange={handleChange}
-              ></CustomTextFields>
-              <Typographys>Relationship to Child*</Typographys>
-              <CustomTextFields
-                name="relationshipToChild"
-                select
-                hiddenLabel
-                fullWidth
-                variant="filled"
-                size="small"
-                value={formData.relationshipToChild}
-                onChange={handleChange}
-                SelectProps={{
-                  displayEmpty: true,
-                  renderValue: (selected) => {
-                    if (selected === "") {
-                      return <span style={{ opacity: 0.5 }}>Select</span>;
-                    }
-                    return relationshipArray.find(
-                      (option) => option.value === selected
-                    )?.label;
-                  },
-                }}
-              >
-                {relationshipArray &&
-                  relationshipArray.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-              </CustomTextFields>
-              <Typographys>Parent/Guardian Phone 1</Typographys>
-              <CustomTextFields
-                name="parentGuardianPhone1"
-                hiddenLabel
-                fullWidth
-                variant="filled"
-                size="small"
-                value={formData.parentGuardianPhone1}
-                onChange={handleChange}
-              ></CustomTextFields>
-              <Typographys>Parent/Guardian Phone 2</Typographys>
-              <CustomTextFields
-                name="parentGuardianPhone2"
-                hiddenLabel
-                fullWidth
-                variant="filled"
-                size="small"
-                value={formData.parentGuardianPhone2}
-                onChange={handleChange}
-              ></CustomTextFields>
-            </FormControls>
-
-            <Box
-              sx={{
-                mt: 2,
-                display: "flex",
-                // border: "1px solid red",
-                // justifyContent: "space-between",
-                width: "80%",
-                marginLeft: "20%",
-                // paddingLeft: "3px",
-              }}
-            >
-              <CustomButton
-                variant="contained"
-                color="secondary"
-                onClick={handleBack}
-              >
-                Back
-              </CustomButton>
-              <CustomButton
-                variant="contained"
-                color="primary"
-                onClick={handleNext}
-              >
-                Get Started
-              </CustomButton>
-            </Box>
+            <Row>
+              <Col xs={12} md={12} lg={7}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    height: "100%",
+                    width: "60%",
+                    "@media (max-width: 600px)": {
+                      display: showRight ? "none" : "flex",
+                      width: "100%",
+                    },
+                  }}
+                >
+                  <FormControls>
+                    <Typographys>Parent/Guardian First Name*</Typographys>
+                    <Field
+                      as={CustomTextFields}
+                      name="parentGuardianFirstName"
+                      hiddenLabel
+                      fullWidth
+                      variant="filled"
+                      size="small"
+                      value={values.parentGuardianFirstName}
+                      onChange={handleChange}
+                    />
+                    <ErrorMessage
+                      name="parentGuardianFirstName"
+                      component="div"
+                      style={{ color: "red" }}
+                    />
+                    <Typographys>Parent/Guardian Last Name*</Typographys>
+                    <Field
+                      as={CustomTextFields}
+                      name="parentGuardianLastName"
+                      hiddenLabel
+                      fullWidth
+                      variant="filled"
+                      size="small"
+                      value={values.parentGuardianLastName}
+                      onChange={handleChange}
+                    />
+                    <ErrorMessage
+                      name="parentGuardianLastName"
+                      component="div"
+                      style={{ color: "red" }}
+                    />
+                    <Typographys>Parent/Guardian Email</Typographys>
+                    <Field
+                      as={CustomTextFields}
+                      name="parentGuardianEmail"
+                      hiddenLabel
+                      fullWidth
+                      variant="filled"
+                      size="small"
+                      value={values.parentGuardianEmail}
+                      onChange={handleChange}
+                    />
+                    <ErrorMessage
+                      name="parentGuardianEmail"
+                      component="div"
+                      style={{ color: "red" }}
+                    />
+                    <Typographys>Relationship to Child*</Typographys>
+                    <CustomTextFields
+                      name="relationshipToChild"
+                      select
+                      hiddenLabel
+                      fullWidth
+                      variant="filled"
+                      size="small"
+                      value={values.relationshipToChild}
+                      onChange={handleChange}
+                      SelectProps={{
+                        displayEmpty: true,
+                        renderValue: (selected) => {
+                          if (selected === "") {
+                            return <span style={{ opacity: 0.5 }}>Select</span>;
+                          }
+                          return relationshipArray.find(
+                            (option) => option.value === selected
+                          )?.label;
+                        },
+                      }}
+                    >
+                      {relationshipArray &&
+                        relationshipArray.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                    </CustomTextFields>
+                    <Typographys>Parent/Guardian Phone 1</Typographys>
+                    <CustomTextFields
+                      name="parentGuardianPhone1"
+                      hiddenLabel
+                      fullWidth
+                      variant="filled"
+                      size="small"
+                      value={values.parentGuardianPhone1}
+                      onChange={handleChange}
+                    />
+                    <Typographys>Parent/Guardian Phone 2</Typographys>
+                    <CustomTextFields
+                      name="parentGuardianPhone2"
+                      hiddenLabel
+                      fullWidth
+                      variant="filled"
+                      size="small"
+                      value={values.parentGuardianPhone2}
+                      onChange={handleChange}
+                    />
+                  </FormControls>
+                  <Box
+                    sx={{
+                      mt: 2,
+                      display: "flex",
+                      width: "80%",
+                      marginLeft: "20%",
+                    }}
+                  >
+                    <CustomButton
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleBack}
+                    >
+                      Back
+                    </CustomButton>
+                    <CustomButton
+                      variant="contained"
+                      color="primary"
+                      type="submit"
+                    >
+                      Continue
+                    </CustomButton>
+                  </Box>
+                </Box>
+              </Col>
+              <Col xs={12} md={12} lg={5}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    height: "100%",
+                    "@media (max-width: 600px)": {
+                      display: showRight ? "flex" : "none",
+                    },
+                  }}
+                >
+                  <SafetyConcernRight />
+                </Box>
+              </Col>
+            </Row>
           </Box>
-        </Col>
-        <Col xs={12} md={12} lg={5}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              height: "100%",
-              "@media (max-width: 600px)": {
-                display: showRight ? "flex" : "none",
-              },
-            }}
-          >
-            <SafetyConcernRight />
-          </Box>
-        </Col>
-      </Row>
-    </Box>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

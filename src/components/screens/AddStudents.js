@@ -5,14 +5,11 @@ import {
   StepButton,
   Stepper,
   Typography,
-  MobileStepper,
   useTheme,
   useMediaQuery,
   Paper,
 } from "@mui/material";
 import React, { useState } from "react";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import Introduction from "../components/Steps/Step1/Introduction";
 import ConnectYourStudent from "../components/Steps/Step2/ConnectYourStudent";
 import SafetyConcern from "../components/Steps/Step3/SafetyConcern";
@@ -35,11 +32,12 @@ const AddStudents = () => {
 
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState({});
-
+  const [contactId, setContactId] = useState("");
+  const [region, setRegion] = useState("");
+  const [waiverId, setWaiverId] = useState("");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery("(min-width:600px) and (max-width:991px)");
-
   const totalSteps = () => steps.length;
 
   const completedSteps = () => Object.keys(completed).length;
@@ -65,6 +63,15 @@ const AddStudents = () => {
   const handleStep = (step) => () => {
     setActiveStep(step);
   };
+  const handleContact = (val) => {
+    val ? setContactId(val) : setContactId("");
+  };
+  const handleRegion = (val) => {
+    val ? setRegion(val) : setRegion("");
+  };
+  const handleWaiver = (val) => {
+    val ? setWaiverId(val) : setWaiverId("");
+  };
 
   const stepContent = (index) => {
     switch (index) {
@@ -72,20 +79,48 @@ const AddStudents = () => {
         return <Introduction handleNext={handleNext} handleBack={handleBack} />;
       case 1:
         return (
-          <ConnectYourStudent handleNext={handleNext} handleBack={handleBack} />
+          <ConnectYourStudent
+            handleNext={handleNext}
+            handleBack={handleBack}
+            handleContact={handleContact}
+            handleRegion={handleRegion}
+          />
         );
       case 2:
         return (
-          <SafetyConcern handleNext={handleNext} handleBack={handleBack} />
+          <SafetyConcern
+            handleNext={handleNext}
+            handleBack={handleBack}
+            contactId={contactId}
+          />
         );
       case 3:
         return (
-          <ShareYourConcern handleNext={handleNext} handleBack={handleBack} />
+          <ShareYourConcern
+            handleNext={handleNext}
+            handleBack={handleBack}
+            contactId={contactId}
+          />
         );
       case 4:
-        return <AcceptWaiver handleNext={handleNext} handleBack={handleBack} />;
+        return (
+          <AcceptWaiver
+            handleNext={handleNext}
+            handleBack={handleBack}
+            contactId={contactId}
+            region={region}
+            handleWaiver={handleWaiver}
+          />
+        );
       case 5:
-        return <AllDone />;
+        return (
+          <AllDone
+            handleBack={handleBack}
+            handleNext={handleNext}
+            contactId={contactId}
+            waiverId={waiverId}
+          />
+        );
       default:
         return <OhNoSorry />;
     }
@@ -94,7 +129,7 @@ const AddStudents = () => {
   return (
     <Container
       style={{
-        backgroundColor: "#FFFADF",
+        backgroundColor: isMobile ? "#FFFFFF" : "#FFFADF",
       }}
     >
       {!isMobile && !isTablet ? (
@@ -152,7 +187,7 @@ const AddStudents = () => {
           >
             <Box
               sx={{
-                height: "70vh",
+                height: "75vh",
                 maxWidth: 1200,
                 width: "100%",
                 p: 2,
@@ -248,10 +283,31 @@ const AddStudents = () => {
           >
             <Typography>{steps[activeStep]}</Typography>
           </Paper>
-          <Box sx={{ height: "100vh", width: "100%", p: 2 }}>
+          <Box>
+            <Stepper
+              nonLinear
+              alternativeLabel
+              activeStep={activeStep}
+              style={{
+                marginTop: "40px",
+                marginInline: "10px",
+              }}
+            >
+              {steps.map((label, index) => (
+                <Step key={label} completed={completed[index]}>
+                  <StepButton
+                    color="inherit"
+                    onClick={handleStep(index)}
+                  ></StepButton>
+                </Step>
+              ))}
+            </Stepper>
+          </Box>
+          <Box sx={{ minHeight: "65vh", height: "100%", width: "100%", p: 2 }}>
             {stepContent(activeStep)}
           </Box>
-          <MobileStepper
+
+          {/* <MobileStepper
             variant="text"
             steps={totalSteps()}
             position="static"
@@ -284,7 +340,7 @@ const AddStudents = () => {
                 Back
               </Button>
             }
-          />
+          /> */}
         </Box>
       )}
     </Container>

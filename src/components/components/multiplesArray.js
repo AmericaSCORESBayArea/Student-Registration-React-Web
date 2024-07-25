@@ -603,3 +603,7 @@ export const parent_Home_Lang_Array = [
     value: "Other",
   },
 ];
+
+export const genderArray_Mobile = ["Boy", "Non-Declared", "Girl"];
+
+export const gradeArray_Mobile = ["3", "4", "5", "6", "7", "8"];

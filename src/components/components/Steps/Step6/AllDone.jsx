@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import AllDoneRight from "./AllDoneRight";
+import { styled } from "@mui/system";
 import { SubTitle } from "../../../componentsStyle/registrationFormStyle";
-
-const AllDone = () => {
+import axios from "axios";
+const CustomButton = styled(Button)({
+  marginTop: "30px",
+  marginLeft: "5px",
+});
+const AllDone = ({ handleNext, handleBack, contactId, waiverId }) => {
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
@@ -34,6 +39,33 @@ const AllDone = () => {
     }
   };
 
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    return now.toISOString().split(".")[0] + "Z";
+  };
+  async function postDataHandler() {
+    try {
+      const currentDateTime = getCurrentDateTime();
+      const response = await axios({
+        method: "POST",
+        url: `${process.env.REACT_APP_BASEURL}/contacts/${contactId}/finishRegistration`,
+        data: {
+          datetime: currentDateTime,
+          waiverResponse: "Acceptance",
+          waiverId: waiverId,
+        },
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Error posting data:", error);
+    }
+  }
+
+  const submitHandler = async () => {
+    postDataHandler().then(() => {});
+  };
+
   return (
     <Box
       sx={{ pt: 2 }}
@@ -56,6 +88,33 @@ const AllDone = () => {
             }}
           >
             <SubTitle>There’s a great school year ahead with SCORES!</SubTitle>
+          </Box>
+          <Box
+            sx={{
+              mt: 2,
+              display: "flex",
+              width: "80%",
+              marginLeft: "20%",
+              "@media (max-width: 600px)": {
+                width: "100%",
+                marginLeft: "0",
+              },
+            }}
+          >
+            <CustomButton
+              variant="contained"
+              color="secondary"
+              onClick={handleBack}
+            >
+              Back
+            </CustomButton>
+            <CustomButton
+              variant="contained"
+              color="primary"
+              onClick={submitHandler}
+            >
+              Finish
+            </CustomButton>
           </Box>
         </Col>
         <Col xs={12} md={12} lg={5}>
