@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -24,7 +24,9 @@ const FormControls = styled(FormControl)({
   borderColor: "gray",
   width: "100%",
   marginTop: 5,
-  height: "54vh",
+  height: "100%",
+  paddingInline: "1%",
+  maxHeight: "57vh",
   overflowY: "scroll",
 });
 
@@ -55,9 +57,9 @@ const ShareYourConcern = ({ handleNext, handleBack, contactId }) => {
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
-  const [formData, setFormData] = useState({
+  const formData = {
     allergies: "",
-  });
+  };
   const minSwipeDistance = 50;
 
   const onTouchStart = (e) => {

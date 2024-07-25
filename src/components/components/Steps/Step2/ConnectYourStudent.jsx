@@ -14,10 +14,9 @@ import { Row, Col } from "react-bootstrap";
 import ConnectYourStudentRight from "./ConnectYourStudentRight";
 import {
   genderArray,
+  genderArray_Mobile,
+  gradeArray_Mobile,
   gradesArray,
-  regionsArray,
-  schoolsName,
-  TeamArray,
 } from "../../multiplesArray";
 import { CustomTextField } from "../../RegisterUI";
 import { styled } from "@mui/system";
@@ -37,7 +36,9 @@ const FormControls = styled(FormControl)({
   borderColor: "gray",
   width: "100%",
   marginTop: 5,
-  height: "57vh",
+  paddingInline: "1%",
+  height: "100%",
+  maxHeight: "57vh",
   overflowY: "scroll",
 });
 const FormControlsMobile = styled(FormControl)({
@@ -60,7 +61,6 @@ const Typographys = styled(Typography)({
 
 const CustomTextFields = styled(CustomTextField)({
   backgroundColor: "white",
-  paddingInline: "1%",
   borderRadius: 10,
   marginBlock: "5px",
 });
@@ -124,11 +124,6 @@ const GradeButton = styled(Button)(({ selected }) => ({
   color: "white",
   marginBlock: "5px",
 }));
-const TypographyGender = styled(Typography)({
-  fontSize: "18px",
-  color: "white",
-  marginBlock: "5px",
-});
 const BoxContainer = styled("div")({
   boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
   backgroundColor: "#DFEDF9",
@@ -153,11 +148,8 @@ const ConnectYourStudent = ({
   const [schoolData, setSchoolData] = useState([]);
   const [teamData, setTeamData] = useState([]);
   const [isTeamData, setIsTeamData] = useState(false);
-  const [selectedRegionData, setSelectedRegionData] = useState(null);
-  const genderArray_mob = ["Boy", "Non-Declared", "Girl"];
-  const gradeArray_mob = ["3", "4", "5", "6", "7", "8"];
 
-  const [formData, setFormData] = useState({
+  const formData = {
     firstName: "",
     lastName: "",
     gender: "",
@@ -168,7 +160,8 @@ const ConnectYourStudent = ({
       schoolFacility: "",
     },
     team: "",
-  });
+  };
+
   const validationSchema = Yup.object({
     firstName: Yup.string()
       .matches(/^[A-Za-z]+$/, "First Name must contain only letters")
@@ -482,7 +475,7 @@ const ConnectYourStudent = ({
                               await getTeamSeasons().then((data) => {
                                 const schoolSite = value;
                                 const matchedTeams = data.filter(
-                                  (team) => team.SchoolSite == schoolSite
+                                  (team) => team.SchoolSite === schoolSite
                                 );
 
                                 const teamData = matchedTeams.map((team) => ({
@@ -680,7 +673,7 @@ const ConnectYourStudent = ({
                         />
                         <Typographys>Gender</Typographys>
                         <Box sx={{ "& > :not(style)": { m: 1 } }}>
-                          {genderArray_mob.map((gender, index) => (
+                          {genderArray_Mobile.map((gender, index) => (
                             <Field
                               key={index}
                               name="gender"
@@ -697,7 +690,7 @@ const ConnectYourStudent = ({
                         />
                         <Typographys>Grade</Typographys>
                         <GradeButtonContainer aria-label="Basic button group">
-                          {gradeArray_mob.map((grade, index) => (
+                          {gradeArray_Mobile.map((grade, index) => (
                             <Field
                               key={index}
                               name="grade"
@@ -800,7 +793,7 @@ const ConnectYourStudent = ({
                                 await getTeamSeasons().then((data) => {
                                   const schoolSite = value;
                                   const matchedTeams = data.filter(
-                                    (team) => team.SchoolSite == schoolSite
+                                    (team) => team.SchoolSite === schoolSite
                                   );
 
                                   const teamData = matchedTeams.map((team) => ({

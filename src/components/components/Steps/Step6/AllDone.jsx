@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, Button } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import AllDoneRight from "./AllDoneRight";

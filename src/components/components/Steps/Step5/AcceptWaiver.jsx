@@ -90,7 +90,6 @@ const AcceptWaiver = ({
   };
 
   const handleAccept = () => {
-    // Handle the acceptance logic here
     setOpenModal(false);
     getDataHandler().then(() => {
       handleNext();
@@ -98,7 +97,6 @@ const AcceptWaiver = ({
   };
 
   const handleDecline = () => {
-    // Handle the decline logic here
     setOpenModal(false);
   };
   const withoutSubmitHandler = () => {

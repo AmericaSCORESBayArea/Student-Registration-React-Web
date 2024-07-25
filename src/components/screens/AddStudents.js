@@ -5,18 +5,15 @@ import {
   StepButton,
   Stepper,
   Typography,
-  MobileStepper,
   useTheme,
   useMediaQuery,
   Paper,
 } from "@mui/material";
 import React, { useState } from "react";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import Introduction from "../components/Steps/Step1/Introduction";
 import ConnectYourStudent from "../components/Steps/Step2/ConnectYourStudent";
 import SafetyConcern from "../components/Steps/Step3/SafetyConcern";
-import ShareYourConcern from "../components/Steps/Step4/ShareYourConcern";
+import ShareYourConcern from "../components/Steps/step4/ShareYourConcern";
 import AcceptWaiver from "../components/Steps/Step5/AcceptWaiver";
 import AllDone from "../components/Steps/Step6/AllDone";
 import OhNoSorry from "../components/Steps/Step7/OhNoSorry";
@@ -41,7 +38,6 @@ const AddStudents = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery("(min-width:600px) and (max-width:991px)");
-
   const totalSteps = () => steps.length;
 
   const completedSteps = () => Object.keys(completed).length;
