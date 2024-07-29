@@ -1,13 +1,18 @@
 import React, { memo } from "react";
 import { Container } from "../../../componentsStyle/registrationFormStyle";
-import { Paper, Typography, Box } from "@mui/material";
+import { Paper, Typography, Box, useMediaQuery } from "@mui/material";
 import { styled } from "@mui/system";
+import { useTheme } from "@emotion/react";
 
-const WaiverContainer = styled(Typography)({
+const WaiverContainer = styled(Box)(({ theme }) => ({
   padding: "20px",
-  height: "400px",
   borderRadius: "30px",
-});
+  [theme.breakpoints.down("sm")]: {
+    padding: "5px",
+    borderRadius: "15px",
+  },
+}));
+
 const WaiverTitle = styled(Typography)({
   fontWeight: "600",
   fontSize: "22px",
@@ -19,17 +24,19 @@ const WaiverSubTitle = styled(Typography)({
 });
 
 const AcceptWaiverRight = memo(() => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Container>
       <WaiverContainer>
         <Box
           sx={{
-            p: 2,
+            p: isMobile ? 0 : 2,
             borderRadius: 2,
             bgcolor: "background.default",
             display: "grid",
             gap: 2,
-            height: 400,
+            height: 600,
             overflowY: "scroll",
           }}
         >

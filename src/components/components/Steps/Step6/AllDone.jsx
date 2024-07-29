@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import AllDoneRight from "./AllDoneRight";
 import { styled } from "@mui/system";
 import { SubTitle } from "../../../componentsStyle/registrationFormStyle";
 import axios from "axios";
+
 const CustomButton = styled(Button)({
   marginTop: "30px",
   marginLeft: "5px",
@@ -13,6 +14,7 @@ const AllDone = ({ handleNext, handleBack, contactId, waiverId }) => {
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const minSwipeDistance = 50;
 
@@ -45,6 +47,7 @@ const AllDone = ({ handleNext, handleBack, contactId, waiverId }) => {
   };
   async function postDataHandler() {
     try {
+      setLoading(true);
       const currentDateTime = getCurrentDateTime();
       const response = await axios({
         method: "POST",
@@ -59,6 +62,8 @@ const AllDone = ({ handleNext, handleBack, contactId, waiverId }) => {
       return response;
     } catch (error) {
       console.error("Error posting data:", error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -81,7 +86,7 @@ const AllDone = ({ handleNext, handleBack, contactId, waiverId }) => {
               flexDirection: "column",
               alignItems: "center",
               height: "100%",
-              // backgroundColor: "red",
+              width: "100%",
               "@media (max-width: 600px)": {
                 display: showRight ? "none" : "flex",
               },
@@ -91,14 +96,9 @@ const AllDone = ({ handleNext, handleBack, contactId, waiverId }) => {
           </Box>
           <Box
             sx={{
-              mt: 2,
               display: "flex",
-              width: "80%",
-              marginLeft: "20%",
-              "@media (max-width: 600px)": {
-                width: "100%",
-                marginLeft: "0",
-              },
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <CustomButton
@@ -113,21 +113,22 @@ const AllDone = ({ handleNext, handleBack, contactId, waiverId }) => {
               color="primary"
               onClick={submitHandler}
             >
-              Finish
+              {loading ? (
+                <CircularProgress size={24} color="warning" />
+              ) : (
+                "Finish"
+              )}
             </CustomButton>
           </Box>
         </Col>
         <Col xs={12} md={12} lg={5}>
           <Box
             sx={{
+              marginTop: "60px",
               display: "flex",
               flexDirection: "column",
+              justifyContent: "center",
               alignItems: "center",
-              height: "100%",
-              // backgroundColor: "blue",
-              "@media (max-width: 600px)": {
-                display: showRight ? "flex" : "none",
-              },
             }}
           >
             <AllDoneRight />

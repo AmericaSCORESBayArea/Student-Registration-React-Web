@@ -50,7 +50,6 @@ const OhNoSorry = () => {
               alignItems: "flex-start",
               height: "100%",
               marginLeft: "20px",
-              // backgroundColor: "red",
               "@media (max-width: 600px)": {
                 display: showRight ? "none" : "flex",
               },
@@ -74,7 +73,6 @@ const OhNoSorry = () => {
               flexDirection: "column",
               alignItems: "center",
               height: "100%",
-              // backgroundColor: "blue",
               "@media (max-width: 600px)": {
                 display: showRight ? "flex" : "none",
               },

@@ -89,7 +89,7 @@ export default function Registration_Status(props) {
     if (categoryName === "Quick Registration" && props.roleType === "Coach") {
       navigate("/QuickRegistration");
     }
-    if (categoryName === "New Layout" && props.roleType === "Coach") {
+    if (categoryName === "New Layout") {
       navigate("/AddStudents");
     }
   };

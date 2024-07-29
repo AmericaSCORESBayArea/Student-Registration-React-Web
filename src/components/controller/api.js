@@ -529,3 +529,21 @@ export async function postEnrollment(data) {
     console.log(error);
   }
 }
+
+export async function getStudentsByPhoneNumberComplete(phoneNumber) {
+  let value = "";
+  var requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+
+  await fetch(
+    `${process.env.REACT_APP_BASEURL}/contacts/searchByPhoneNumber?phoneNumber=${phoneNumber}`,
+    requestOptions
+  )
+    .then((response) => response.json())
+    .then((data) => (value = data))
+    .catch((error) => console.log("error", error));
+  return value;
+}

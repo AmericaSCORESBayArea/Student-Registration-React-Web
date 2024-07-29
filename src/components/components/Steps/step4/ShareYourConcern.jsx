@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
+  CircularProgress,
   FormControl,
   TextField,
   useMediaQuery,
@@ -57,6 +58,7 @@ const ShareYourConcern = ({ handleNext, handleBack, contactId }) => {
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [loading, setLoading] = useState(false);
   const formData = {
     allergies: "",
   };
@@ -86,6 +88,7 @@ const ShareYourConcern = ({ handleNext, handleBack, contactId }) => {
   };
   async function postDataHandler(data) {
     try {
+      setLoading(true);
       const response = await axios({
         method: "PATCH",
         url: `${process.env.REACT_APP_BASEURL}/contacts/${contactId}`,
@@ -97,6 +100,8 @@ const ShareYourConcern = ({ handleNext, handleBack, contactId }) => {
       return response;
     } catch (error) {
       console.log("Post Form Submit Error : ", error);
+    } finally {
+      setLoading(false);
     }
   }
   const onSumbitHandler = async (data) => {
@@ -128,16 +133,7 @@ const ShareYourConcern = ({ handleNext, handleBack, contactId }) => {
                       },
                     }}
                   >
-                    <Container
-                      width="70%"
-                      marginRight="25%"
-                      sx={{
-                        "@media (max-width: 600px)": {
-                          width: "100%",
-                          marginRight: "0",
-                        },
-                      }}
-                    >
+                    <Container>
                       <Title textAlign="center">Student Needs</Title>
                       <SubTitle>
                         Tell us if your student has allergies or any other needs
@@ -156,12 +152,8 @@ const ShareYourConcern = ({ handleNext, handleBack, contactId }) => {
                         sx={{
                           mt: 2,
                           display: "flex",
-                          width: "80%",
-                          marginLeft: "20%",
-                          "@media (max-width: 600px)": {
-                            width: "100%",
-                            marginLeft: "0",
-                          },
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                       >
                         <CustomButton
@@ -176,7 +168,11 @@ const ShareYourConcern = ({ handleNext, handleBack, contactId }) => {
                           color="primary"
                           type="submit"
                         >
-                          Continue
+                          {loading ? (
+                            <CircularProgress size={24} color="warning" />
+                          ) : (
+                            "Continue"
+                          )}
                         </CustomButton>
                       </Box>
                     </Container>
