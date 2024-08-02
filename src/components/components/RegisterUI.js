@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -88,7 +88,16 @@ const RegisterUI = React.memo(
   }) => {
     const { enrolledStudents } = useStore();
     const hasEnrollments = Object.keys(enrolledStudents).length > 0;
-
+    const { pastedData, clearPastedData } = useStore((state) => ({
+      pastedData: state.pastedData,
+      clearPastedData: state.clearPastedData,
+    }));
+    // Callback to add a new row when the input length exceeds 5
+    useEffect(() => {
+      if (pastedData && pastedData.length > 5) {
+        onAddRow();
+      }
+    }, [pastedData]);
     return (
       <Box
         sx={{

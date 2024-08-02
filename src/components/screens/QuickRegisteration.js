@@ -45,7 +45,7 @@ const QuickRegisteration = () => {
     clearPastedData: state.clearPastedData,
   }));
 
-  console.log("pastedData:", pastedData);
+  // console.log("pastedData:", pastedData);
 
   // useEffect(() => {
   //   if (pastedData.length > 0) {

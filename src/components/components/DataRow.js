@@ -4,6 +4,7 @@ import { getStudents } from "../controller/api";
 import debounce from "lodash/debounce";
 import { createFilterOptions } from "@mui/material/Autocomplete";
 import { CustomTextField, DropdownTextField } from "./RegisterUI";
+import useStore from "../../store/useStore";
 
 const DataRow = React.memo(
   ({
@@ -34,6 +35,11 @@ const DataRow = React.memo(
     const [shouldCreateNewContact, setShouldCreateNewContact] = useState(false);
 
     const defaultFilterOptions = createFilterOptions();
+
+    const { pastedData, clearPastedData } = useStore((state) => ({
+      pastedData: state.pastedData,
+      clearPastedData: state.clearPastedData,
+    }));
 
     const fetchData = useCallback(
       async (input, type) => {
@@ -191,7 +197,49 @@ const DataRow = React.memo(
         contactId: "",
       });
     }, [region, index, setRowData]);
+    // UseEffect to populate inputs based on pastedData or initial rowData
+    useEffect(() => {
+      if (pastedData && pastedData[index]) {
+        const { firstName, lastName } = pastedData[index];
+        setFirstNameInput(firstName || "");
+        setLastNameInput(lastName || "");
+        setRowData(index, "firstName", firstName || "", "");
+        setRowData(index, "lastName", lastName || "", "");
+      }
+    }, [pastedData, index, setRowData]);
 
+    // Debounced fetch for first name data
+    useEffect(() => {
+      if (firstNameInput.trim().length >= 2) {
+        debouncedFetchFirstNameData(firstNameInput);
+      } else {
+        setFirstNameOptions([]);
+      }
+    }, [firstNameInput, debouncedFetchFirstNameData]);
+
+    // Debounced fetch for last name data
+    useEffect(() => {
+      if (lastNameInput.trim().length >= 2) {
+        debouncedFetchLastNameData(lastNameInput);
+      } else {
+        setLastNameOptions([]);
+      }
+    }, [lastNameInput, debouncedFetchLastNameData]);
+
+    // Handle input changes
+    const handleBlur = (index, newValue, inputValue, type) => {
+      if (inputValue) {
+        if (
+          !firstNameOptions.some(
+            (option) => option.label.toLowerCase() === inputValue.toLowerCase()
+          )
+        ) {
+          setRowData(index, type, inputValue, "");
+          handleNameSelect(newValue, type);
+          handleInputChange(type, inputValue, true);
+        }
+      }
+    };
     return (
       <Grid container spacing={2} sx={{ marginBottom: 2 }}>
         <Grid item xs={12} sm={3}>
@@ -206,40 +254,26 @@ const DataRow = React.memo(
             value={
               firstNameOptions.find(
                 (option) => option.label === rowData.firstName
-              ) || ""
+              ) || null
             }
             getOptionLabel={(option) => option.label || ""}
             options={firstNameOptions}
             loading={loadingFirstName}
             inputValue={firstNameInput}
             onInputChange={(event, newInputValue, reason) => {
-              if (reason === "input") {
-                setFirstNameInput(newInputValue);
-              } else if (reason === "clear") {
+              if (reason === "input") setFirstNameInput(newInputValue);
+              else if (reason === "clear") {
                 setFirstNameInput("");
                 setRowData(index, "firstName", "", "");
-              }
-            }}
-            onBlur={(newValue) => {
-              const inputValue = firstNameInput.trim();
-              if (
-                inputValue &&
-                !firstNameOptions.some(
-                  (option) =>
-                    option.label.toLowerCase() === inputValue.toLowerCase()
-                )
-              ) {
-                setRowData(index, "firstName", inputValue, "");
-                handleNameSelect(newValue, "firstName");
-                handleInputChange("firstName", inputValue, true);
               }
             }}
             onChange={(event, newValue) => {
               handleInputChange("firstName", newValue, false);
               handleNameSelect(newValue, "firstName");
             }}
+            onBlur={() => handleBlur(index, null, firstNameInput, "firstName")}
             filterOptions={filterOptions}
-            noOptionsText="start typing to search"
+            noOptionsText="Start typing to search"
             renderInput={(params) => (
               <CustomTextField
                 error={!!errors[index].firstNameError}
@@ -260,31 +294,14 @@ const DataRow = React.memo(
                     </>
                   ),
                 }}
-                InputLabelProps={{
-                  ...params.InputLabelProps,
-                  shrink: false,
-                }}
               />
-            )}
-            renderOption={(props, option) => (
-              <li {...props}>
-                <div>
-                  {option.label.split(" ").slice(0, 2).join(" ")}
-                  <br />
-                  <span style={{ color: "grey" }}>
-                    {option.label.split(" ").slice(2).join(" ")}
-                  </span>
-                </div>
-              </li>
             )}
           />
         </Grid>
+
         <Grid item xs={12} sm={3}>
           <Autocomplete
             id={`last-name-autocomplete-${index}`}
-            variant="filled"
-            fullWidth
-            size="small"
             open={openLastName}
             onOpen={() => setOpenLastName(true)}
             onClose={() => setOpenLastName(false)}
@@ -294,7 +311,7 @@ const DataRow = React.memo(
             value={
               lastNameOptions.find(
                 (option) => option.label === rowData.lastName
-              ) || ""
+              ) || null
             }
             getOptionLabel={(option) => option.label || ""}
             options={lastNameOptions}
@@ -311,22 +328,9 @@ const DataRow = React.memo(
               handleInputChange("lastName", newValue, false);
               handleNameSelect(newValue, "lastName");
             }}
-            onBlur={(newValue) => {
-              const inputValue = lastNameInput.trim();
-              if (
-                inputValue &&
-                !lastNameOptions.some(
-                  (option) =>
-                    option.label.toLowerCase() === inputValue.toLowerCase()
-                )
-              ) {
-                setRowData(index, "lastName", inputValue, "");
-                handleNameSelect(newValue, "lastName");
-                handleInputChange("lastName", inputValue, true);
-              }
-            }}
+            onBlur={() => handleBlur(index, null, lastNameInput, "lastName")}
             filterOptions={filterOptions}
-            noOptionsText="start typing to search"
+            noOptionsText="Start typing to search"
             renderInput={(params) => (
               <CustomTextField
                 error={!!errors[index].lastNameError}
@@ -349,19 +353,9 @@ const DataRow = React.memo(
                 }}
               />
             )}
-            renderOption={(props, option) => (
-              <li {...props}>
-                <div>
-                  {option.label.split(" ").slice(0, 2).join(" ")}
-                  <br />
-                  <span style={{ color: "grey" }}>
-                    {option.label.split(" ").slice(2).join(" ")}
-                  </span>
-                </div>
-              </li>
-            )}
           />
         </Grid>
+
         <Grid item xs={12} sm={3}>
           <DropdownTextField
             error={!!errors[index].schoolSiteError}
