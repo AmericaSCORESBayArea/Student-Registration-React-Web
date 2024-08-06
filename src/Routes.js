@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, useNavigate, Routes } from "react-router-dom";
 import HomeScreen from "./components/screens/HomeScreen";
 import NavBar from "./components/NavbarComponent";
@@ -23,6 +23,7 @@ export default function RoutesWeb() {
   const [selectedLanguage] = React.useState(
     lang === "es-ES" || lang === "es" ? "ES" : lang === "zh-CN" ? "CN" : "US"
   );
+  const [loading, setLoading] = useState(true);
 
   const checkLocalstorageLanguage = () => {
     var code = localStorage.getItem("language");
@@ -33,6 +34,7 @@ export default function RoutesWeb() {
     } else if (code === "CN") {
       setAuxTranslation(cnLanguages);
     }
+    setLoading(false);
   };
 
   document.addEventListener("languageChanged", () => {
@@ -70,6 +72,11 @@ export default function RoutesWeb() {
       checkLocalstorageLanguage();
     }
   }, [lang]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <NavBar
@@ -86,7 +93,7 @@ export default function RoutesWeb() {
         <ScrollToTop />
         <Routes history={useNavigate}>
           <Route
-            path="/"
+            path="/:stepId?"
             element={
               <PrivateRoute>
                 <HomeScreen translations={auxTranslation} />
@@ -102,7 +109,7 @@ export default function RoutesWeb() {
             }
           />
           <Route
-            path="/AddStudents"
+            path="/AddStudents/:step"
             element={
               <PrivateRoute>
                 <AddStudents />
