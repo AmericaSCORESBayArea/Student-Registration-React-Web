@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+import { useParams, useNavigate, useLocation  } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -6,17 +7,38 @@ import StepButton from "@mui/material/StepButton";
 import RoleType from "./../components/RoleType";
 import Registration from "./../components/Registration_Status";
 import Form from "./../components/Form";
+
+const getSteps = (translations) => [
+  { label: translations.steps_1, url: translations.steps_1_url },
+  { label: translations.steps_2, url: translations.steps_2_url },
+  { label: translations.steps_3, url: translations.steps_3_url },
+];
+
 export default function HomeScreen(props) {
-  const steps = [
-    props.translations.steps_1,
-    props.translations.steps_2,
-    props.translations.steps_3,
-  ];
+  const { stepId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const steps = useMemo(() => props.translations ? getSteps(props.translations) : [], [props.translations]);
+  const stepIndex = steps.findIndex(step => step.url === stepId);
   const [student, setStudent] = useState("");
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
   const [roleType, setRoleType] = React.useState();
   const [regStatus, setRegStatus] = React.useState();
+ 
+  useEffect(() => {
+    if (!steps || steps.length === 0) {
+      setActiveStep(0);
+    } else {
+      if (stepIndex !== -1 && stepIndex !== undefined && steps[stepIndex].url !== stepId) {
+        setActiveStep(stepIndex);
+      }
+      if ((stepId === -1 || location.pathname === "/") && steps.length > 0) {
+        navigate(`/${steps[0].url}`);
+      }
+    }
+  }, [stepIndex, stepId, steps, navigate, location.pathname, props.translations]);
+
   const totalSteps = () => {
     return steps.length;
   };
@@ -38,30 +60,49 @@ export default function HomeScreen(props) {
   };
 
   const handleNext = (step, selected) => {
-    const newActiveStep =
+    let newActiveStep;
+    newActiveStep =
       isLastStep() && !allStepsCompleted()
         ? // It's the last step, but not all steps have been completed,
           // find the first step that has been completed
           steps.findIndex((step, i) => !(i in completed))
         : activeStep + 1;
-    setActiveStep(newActiveStep);
+
+    if (newActiveStep >= steps.length) {
+      newActiveStep = steps.length - 1;
+    }
+
     if (step === "role_type") {
       setRoleType(selected);
     } else if (step === "registration_status") {
       setRegStatus(selected);
     }
+
+    if (newActiveStep === 2 && (regStatus !== "New" && regStatus !== "Existing")) {
+      return;
+    }
+
+    handleStep(newActiveStep)();
+
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setActiveStep((prevActiveStep) => {
+      const newActiveStep = prevActiveStep - 1;
+        if (newActiveStep >= 0 && newActiveStep < steps.length) {
+          navigate(`/${steps[newActiveStep].url}`);
+        }
+        return newActiveStep;
+      });
   };
 
   const handleStep = (step) => () => {
     setActiveStep(step);
+    navigate(`/${steps[step].url}`);
   };
 
   const handleReset = () => {
-    setActiveStep(1);
+    setActiveStep(0);
     setCompleted({});
     setRegStatus("");
     setStudent("");
@@ -131,34 +172,36 @@ export default function HomeScreen(props) {
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
   return (
-    <React.Fragment>
-      <Box
-        display="flex"
-        width={"100%"}
-        alignItems="center"
-        justifyContent="center"
-      >
-        <Stepper
-          style={{ width: width < 720 ? "80%" : "50%" }}
-          activeStep={activeStep}
+    (steps.length !== 0 || stepId !== undefined) && (
+      <React.Fragment>
+        <Box
+          display="flex"
+          width={"100%"}
+          alignItems="center"
+          justifyContent="center"
         >
-          {steps.map((label, index) => (
-            <Step key={label} completed={completed[index]}>
-              <StepButton color="inherit" onClick={handleStep(index)}>
-                {label}
-              </StepButton>
-            </Step>
-          ))}
-        </Stepper>
-      </Box>
-      <Box
-        display="flex"
-        width={"100%"}
-        alignItems="center"
-        justifyContent="center"
-      >
-        {getScreen()}
-      </Box>
-    </React.Fragment>
+          <Stepper
+            style={{ width: width < 720 ? "80%" : "50%" }}
+            activeStep={activeStep}
+          >
+            {steps.map(({label}, index) => (
+              <Step key={`${label}-${index}`} completed={completed[index]}>
+                <StepButton color="inherit" onClick={handleStep(index)}>
+                  {label}
+                </StepButton>
+              </Step>
+            ))}
+          </Stepper>
+        </Box>
+        <Box
+          display="flex"
+          width={"100%"}
+          alignItems="center"
+          justifyContent="center"
+        >
+          {getScreen()}
+        </Box>
+      </React.Fragment>
+    )
   );
 }

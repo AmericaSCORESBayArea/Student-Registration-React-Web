@@ -9,7 +9,10 @@ import {
   useMediaQuery,
   Paper,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import Introduction from "../components/Steps/Step1/Introduction";
 import ConnectYourStudent from "../components/Steps/Step2/ConnectYourStudent";
 import SafetyConcern from "../components/Steps/Step3/SafetyConcern";
@@ -20,21 +23,49 @@ import OhNoSorry from "../components/Steps/Step7/OhNoSorry";
 import logo from "../../assets/SCORESLogo.png";
 import { Container } from "react-bootstrap";
 
-const AddStudents = () => {
-  const steps = [
-    "Introduction",
-    "Help Us Connect Your Student",
-    "Safety is Our Top Concern",
-    "Share Your Concerns and Goals",
-    "Accept the Waiver",
-    "All Done! Thanks!",
-  ];
+const steps = [
+  { label: "Introduction", url: "introduction" },
+  { label: "Help Us Connect Your Student", url: "connect-your-student" },
+  { label: "Safety is Our Top Concern", url: "safety-is-our-top-concern" },
+  { label: "Share Your Concerns and Goals", url: "share-your-concerns-and-goals" },
+  { label: "Accept the Waiver", url: "accept-the-waiver" },
+  { label: "All Done! Thanks!", url: "all-done-thanks" },
+];
 
+const AddStudents = () => {
+  const { step } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const standardizedStep = step ? step.toLowerCase() : "";
+  const stepIndex = steps.findIndex(e_step => e_step.url === standardizedStep);
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState({});
   const [contactId, setContactId] = useState("");
   const [region, setRegion] = useState("");
   const [waiverId, setWaiverId] = useState("");
+
+  useEffect(() => {
+    if (!steps || steps.length === 0) {
+      setActiveStep(0);
+    } else{
+
+    if (stepIndex !== -1 && stepIndex !== undefined && steps[stepIndex].url !== step) {
+      setActiveStep(stepIndex);
+    }
+
+    if ((step === -1 || location.pathname === "/AddStudents") && steps.length > 0) {
+      navigate(`AddStudents//${steps[0].url}`);
+    }
+  }
+  }, [location.pathname, stepIndex, navigate, step]);
+  
+  useEffect(() => {
+    const stepFromUrl = steps.findIndex(step => `/AddStudents/${step.url}` === location.pathname);
+    if (stepFromUrl !== -1 && stepFromUrl !== activeStep) {
+      setActiveStep(stepFromUrl);
+    }
+  }, [location.pathname, activeStep]);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery("(min-width:600px) and (max-width:991px)");
@@ -47,21 +78,33 @@ const AddStudents = () => {
   const allStepsCompleted = () => completedSteps() === totalSteps();
 
   const handleNext = () => {
-    const newActiveStep =
+    let newActiveStep;
+    newActiveStep =
       isLastStep() && !allStepsCompleted()
         ? steps.findIndex((step, i) => !(i in completed))
         : activeStep + 1;
 
+    if (newActiveStep >= steps.length) {
+      newActiveStep = steps.length - 1;
+    }
     setActiveStep(newActiveStep);
     setCompleted({ ...completed, [activeStep]: true });
+    handleStep(newActiveStep)();
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setActiveStep((prevActiveStep) => {
+      const newActiveStep = prevActiveStep - 1;
+        if (newActiveStep >= 0 && newActiveStep < steps.length) {
+          handleStep(newActiveStep)();
+        }
+        return newActiveStep;
+    });
   };
 
   const handleStep = (step) => () => {
     setActiveStep(step);
+    navigate(`/AddStudents/${steps[step].url}`);
   };
   const handleContact = (val) => {
     val ? setContactId(val) : setContactId("");
@@ -154,7 +197,7 @@ const AddStudents = () => {
                 fontWeight: "bold",
               }}
             >
-              {steps[activeStep]}
+              {steps[activeStep].label}
             </Box>
             <Box>
               <Stepper
@@ -165,8 +208,8 @@ const AddStudents = () => {
                   marginTop: "40px",
                 }}
               >
-                {steps.map((label, index) => (
-                  <Step key={label} completed={completed[index]}>
+                {steps.map(({label}, index) => (
+                  <Step key={`${label}-${index}`} completed={completed[index]}>
                     <StepButton color="inherit" onClick={handleStep(index)}>
                       {label}
                     </StepButton>
@@ -230,8 +273,8 @@ const AddStudents = () => {
                   width: "100%",
                 }}
               >
-                {steps.map((label, index) => (
-                  <Step key={label} completed={completed[index]}>
+                {steps.map(({label}, index) => (
+                  <Step key={`${label}-${index}`} completed={completed[index]}>
                     <StepButton color="inherit" onClick={handleStep(index)}>
                       {label}
                     </StepButton>
@@ -281,7 +324,7 @@ const AddStudents = () => {
               bgcolor: "#f8f5f4",
             }}
           >
-            <Typography>{steps[activeStep]}</Typography>
+            <Typography>{steps[activeStep].label}</Typography>
           </Paper>
           <Box>
             <Stepper
