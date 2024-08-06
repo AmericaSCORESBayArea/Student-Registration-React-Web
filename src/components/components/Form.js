@@ -138,12 +138,8 @@ export default function Form(props) {
               props.studentProps.Id,
               response[0].WaiverId,
               region
-            ).then(async (acceptance) => {
-              let accepted = acceptance
-                ? acceptance[0].Response === "Acceptance"
-                  ? true
-                  : false
-                : false;
+            ).then(async (acceptance = []) => {
+              let accepted = acceptance.length > 0 && acceptance[0].Response === "Acceptance";
               setIsWaiverAccepted(accepted);
             });
           }
