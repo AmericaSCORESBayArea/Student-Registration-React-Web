@@ -45,23 +45,6 @@ const QuickRegisteration = () => {
     clearPastedData: state.clearPastedData,
   }));
 
-  // console.log("pastedData:", pastedData);
-
-  // useEffect(() => {
-  //   if (pastedData.length > 0) {
-  //     setRows((currentRows) =>
-  //       currentRows.map((row, index) => ({
-  //         ...row,
-  //         ...pastedData[index % pastedData.length],
-  //       }))
-  //     );
-
-  //     clearPastedData();
-  //   }
-  // }, [pastedData, clearPastedData]);
-
-  // console.log("rows:", rows);
-
   const [errors, setErrors] = useState(
     Array(5).fill({
       firstNameError: "",
@@ -156,6 +139,8 @@ const QuickRegisteration = () => {
   };
 
   const handleAddRow = useCallback(() => {
+    console.log("❤️");
+
     setRows([
       ...rows,
       {
@@ -398,6 +383,29 @@ const QuickRegisteration = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [handleBeforeUnload]);
+
+  console.log("pastedData:", pastedData);
+
+  useEffect(() => {
+    if (pastedData.length > 0) {
+      if (pastedData && pastedData.length > rows.length) {
+        const additionalRowsNeeded = pastedData.length - rows.length;
+
+        for (let i = 0; i < additionalRowsNeeded; i++) {
+          console.log("😊😊😊😊");
+
+          handleAddRow();
+        }
+      }
+      setRows((currentRows) =>
+        currentRows.map((row, index) => ({
+          ...row,
+          ...pastedData[index],
+        }))
+      );
+      clearPastedData();
+    }
+  }, [pastedData]);
 
   if (loadingRegions || loadingTeamSeasons) return <Loader />;
 

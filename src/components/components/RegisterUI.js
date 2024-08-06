@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -92,12 +92,26 @@ const RegisterUI = React.memo(
       pastedData: state.pastedData,
       clearPastedData: state.clearPastedData,
     }));
+
     // Callback to add a new row when the input length exceeds 5
     useEffect(() => {
-      if (pastedData && pastedData.length > 5) {
-        onAddRow();
+      console.log("Current rows:", rows);
+      console.log("Pasted data:", pastedData);
+      console.log("Pasted data length:", pastedData.length);
+
+      if (pastedData && pastedData.length > rows.length) {
+        const additionalRowsNeeded = pastedData.length - rows.length;
+
+        for (let i = 0; i < additionalRowsNeeded; i++) {
+          onAddRow();
+        }
       }
-    }, [pastedData]);
+    }, [pastedData, rows.length, onAddRow]);
+
+    // useEffect(() => {
+    //   console.log("💕");
+    // }, []);
+
     return (
       <Box
         sx={{
@@ -235,19 +249,22 @@ const RegisterUI = React.memo(
                       </Typography>
                     </Grid>
                   </Grid>
-                  {rows.map((row, index) => (
-                    <DataRow
-                      key={index}
-                      index={index}
-                      rowData={row}
-                      setRowData={onInputChange}
-                      region={region}
-                      schoolSitesData={schoolSitesData}
-                      teamSeasons={teamSeasons}
-                      errors={errors}
-                      handleFieldChange={handleFieldChange}
-                    />
-                  ))}
+                  {rows.map((row, index) => {
+                    console.log("😊😊:", row);
+                    return (
+                      <DataRow
+                        key={index}
+                        index={index}
+                        rowData={row}
+                        setRowData={onInputChange}
+                        region={region}
+                        schoolSitesData={schoolSitesData}
+                        teamSeasons={teamSeasons}
+                        errors={errors}
+                        handleFieldChange={handleFieldChange}
+                      />
+                    );
+                  })}
                   <Grid container item>
                     <Button
                       onClick={onAddRow}
