@@ -33,7 +33,7 @@ const DataRow = React.memo(
     const [loadingFirstName, setLoadingFirstName] = useState(false);
     const [loadingLastName, setLoadingLastName] = useState(false);
     const [shouldCreateNewContact, setShouldCreateNewContact] = useState(false);
-    const [pastedSort, SetPastedSort] = useState(index);
+
     const defaultFilterOptions = createFilterOptions();
 
     const { pastedData, clearPastedData } = useStore((state) => ({
@@ -202,15 +202,19 @@ const DataRow = React.memo(
     }, [region, index, setRowData]);
     // UseEffect to populate inputs based on pastedData or initial rowData
     useEffect(() => {
-      // console.log("ROW DATA : ", rowData);
+      console.log("ROW DATA : ", rowData);
       if (rowData) {
         const { firstName, lastName } = rowData;
         setFirstNameInput(firstName || "");
         setLastNameInput(lastName || "");
-        setRowData(index, "firstName", firstName || "", "");
-        setRowData(index, "lastName", lastName || "", "");
+        // setRowData(index, "firstName", firstName || "", "");
+        // setRowData(index, "lastName", lastName || "", "");
       }
-    }, [index, setRowData]);
+    }, [rowData]);
+
+    // useEffect(() => {
+    //   console.log("ROW DATA : ", rowData);
+    // }, [rowData]);
 
     // Debounced fetch for first name data
     useEffect(() => {

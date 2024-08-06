@@ -88,29 +88,30 @@ const RegisterUI = React.memo(
   }) => {
     const { enrolledStudents } = useStore();
     const hasEnrollments = Object.keys(enrolledStudents).length > 0;
-    const { pastedData, clearPastedData } = useStore((state) => ({
-      pastedData: state.pastedData,
-      clearPastedData: state.clearPastedData,
-    }));
+    // const { pastedData, clearPastedData } = useStore((state) => ({
+    //   pastedData: state.pastedData,
+    //   clearPastedData: state.clearPastedData,
+    // }));
 
     // Callback to add a new row when the input length exceeds 5
-    useEffect(() => {
-      console.log("Current rows:", rows);
-      console.log("Pasted data:", pastedData);
-      console.log("Pasted data length:", pastedData.length);
+    // useEffect(() => {
+    //   console.log("Current rows:", rows);
+    //   console.log("Pasted data:", pastedData);
+    //   console.log("Pasted data length:", pastedData.length);
 
-      if (pastedData && pastedData.length > rows.length) {
-        const additionalRowsNeeded = pastedData.length - rows.length;
+    //   if (pastedData && pastedData.length > rows.length) {
+    //     const additionalRowsNeeded = pastedData.length - rows.length;
 
-        for (let i = 0; i < additionalRowsNeeded; i++) {
-          onAddRow();
-        }
-      }
-    }, [pastedData, rows.length, onAddRow]);
+    //     for (let i = 0; i < additionalRowsNeeded; i++) {
+    //       onAddRow();
+    //     }
+    //   }
+    // }, [pastedData, rows.length, onAddRow]);
 
     // useEffect(() => {
-    //   console.log("💕");
-    // }, []);
+    //   console.log("💕 : ", rows);
+    //   console.log("💕 Register UI rows length : ", rows.length);
+    // }, [rows]);
 
     return (
       <Box
@@ -250,12 +251,12 @@ const RegisterUI = React.memo(
                     </Grid>
                   </Grid>
                   {rows.map((row, index) => {
-                    console.log("😊😊:", row);
+                    // console.log("😊😊:", row);
                     return (
                       <DataRow
                         key={index}
                         index={index}
-                        rowData={row}
+                        rowData={row ? { ...row } : ""}
                         setRowData={onInputChange}
                         region={region}
                         schoolSitesData={schoolSitesData}
