@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Step,
   StepButton,
   Stepper,
@@ -9,7 +8,8 @@ import {
   useMediaQuery,
   Paper,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import CreatedStudents from "../components/Steps/Step0/CreatedStudents";
 import Introduction from "../components/Steps/Step1/Introduction";
 import ConnectYourStudent from "../components/Steps/Step2/ConnectYourStudent";
 import SafetyConcern from "../components/Steps/Step3/SafetyConcern";
@@ -19,32 +19,63 @@ import AllDone from "../components/Steps/Step6/AllDone";
 import OhNoSorry from "../components/Steps/Step7/OhNoSorry";
 import logo from "../../assets/SCORESLogo.png";
 import { Container } from "react-bootstrap";
+import { getStudentsByPhoneNumber } from "../controller/api";
 
 const AddStudents = () => {
-  const steps = [
-    "Introduction",
-    "Help Us Connect Your Student",
-    "Safety is Our Top Concern",
-    "Share Your Concerns and Goals",
-    "Accept the Waiver",
-    "All Done! Thanks!",
-  ];
-
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState({});
   const [contactId, setContactId] = useState("");
   const [region, setRegion] = useState("");
+  const [studentsList, setStudentsList] = useState([]);
+  const [showParentStudents, setShowParentStudents] = useState(false);
   const [waiverId, setWaiverId] = useState("");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery("(min-width:600px) and (max-width:991px)");
   const totalSteps = () => steps.length;
 
+  const steps = showParentStudents
+    ? [
+        "Created Students",
+        "Introduction",
+        "Help Us Connect Your Student",
+        "Safety is Our Top Concern",
+        "Share Your Concerns and Goals",
+        "Accept the Waiver",
+        "All Done! Thanks!",
+      ]
+    : [
+        "Introduction",
+        "Help Us Connect Your Student",
+        "Safety is Our Top Concern",
+        "Share Your Concerns and Goals",
+        "Accept the Waiver",
+        "All Done! Thanks!",
+      ];
+
   const completedSteps = () => Object.keys(completed).length;
 
   const isLastStep = () => activeStep === totalSteps() - 1;
 
   const allStepsCompleted = () => completedSteps() === totalSteps();
+
+  const getAllStudentsByPhoneNumber = useCallback(async () => {
+    let phoneNumber = localStorage.getItem("phoneNumber");
+    try {
+      await getStudentsByPhoneNumber(phoneNumber).then((result) => {
+        if (result.length !== 0) {
+          setShowParentStudents(true);
+          setStudentsList(result);
+        }
+        console.log("result", result);
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+  useEffect(() => {
+    getAllStudentsByPhoneNumber();
+  }, [getAllStudentsByPhoneNumber]);
 
   const handleNext = () => {
     const newActiveStep =
@@ -57,72 +88,129 @@ const AddStudents = () => {
   };
 
   const handleBack = () => {
+    if (activeStep === 0) return;
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
   const handleStep = (step) => () => {
+    if ((showParentStudents && step > 2) || (!showParentStudents && step > 1)) {
+      if (!contactId) return;
+    }
     setActiveStep(step);
   };
-  const handleContact = (val) => {
-    val ? setContactId(val) : setContactId("");
-  };
-  const handleRegion = (val) => {
-    val ? setRegion(val) : setRegion("");
-  };
-  const handleWaiver = (val) => {
-    val ? setWaiverId(val) : setWaiverId("");
-  };
 
+  const handleContact = (val) => setContactId(val || "");
+  const handleRegion = (val) => setRegion(val || "");
+  const handleWaiver = (val) => setWaiverId(val || "");
   const stepContent = (index) => {
-    switch (index) {
-      case 0:
-        return <Introduction handleNext={handleNext} handleBack={handleBack} />;
-      case 1:
-        return (
-          <ConnectYourStudent
-            handleNext={handleNext}
-            handleBack={handleBack}
-            handleContact={handleContact}
-            handleRegion={handleRegion}
-          />
-        );
-      case 2:
-        return (
-          <SafetyConcern
-            handleNext={handleNext}
-            handleBack={handleBack}
-            contactId={contactId}
-          />
-        );
-      case 3:
-        return (
-          <ShareYourConcern
-            handleNext={handleNext}
-            handleBack={handleBack}
-            contactId={contactId}
-          />
-        );
-      case 4:
-        return (
-          <AcceptWaiver
-            handleNext={handleNext}
-            handleBack={handleBack}
-            contactId={contactId}
-            region={region}
-            handleWaiver={handleWaiver}
-          />
-        );
-      case 5:
-        return (
-          <AllDone
-            handleBack={handleBack}
-            handleNext={handleNext}
-            contactId={contactId}
-            waiverId={waiverId}
-          />
-        );
-      default:
-        return <OhNoSorry />;
+    if (showParentStudents) {
+      switch (index) {
+        case 0:
+          return <CreatedStudents studentsList={studentsList} />;
+        case 1:
+          return (
+            <Introduction handleNext={handleNext} handleBack={handleBack} />
+          );
+        case 2:
+          return (
+            <ConnectYourStudent
+              handleNext={handleNext}
+              handleBack={handleBack}
+              handleContact={handleContact}
+              handleRegion={handleRegion}
+            />
+          );
+        case 3:
+          return (
+            <SafetyConcern
+              handleNext={handleNext}
+              handleBack={handleBack}
+              contactId={contactId}
+            />
+          );
+        case 4:
+          return (
+            <ShareYourConcern
+              handleNext={handleNext}
+              handleBack={handleBack}
+              contactId={contactId}
+            />
+          );
+        case 5:
+          return (
+            <AcceptWaiver
+              handleNext={handleNext}
+              handleBack={handleBack}
+              contactId={contactId}
+              region={region}
+              handleWaiver={handleWaiver}
+            />
+          );
+        case 6:
+          return (
+            <AllDone
+              handleBack={handleBack}
+              handleNext={handleNext}
+              contactId={contactId}
+              waiverId={waiverId}
+            />
+          );
+        default:
+          return <OhNoSorry />;
+      }
+    } else {
+      switch (index) {
+        case 0:
+          return (
+            <Introduction handleNext={handleNext} handleBack={handleBack} />
+          );
+        case 1:
+          return (
+            <ConnectYourStudent
+              handleNext={handleNext}
+              handleBack={handleBack}
+              handleContact={handleContact}
+              handleRegion={handleRegion}
+            />
+          );
+        case 2:
+          return (
+            <SafetyConcern
+              handleNext={handleNext}
+              handleBack={handleBack}
+              contactId={contactId}
+            />
+          );
+        case 3:
+          return (
+            <ShareYourConcern
+              handleNext={handleNext}
+              handleBack={handleBack}
+              contactId={contactId}
+            />
+          );
+        case 4:
+          return (
+            <AcceptWaiver
+              handleNext={handleNext}
+              handleBack={handleBack}
+              contactId={contactId}
+              region={region}
+              handleWaiver={handleWaiver}
+            />
+          );
+        case 5:
+          return (
+            <AllDone
+              handleBack={handleBack}
+              handleNext={handleNext}
+              contactId={contactId}
+              waiverId={waiverId}
+            />
+          );
+        default:
+          return <OhNoSorry />;
+      }
     }
   };
 
@@ -167,7 +255,11 @@ const AddStudents = () => {
               >
                 {steps.map((label, index) => (
                   <Step key={label} completed={completed[index]}>
-                    <StepButton color="inherit" onClick={handleStep(index)}>
+                    <StepButton
+                      color="inherit"
+                      onClick={handleStep(index)}
+                      disabled={index > 2 && !contactId}
+                    >
                       {label}
                     </StepButton>
                   </Step>
@@ -212,6 +304,7 @@ const AddStudents = () => {
               style={{
                 display: "flex",
                 justifyContent: "space-between",
+                alignItems: "center",
                 width: "100%",
                 padding: "0 20px",
                 marginBottom: "20px",
@@ -232,7 +325,11 @@ const AddStudents = () => {
               >
                 {steps.map((label, index) => (
                   <Step key={label} completed={completed[index]}>
-                    <StepButton color="inherit" onClick={handleStep(index)}>
+                    <StepButton
+                      color="inherit"
+                      onClick={handleStep(index)}
+                      disabled={index > 1 && !contactId}
+                    >
                       {label}
                     </StepButton>
                   </Step>
@@ -240,31 +337,9 @@ const AddStudents = () => {
               </Stepper>
             </Box>
           </Container>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              pt: 2,
-            }}
-          >
-            <Box sx={{ height: "65vh", width: "100%", p: 2 }}>
-              <Typography>{stepContent(activeStep)}</Typography>
-            </Box>
 
-            <Box sx={{ mb: 2 }}>
-              <Button
-                color="inherit"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={{ mr: 1 }}
-              >
-                Back
-              </Button>
-              <Button onClick={handleNext} sx={{ mr: 1 }}>
-                {isLastStep() ? "Finish" : "Next"}
-              </Button>
-            </Box>
+          <Box sx={{ height: "100%", width: "100%", p: 2 }}>
+            <Typography>{stepContent(activeStep)}</Typography>
           </Box>
         </>
       ) : (
@@ -298,7 +373,8 @@ const AddStudents = () => {
                   <StepButton
                     color="inherit"
                     onClick={handleStep(index)}
-                  ></StepButton>
+                    disabled={index > 1 && !contactId}
+                  />
                 </Step>
               ))}
             </Stepper>
@@ -306,41 +382,6 @@ const AddStudents = () => {
           <Box sx={{ minHeight: "65vh", height: "100%", width: "100%", p: 2 }}>
             {stepContent(activeStep)}
           </Box>
-
-          {/* <MobileStepper
-            variant="text"
-            steps={totalSteps()}
-            position="static"
-            activeStep={activeStep}
-            nextButton={
-              <Button
-                size="small"
-                onClick={handleNext}
-                disabled={activeStep === totalSteps() - 1}
-              >
-                Next
-                {theme.direction === "rtl" ? (
-                  <KeyboardArrowLeft />
-                ) : (
-                  <KeyboardArrowRight />
-                )}
-              </Button>
-            }
-            backButton={
-              <Button
-                size="small"
-                onClick={handleBack}
-                disabled={activeStep === 0}
-              >
-                {theme.direction === "rtl" ? (
-                  <KeyboardArrowRight />
-                ) : (
-                  <KeyboardArrowLeft />
-                )}
-                Back
-              </Button>
-            }
-          /> */}
         </Box>
       )}
     </Container>

@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, Button, FormControl, MenuItem, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  FormControl,
+  MenuItem,
+  Typography,
+} from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import { relationshipArray } from "../../multiplesArray";
 import SafetyConcernRight from "./SafetyConcernRight";
@@ -8,6 +15,7 @@ import { styled } from "@mui/system";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { useTheme } from "@emotion/react";
 const FormControls = styled(FormControl)({
   display: "flex",
   flexDirection: "column",
@@ -33,25 +41,31 @@ const CustomButton = styled(Button)({
 });
 
 const SafetyConcern = ({ handleNext, handleBack, contactId }) => {
+  const theme = useTheme();
+
   const [showRight, setShowRight] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const rawPhoneNumber = localStorage.getItem("phoneNumber");
+  const phoneNumber = rawPhoneNumber.slice(2);
+
   const formData = {
     parentGuardianFirstName: "",
     parentGuardianLastName: "",
     parentGuardianEmail: "",
     relationshipToChild: "",
-    parentGuardianPhone1: "",
+    parentGuardianPhone1: phoneNumber,
     parentGuardianPhone2: "",
   };
 
   const validationSchema = Yup.object({
-    parentGuardianFirstName: Yup.string()
-      .matches(/^[A-Za-z]+$/, "First Name must contain only letters")
-      .required("Parent/Guardian First Name is required"),
-    parentGuardianLastName: Yup.string()
-      .matches(/^[A-Za-z]+$/, "Last Name must contain only letters")
-      .required("Parent/Guardian Last Name is required"),
+    parentGuardianFirstName: Yup.string().required(
+      "Parent/Guardian First Name is required"
+    ),
+    parentGuardianLastName: Yup.string().required(
+      "Parent/Guardian Last Name is required"
+    ),
     parentGuardianEmail: Yup.string().matches(
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       "Email is invalid"
@@ -84,6 +98,7 @@ const SafetyConcern = ({ handleNext, handleBack, contactId }) => {
 
   async function postDataHandler(data) {
     try {
+      setLoading(true);
       const response = await axios({
         method: "PATCH",
         url: `${process.env.REACT_APP_BASEURL}/contacts/${contactId}`,
@@ -100,11 +115,13 @@ const SafetyConcern = ({ handleNext, handleBack, contactId }) => {
       return response;
     } catch (error) {
       console.log("Post Form Submit Error : ", error);
+    } finally {
+      setLoading(false);
     }
   }
   const onSumbitHandler = async (data) => {
     if (data.parentGuardianFirstName && data.parentGuardianLastName) {
-      postDataHandler(data).then((data) => {
+      postDataHandler(data).then(() => {
         handleNext();
       });
     }
@@ -132,6 +149,10 @@ const SafetyConcern = ({ handleNext, handleBack, contactId }) => {
                     alignItems: "center",
                     height: "100%",
                     width: "60%",
+                    [theme.breakpoints.down("md")]: {
+                      width: "80%",
+                      marginInline: "auto",
+                    },
                     "@media (max-width: 600px)": {
                       display: showRight ? "none" : "flex",
                       width: "100%",
@@ -224,6 +245,7 @@ const SafetyConcern = ({ handleNext, handleBack, contactId }) => {
                       variant="filled"
                       size="small"
                       value={values.parentGuardianPhone1}
+                      disabled={values.parentGuardianPhone1 === phoneNumber}
                       onChange={handleChange}
                     />
                     <Typographys>Parent/Guardian Phone 2</Typographys>
@@ -241,8 +263,8 @@ const SafetyConcern = ({ handleNext, handleBack, contactId }) => {
                     sx={{
                       mt: 2,
                       display: "flex",
-                      width: "80%",
-                      marginLeft: "20%",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
                     <CustomButton
@@ -257,7 +279,11 @@ const SafetyConcern = ({ handleNext, handleBack, contactId }) => {
                       color="primary"
                       type="submit"
                     >
-                      Continue
+                      {loading ? (
+                        <CircularProgress size={24} color="warning" />
+                      ) : (
+                        "Continue"
+                      )}
                     </CustomButton>
                   </Box>
                 </Box>

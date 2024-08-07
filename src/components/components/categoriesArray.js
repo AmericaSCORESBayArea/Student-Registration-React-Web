@@ -23,10 +23,10 @@ export const statusArray = [
   },
   {
     id: 3,
-    name: "Enroll",
+    name: "New Layout",
   },
   {
     id: 4,
-    name: "New Layout",
+    name: "Enroll",
   },
 ];

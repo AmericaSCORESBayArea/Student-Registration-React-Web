@@ -198,7 +198,7 @@ export default function Form(props) {
     }
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
-  }, []);
+  }, [props.studentProps]);
 
   async function getSchoolSiteId(schoolName) {
     const results = schoolsArray.find(

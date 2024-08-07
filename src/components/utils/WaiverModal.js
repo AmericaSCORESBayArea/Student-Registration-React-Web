@@ -26,7 +26,7 @@ export function WaiverModal(props) {
       }
       setLoading(false);
     })();
-  }, []);
+  }, [props]);
 
   return (
     <div id="container">

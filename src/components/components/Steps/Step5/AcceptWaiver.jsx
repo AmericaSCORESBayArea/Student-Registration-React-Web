@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -47,7 +48,7 @@ const AcceptWaiver = ({
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const minSwipeDistance = 50;
 
   const onTouchStart = (e) => {
@@ -75,6 +76,7 @@ const AcceptWaiver = ({
 
   async function getDataHandler() {
     try {
+      setLoading(true);
       const response = await axios({
         method: "GET",
         url: `${process.env.REACT_APP_BASEURL}/waiver?region=${region}`,
@@ -82,7 +84,11 @@ const AcceptWaiver = ({
 
       handleWaiver(response.data[0].WaiverId);
       return response;
-    } catch (error) {}
+    } catch (error) {
+      console.log("Get Data Error : ", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const submitHandler = () => {
@@ -90,17 +96,18 @@ const AcceptWaiver = ({
   };
 
   const handleAccept = () => {
-    setOpenModal(false);
     getDataHandler().then(() => {
       handleNext();
     });
+    setOpenModal(false);
   };
 
   const handleDecline = () => {
     setOpenModal(false);
   };
   const withoutSubmitHandler = () => {
-    handleNext();
+    //dont need to do anything yet as user hasnt accepted waiver
+    // handleNext();
   };
 
   return (
@@ -134,8 +141,8 @@ const AcceptWaiver = ({
                 sx={{
                   mt: 2,
                   display: "flex",
-                  width: "80%",
-                  marginLeft: "20%",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
                 <CustomButton
@@ -195,7 +202,11 @@ const AcceptWaiver = ({
             variant="contained"
             color="primary"
           >
-            Accept
+            {loading ? (
+              <CircularProgress size={24} color="warning" />
+            ) : (
+              "Accept"
+            )}
           </CustomButton>
           <CustomButton
             onClick={handleDecline}

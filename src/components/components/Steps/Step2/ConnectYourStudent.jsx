@@ -3,9 +3,12 @@ import {
   Box,
   Button,
   ButtonGroup,
+  CircularProgress,
   Fab,
   FormControl,
+  InputAdornment,
   MenuItem,
+  TextField,
   Typography,
   useMediaQuery,
   useTheme,
@@ -20,17 +23,16 @@ import {
 } from "../../multiplesArray";
 import { CustomTextField } from "../../RegisterUI";
 import { styled } from "@mui/system";
-import {
-  getRegionsData,
-  getSchoolData,
-  getTeamSeasons,
-} from "../../../controller/api";
+import { getRegionsData, getSchoolData } from "../../../controller/api";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { SubTitle } from "../../../componentsStyle/registrationFormStyle";
 import axios from "axios";
+import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
-const FormControls = styled(FormControl)({
+const FormControls = styled(FormControl)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   borderColor: "gray",
@@ -40,7 +42,14 @@ const FormControls = styled(FormControl)({
   height: "100%",
   maxHeight: "57vh",
   overflowY: "scroll",
-});
+  [theme.breakpoints.down("md")]: {
+    maxHeight: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+}));
+
 const FormControlsMobile = styled(FormControl)({
   display: "flex",
   flexDirection: "column",
@@ -55,14 +64,11 @@ const Typographys = styled(Typography)({
   textAlign: "left",
   paddingBottom: "5px",
   width: "100%",
-  marginBlock: "5px",
-  fontSize: "22px",
 });
 
-const CustomTextFields = styled(CustomTextField)({
+const InputTextField = styled(CustomTextField)({
   backgroundColor: "white",
   borderRadius: 10,
-  marginBlock: "5px",
 });
 
 const ProgramSiteContainer = styled("div")({
@@ -81,6 +87,7 @@ const CustomButton = styled(Button)({
   marginLeft: "5px",
   marginBlock: "5px",
 });
+
 const FabButton = styled(Fab)(({ selected }) => ({
   paddingInline: "10px",
   backgroundColor: selected ? "grey" : "#03467F",
@@ -89,8 +96,60 @@ const FabButton = styled(Fab)(({ selected }) => ({
   width: "100px",
   marginBlock: "5px",
 }));
-// CustomFabButton component
-const CustomFabButton = ({ field, form, gender, selectedGender }) => (
+
+const GradeButtonContainer = styled(ButtonGroup)({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  marginBlock: "5px",
+});
+
+const GradeButton = styled(Button)(({ selected }) => ({
+  marginInline: "5px",
+  backgroundColor: selected ? "grey" : "#03467F",
+  color: "white",
+  marginBlock: "5px",
+}));
+
+const BoxContainer = styled("div")({
+  boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+  backgroundColor: "#DFEDF9",
+  padding: "10px",
+  borderRadius: "20px",
+  marginBlock: "5px",
+});
+
+const DatePickerInput = styled(TextField)({
+  "& .MuiFilledInput-input": {
+    backgroundColor: "white",
+    borderRadius: "10px ",
+    height: "40px",
+    cursor: "pointer",
+    padding: "4px 10px",
+  },
+  "& .MuiFilledInput-root": {
+    backgroundColor: "white",
+    borderRadius: "10px ",
+    height: "50px",
+    padding: "4px 10px",
+    cursor: "pointer",
+    border: "1px solid #ccc",
+    "&:hover": {
+      backgroundColor: "white",
+    },
+  },
+  "& .MuiFormControl-root": {
+    backgroundColor: "white",
+    height: "50px",
+    padding: "4px 10px ",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "white",
+    },
+  },
+});
+
+const MobileGenderButton = ({ field, form, gender, selectedGender }) => (
   <FabButton
     size="large"
     onClick={() => {
@@ -102,7 +161,7 @@ const CustomFabButton = ({ field, form, gender, selectedGender }) => (
   </FabButton>
 );
 
-const CustomGradeButton = ({ field, form, grade, selectedGrade }) => (
+const MobileGradeButton = ({ field, form, grade, selectedGrade }) => (
   <GradeButton
     onClick={() => {
       form.setFieldValue(field.name, grade);
@@ -112,25 +171,6 @@ const CustomGradeButton = ({ field, form, grade, selectedGrade }) => (
     {grade}
   </GradeButton>
 );
-const GradeButtonContainer = styled(ButtonGroup)({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  marginBlock: "5px",
-});
-const GradeButton = styled(Button)(({ selected }) => ({
-  marginInline: "5px",
-  backgroundColor: selected ? "grey" : "#03467F",
-  color: "white",
-  marginBlock: "5px",
-}));
-const BoxContainer = styled("div")({
-  boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-  backgroundColor: "#DFEDF9",
-  padding: "10px",
-  borderRadius: "20px",
-  marginBlock: "5px",
-});
 
 const ConnectYourStudent = ({
   handleNext,
@@ -146,14 +186,15 @@ const ConnectYourStudent = ({
   const [touchEnd, setTouchEnd] = useState(null);
   const [regionData, setRegionData] = useState([]);
   const [schoolData, setSchoolData] = useState([]);
-  const [teamData, setTeamData] = useState([]);
-  const [isTeamData, setIsTeamData] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [datepicker, setDatePicker] = useState(false);
 
   const formData = {
     firstName: "",
     lastName: "",
     gender: "",
     grade: "",
+    birthdate: "",
     region: "",
     schoolName: {
       id: "",
@@ -163,13 +204,10 @@ const ConnectYourStudent = ({
   };
 
   const validationSchema = Yup.object({
-    firstName: Yup.string()
-      .matches(/^[A-Za-z]+$/, "First Name must contain only letters")
-      .required("First Name is required"),
-    lastName: Yup.string()
-      .matches(/^[A-Za-z]+$/, "Last Name must contain only letters")
-      .required("Last Name is required"),
+    firstName: Yup.string().required("First Name is required"),
+    lastName: Yup.string().required("Last Name is required"),
     region: Yup.string().required("Region is required"),
+    birthdate: Yup.date().required("Birthdate is required"),
     schoolName: Yup.object({
       schoolFacility: Yup.string().required(
         "School or Facility Name is required"
@@ -214,25 +252,28 @@ const ConnectYourStudent = ({
 
   async function postDataHandler(data) {
     try {
+      setLoading(true);
       const response = await axios({
         method: "post",
         url: `${process.env.REACT_APP_BASEURL}/contacts`,
         data: {
           FirstName: data.firstName,
           LastName: data.lastName,
-          Gender__c: data.gender,
-          Grade__c: data.grade,
-          Region__c: data.region,
-          School_Attending__c: data.schoolName.schoolFacility,
+          Gender: data.gender,
+          Grade: data.grade,
+          Birthdate: data.birthdate,
+          Region: data.region,
+          SchoolName: data.schoolName.schoolFacility,
           SchoolSiteId: data.schoolName.id,
         },
       });
-
       handleContact(response.data.ContactId);
       handleRegion(data.region);
       return response;
     } catch (error) {
       console.log("Post Form Submit Error : ", error);
+    } finally {
+      setLoading(false);
     }
   }
   const onSumbitHandler = async (data) => {
@@ -240,14 +281,18 @@ const ConnectYourStudent = ({
       data.firstName &&
       data.lastName &&
       data.region &&
-      data.schoolName.schoolFacility
+      data.schoolName.schoolFacility &&
+      data.birthdate
     ) {
-      postDataHandler(data).then(() => {
+      const newData = {
+        ...data,
+        birthdate: new Date(data.birthdate).toISOString().split("T")[0],
+      };
+      postDataHandler(newData).then(() => {
         handleNext();
       });
     }
   };
-
   return (
     <Formik
       initialValues={formData}
@@ -256,399 +301,46 @@ const ConnectYourStudent = ({
     >
       {({ values, handleChange, setFieldValue }) => (
         <Form>
-          {!isMobile ? (
-            <Box
-              sx={{ pt: 2 }}
-              onTouchStart={onTouchStart}
-              onTouchMove={onTouchMove}
-              onTouchEnd={onTouchEnd}
-            >
-              <Row>
-                <Col xs={12} md={12} lg={7}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      height: "100%",
-                      width: "60%",
-                      "@media (max-width: 600px)": {
-                        display: showRight ? "none" : "flex",
-                      },
-                    }}
-                  >
-                    <FormControls>
-                      <Typographys>First Name*</Typographys>
-                      <Field
-                        as={CustomTextFields}
-                        id="firstName"
-                        name="firstName"
-                        hiddenLabel
-                        fullWidth
-                        variant="filled"
-                        size="small"
-                        value={values.firstName}
-                        onChange={handleChange}
-                      />
-                      <ErrorMessage
-                        name="firstName"
-                        component="div"
-                        style={{ color: "red" }}
-                      />
-
-                      <Typographys>Last Name or Initial*</Typographys>
-                      <Field
-                        as={CustomTextFields}
-                        id="lastName"
-                        name="lastName"
-                        hiddenLabel
-                        fullWidth
-                        variant="filled"
-                        size="small"
-                        value={values.lastName}
-                        onChange={handleChange}
-                      />
-                      <ErrorMessage
-                        name="lastName"
-                        component="div"
-                        style={{ color: "red" }}
-                      />
-
-                      <Typographys>Gender</Typographys>
-                      <CustomTextFields
-                        name="gender"
-                        select
-                        hiddenLabel
-                        fullWidth
-                        variant="filled"
-                        size="small"
-                        value={values.gender}
-                        onChange={handleChange}
-                        SelectProps={{
-                          displayEmpty: true,
-                          renderValue: (selected) => {
-                            if (selected === "") {
-                              return (
-                                <span style={{ opacity: 0.5 }}>
-                                  Select a Gender
-                                </span>
-                              );
-                            }
-                            return genderArray.find(
-                              (option) => option.value === selected
-                            )?.label;
-                          },
-                        }}
-                      >
-                        {genderArray && genderArray.length > 0 ? (
-                          genderArray.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          ))
-                        ) : (
-                          <MenuItem value="" disabled>
-                            Loading...
-                          </MenuItem>
-                        )}
-                      </CustomTextFields>
-                      <Typographys>Grade</Typographys>
-                      <CustomTextFields
-                        name="grade"
-                        select
-                        hiddenLabel
-                        fullWidth
-                        variant="filled"
-                        size="small"
-                        value={values.grade}
-                        onChange={handleChange}
-                        SelectProps={{
-                          displayEmpty: true,
-                          renderValue: (selected) => {
-                            if (selected === "") {
-                              return (
-                                <span style={{ opacity: 0.5 }}>
-                                  Select a Grade
-                                </span>
-                              );
-                            }
-                            return gradesArray.find(
-                              (option) => option.value === selected
-                            )?.label;
-                          },
-                        }}
-                      >
-                        {gradesArray && gradesArray.length > 0 ? (
-                          gradesArray.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          ))
-                        ) : (
-                          <MenuItem value="" disabled>
-                            Loading...
-                          </MenuItem>
-                        )}
-                      </CustomTextFields>
-                      <ProgramSiteContainer>
-                        <Typographys>Region*</Typographys>
-                        <Field
-                          as={CustomTextFields}
-                          name="region"
-                          select
-                          hiddenLabel
-                          fullWidth
-                          variant="filled"
-                          size="small"
-                          value={values.region}
-                          onChange={async (e) => {
-                            handleChange(e);
-                            const { name, value } = e.target;
-
-                            if (name === "region") {
-                              await getSchoolData(value).then((data) => {
-                                setSchoolData(data);
-                              });
-                            }
-                          }}
-                          SelectProps={{
-                            displayEmpty: true,
-                            renderValue: (selected) => {
-                              if (selected === "") {
-                                return (
-                                  <span style={{ opacity: 0.5 }}>
-                                    Select a Region
-                                  </span>
-                                );
-                              }
-                              return regionData.find(
-                                (option) => option.value === selected
-                              )?.label;
-                            },
-                          }}
-                        >
-                          {regionData && regionData.length > 0 ? (
-                            regionData.map((option) => (
-                              <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                              </MenuItem>
-                            ))
-                          ) : (
-                            <MenuItem value="" disabled>
-                              Loading...
-                            </MenuItem>
-                          )}
-                        </Field>
-                        <ErrorMessage
-                          name="region"
-                          component="div"
-                          style={{ color: "red" }}
-                        />
-
-                        <Typographys>School or Facility Name*</Typographys>
-                        <Field
-                          as={CustomTextFields}
-                          name="schoolName.schoolFacility"
-                          select
-                          hiddenLabel
-                          fullWidth
-                          variant="filled"
-                          size="small"
-                          value={values.schoolName.schoolFacility}
-                          onChange={async (e) => {
-                            handleChange(e);
-                            const { name, value } = e.target;
-
-                            if (name === "schoolName.schoolFacility") {
-                              const matchedSchool = schoolData.find(
-                                (school) => school.value === value
-                              );
-
-                              if (matchedSchool) {
-                                setFieldValue(
-                                  "schoolName.id",
-                                  matchedSchool.id
-                                );
-                              }
-                            }
-                            if (name === "schoolName.schoolFacility") {
-                              await getTeamSeasons().then((data) => {
-                                const schoolSite = value;
-                                const matchedTeams = data.filter(
-                                  (team) => team.SchoolSite === schoolSite
-                                );
-
-                                const teamData = matchedTeams.map((team) => ({
-                                  label: team.TeamName,
-                                  value: team.TeamName,
-                                }));
-
-                                if (teamData.length === 0) {
-                                  setIsTeamData(true);
-                                  setTeamData([]);
-                                } else {
-                                  setIsTeamData(false);
-                                  setTeamData(teamData);
-                                }
-                              });
-                            }
-                          }}
-                          SelectProps={{
-                            displayEmpty: true,
-                            renderValue: (selected) => {
-                              if (selected === "") {
-                                return (
-                                  <span style={{ opacity: 0.5 }}>
-                                    Select a School
-                                  </span>
-                                );
-                              }
-                              return schoolData.find(
-                                (option) => option.value === selected
-                              )?.label;
-                            },
-                          }}
-                        >
-                          {schoolData && schoolData.length > 0 ? (
-                            schoolData.map((option) => (
-                              <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                              </MenuItem>
-                            ))
-                          ) : (
-                            <MenuItem value="" disabled>
-                              Loading...
-                            </MenuItem>
-                          )}
-                        </Field>
-                        <ErrorMessage
-                          name="schoolName.schoolFacility"
-                          component="div"
-                          style={{ color: "red" }}
-                        />
-
-                        <Typographys>Team</Typographys>
-                        <CustomTextFields
-                          name="team"
-                          select
-                          hiddenLabel
-                          fullWidth
-                          variant="filled"
-                          size="small"
-                          value={values.team}
-                          onChange={handleChange}
-                          SelectProps={{
-                            displayEmpty: true,
-                            renderValue: (selected) => {
-                              if (selected === "") {
-                                return (
-                                  <span style={{ opacity: 0.5 }}>
-                                    Select a Team
-                                  </span>
-                                );
-                              }
-                              return teamData.find(
-                                (option) => option.value === selected
-                              )?.label;
-                            },
-                          }}
-                        >
-                          {teamData && teamData.length > 0 ? (
-                            teamData.map((option) => (
-                              <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                              </MenuItem>
-                            ))
-                          ) : isTeamData ? (
-                            <MenuItem value="" disabled>
-                              Select Another School or Region
-                            </MenuItem>
-                          ) : (
-                            <MenuItem value="" disabled>
-                              Loading...
-                            </MenuItem>
-                          )}
-                        </CustomTextFields>
-                      </ProgramSiteContainer>
-                    </FormControls>
-
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            {!isMobile ? (
+              <Box
+                sx={{ pt: 2 }}
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
+              >
+                <Row>
+                  <Col xs={12} md={12} lg={7}>
                     <Box
                       sx={{
-                        mt: 2,
                         display: "flex",
-                        width: "80%",
-                        marginLeft: "20%",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        height: "100%",
+                        width: "60%",
+                        [theme.breakpoints.down("md")]: {
+                          width: "80%",
+                          marginInline: "auto",
+                        },
+                        "@media (max-width: 600px)": {
+                          display: showRight ? "none" : "flex",
+                        },
                       }}
                     >
-                      <CustomButton
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleBack}
-                      >
-                        Back
-                      </CustomButton>
-                      <CustomButton
-                        variant="contained"
-                        color="primary"
-                        type="submit"
-                      >
-                        Continue
-                      </CustomButton>
-                    </Box>
-                  </Box>
-                </Col>
-                <Col xs={12} md={12} lg={5}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      height: "100%",
-                      "@media (max-width: 600px)": {
-                        display: showRight ? "flex" : "none",
-                      },
-                    }}
-                  >
-                    <ConnectYourStudentRight />
-                  </Box>
-                </Col>
-              </Row>
-            </Box>
-          ) : (
-            <Box
-              sx={{ pt: 2 }}
-              onTouchStart={onTouchStart}
-              onTouchMove={onTouchMove}
-              onTouchEnd={onTouchEnd}
-            >
-              <Row>
-                <Col xs={12} md={12} lg={7}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      height: "100%",
-                      width: "100%",
-                      "@media (max-width: 600px)": {
-                        display: showRight ? "none" : "flex",
-                      },
-                    }}
-                  >
-                    <BoxContainer>
-                      <FormControlsMobile>
+                      <FormControls>
                         <Typographys>First Name*</Typographys>
                         <Field
-                          as={CustomTextFields}
+                          as={InputTextField}
                           id="firstName"
                           name="firstName"
                           hiddenLabel
+                          placeholder="First Name"
                           fullWidth
                           variant="filled"
                           size="small"
                           value={values.firstName}
                           onChange={handleChange}
-                        />{" "}
+                        />
                         <ErrorMessage
                           name="firstName"
                           component="div"
@@ -656,59 +348,146 @@ const ConnectYourStudent = ({
                         />
                         <Typographys>Last Name or Initial*</Typographys>
                         <Field
-                          as={CustomTextFields}
+                          as={InputTextField}
                           id="lastName"
                           name="lastName"
                           hiddenLabel
+                          placeholder="Last Name"
                           fullWidth
                           variant="filled"
                           size="small"
                           value={values.lastName}
                           onChange={handleChange}
-                        />{" "}
+                        />
                         <ErrorMessage
                           name="lastName"
                           component="div"
                           style={{ color: "red" }}
                         />
+                        <Typographys>Birthdate*</Typographys>
+                        <MobileDatePicker
+                          inputVariant="standard"
+                          hiddenLabel
+                          disableFuture={true}
+                          open={datepicker}
+                          onClose={() => setDatePicker(false)}
+                          onOpen={() => setDatePicker(true)}
+                          InputProps={{
+                            disableUnderline: true,
+                          }}
+                          id="birthdate"
+                          name="birthdate"
+                          value={values.birthdate}
+                          onChange={(newValue) => {
+                            setFieldValue("birthdate", newValue.$d);
+                          }}
+                          renderInput={(params) => (
+                            <DatePickerInput
+                              {...params}
+                              variant="filled"
+                              hiddenLabel
+                              fullWidth
+                              placeholder="MM/DD/YYYY"
+                              InputProps={{
+                                endAdornment: (
+                                  <InputAdornment
+                                    position="end"
+                                    onClick={() => setDatePicker(!datepicker)}
+                                  >
+                                    <CalendarMonthIcon />
+                                  </InputAdornment>
+                                ),
+                                disableUnderline: true,
+                              }}
+                            />
+                          )}
+                        />
+                        <ErrorMessage
+                          name="birthdate"
+                          component="div"
+                          style={{ color: "red" }}
+                        />
+
                         <Typographys>Gender</Typographys>
-                        <Box sx={{ "& > :not(style)": { m: 1 } }}>
-                          {genderArray_Mobile.map((gender, index) => (
-                            <Field
-                              key={index}
-                              name="gender"
-                              gender={gender}
-                              selectedGender={values.gender}
-                              component={CustomFabButton}
-                            />
-                          ))}
-                        </Box>
-                        <ErrorMessage
+                        <InputTextField
                           name="gender"
-                          component="div"
-                          style={{ color: "red" }}
-                        />
+                          select
+                          hiddenLabel
+                          fullWidth
+                          variant="filled"
+                          size="small"
+                          value={values.gender}
+                          onChange={handleChange}
+                          SelectProps={{
+                            displayEmpty: true,
+                            renderValue: (selected) => {
+                              if (selected === "") {
+                                return (
+                                  <span style={{ opacity: 0.5 }}>
+                                    Select a Gender
+                                  </span>
+                                );
+                              }
+                              return genderArray.find(
+                                (option) => option.value === selected
+                              )?.label;
+                            },
+                          }}
+                        >
+                          {genderArray && genderArray.length > 0 ? (
+                            genderArray.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))
+                          ) : (
+                            <MenuItem value="" disabled>
+                              Loading...
+                            </MenuItem>
+                          )}
+                        </InputTextField>
                         <Typographys>Grade</Typographys>
-                        <GradeButtonContainer aria-label="Basic button group">
-                          {gradeArray_Mobile.map((grade, index) => (
-                            <Field
-                              key={index}
-                              name="grade"
-                              grade={grade}
-                              selectedGrade={values.grade}
-                              component={CustomGradeButton}
-                            />
-                          ))}
-                        </GradeButtonContainer>
-                        <ErrorMessage
+                        <InputTextField
                           name="grade"
-                          component="div"
-                          style={{ color: "red" }}
-                        />
+                          select
+                          hiddenLabel
+                          fullWidth
+                          variant="filled"
+                          size="small"
+                          value={values.grade}
+                          onChange={handleChange}
+                          SelectProps={{
+                            displayEmpty: true,
+                            renderValue: (selected) => {
+                              if (selected === "") {
+                                return (
+                                  <span style={{ opacity: 0.5 }}>
+                                    Select a Grade
+                                  </span>
+                                );
+                              }
+                              return gradesArray.find(
+                                (option) => option.value === selected
+                              )?.label;
+                            },
+                          }}
+                        >
+                          {gradesArray && gradesArray.length > 0 ? (
+                            gradesArray.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))
+                          ) : (
+                            <MenuItem value="" disabled>
+                              Loading...
+                            </MenuItem>
+                          )}
+                        </InputTextField>
                         <ProgramSiteContainer>
                           <Typographys>Region*</Typographys>
                           <Field
-                            as={CustomTextFields}
+                            as={InputTextField}
                             name="region"
                             select
                             hiddenLabel
@@ -719,7 +498,6 @@ const ConnectYourStudent = ({
                             onChange={async (e) => {
                               handleChange(e);
                               const { name, value } = e.target;
-
                               if (name === "region") {
                                 await getSchoolData(value).then((data) => {
                                   setSchoolData(data);
@@ -765,7 +543,7 @@ const ConnectYourStudent = ({
 
                           <Typographys>School or Facility Name*</Typographys>
                           <Field
-                            as={CustomTextFields}
+                            as={InputTextField}
                             name="schoolName.schoolFacility"
                             select
                             hiddenLabel
@@ -788,27 +566,6 @@ const ConnectYourStudent = ({
                                     matchedSchool.id
                                   );
                                 }
-                              }
-                              if (name === "schoolName.schoolFacility") {
-                                await getTeamSeasons().then((data) => {
-                                  const schoolSite = value;
-                                  const matchedTeams = data.filter(
-                                    (team) => team.SchoolSite === schoolSite
-                                  );
-
-                                  const teamData = matchedTeams.map((team) => ({
-                                    label: team.TeamName,
-                                    value: team.TeamName,
-                                  }));
-
-                                  if (teamData.length === 0) {
-                                    setIsTeamData(true);
-                                    setTeamData([]);
-                                  } else {
-                                    setIsTeamData(false);
-                                    setTeamData(teamData);
-                                  }
-                                });
                               }
                             }}
                             SelectProps={{
@@ -847,63 +604,15 @@ const ConnectYourStudent = ({
                             component="div"
                             style={{ color: "red" }}
                           />
-                          <Typographys>Team</Typographys>
-                          <CustomTextFields
-                            name="team"
-                            select
-                            hiddenLabel
-                            fullWidth
-                            variant="filled"
-                            size="small"
-                            value={values.team}
-                            onChange={handleChange}
-                            SelectProps={{
-                              displayEmpty: true,
-                              renderValue: (selected) => {
-                                if (selected === "") {
-                                  return (
-                                    <span style={{ opacity: 0.5 }}>
-                                      Select a Team
-                                    </span>
-                                  );
-                                }
-                                return teamData.find(
-                                  (option) => option.value === selected
-                                )?.label;
-                              },
-                            }}
-                          >
-                            {teamData && teamData.length > 0 ? (
-                              teamData.map((option) => (
-                                <MenuItem
-                                  key={option.value}
-                                  value={option.value}
-                                >
-                                  {option.label}
-                                </MenuItem>
-                              ))
-                            ) : isTeamData ? (
-                              <MenuItem value="" disabled>
-                                Select Another School or Region
-                              </MenuItem>
-                            ) : (
-                              <MenuItem value="" disabled>
-                                Loading...
-                              </MenuItem>
-                            )}
-                          </CustomTextFields>
                         </ProgramSiteContainer>
-                        <SubTitle>
-                          Not sure What to Select? It’s OK to leave this page
-                          blank and let us figure it out.
-                        </SubTitle>
-                      </FormControlsMobile>
+                      </FormControls>
+
                       <Box
                         sx={{
                           mt: 2,
                           display: "flex",
+                          alignItems: "center",
                           justifyContent: "center",
-                          width: "100%",
                         }}
                       >
                         <CustomButton
@@ -918,15 +627,348 @@ const ConnectYourStudent = ({
                           color="primary"
                           type="submit"
                         >
-                          Continue
+                          {loading ? (
+                            <CircularProgress size={24} color="warning" />
+                          ) : (
+                            "Continue"
+                          )}
                         </CustomButton>
                       </Box>
-                    </BoxContainer>
-                  </Box>
-                </Col>
-              </Row>
-            </Box>
-          )}
+                    </Box>
+                  </Col>
+                  <Col xs={12} md={12} lg={5}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        height: "100%",
+                        "@media (max-width: 600px)": {
+                          display: showRight ? "flex" : "none",
+                        },
+                      }}
+                    >
+                      <ConnectYourStudentRight />
+                    </Box>
+                  </Col>
+                </Row>
+              </Box>
+            ) : (
+              <Box
+                sx={{ pt: 2 }}
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
+              >
+                <Row>
+                  <Col xs={12} md={12} lg={7}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        height: "100%",
+                        width: "100%",
+                        "@media (max-width: 600px)": {
+                          display: showRight ? "none" : "flex",
+                        },
+                      }}
+                    >
+                      <BoxContainer>
+                        <FormControlsMobile>
+                          <Typographys>First Name*</Typographys>
+                          <Field
+                            as={InputTextField}
+                            id="firstName"
+                            name="firstName"
+                            hiddenLabel
+                            fullWidth
+                            variant="filled"
+                            size="small"
+                            value={values.firstName}
+                            onChange={handleChange}
+                          />
+                          <ErrorMessage
+                            name="firstName"
+                            component="div"
+                            style={{ color: "red" }}
+                          />
+                          <Typographys>Last Name or Initial*</Typographys>
+                          <Field
+                            as={InputTextField}
+                            id="lastName"
+                            name="lastName"
+                            hiddenLabel
+                            fullWidth
+                            variant="filled"
+                            size="small"
+                            value={values.lastName}
+                            onChange={handleChange}
+                          />
+                          <ErrorMessage
+                            name="lastName"
+                            component="div"
+                            style={{ color: "red" }}
+                          />
+                          <Typographys>Birthdate*</Typographys>
+                          <MobileDatePicker
+                            inputVariant="standard"
+                            hiddenLabel
+                            disableFuture={true}
+                            open={datepicker}
+                            onClose={() => setDatePicker(false)}
+                            onOpen={() => setDatePicker(true)}
+                            InputProps={{
+                              disableUnderline: true,
+                            }}
+                            id="birthdate"
+                            name="birthdate"
+                            value={values.birthdate}
+                            onChange={(newValue) => {
+                              setFieldValue("birthdate", newValue.$d);
+                            }}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                variant="filled"
+                                hiddenLabel
+                                fullWidth
+                                placeholder="MM/DD/YYYY"
+                                sx={{
+                                  "& .MuiFilledInput-input": {
+                                    backgroundColor: "white",
+                                    borderRadius: "10px ",
+                                    height: "40px",
+                                    cursor: "pointer",
+                                    padding: "4px 10px",
+                                  },
+                                  "& .MuiFilledInput-root": {
+                                    backgroundColor: "white",
+                                    borderRadius: "10px ",
+                                    height: "50px",
+                                    padding: "4px 10px",
+                                    cursor: "pointer",
+                                  },
+                                  "& .MuiFormControl-root": {
+                                    backgroundColor: "white",
+                                    height: "50px",
+                                    padding: "4px 10px ",
+                                    cursor: "pointer",
+                                  },
+                                }}
+                                InputProps={{
+                                  endAdornment: (
+                                    <InputAdornment
+                                      position="end"
+                                      onClick={() => setDatePicker(!datepicker)}
+                                    >
+                                      <CalendarMonthIcon />
+                                    </InputAdornment>
+                                  ),
+                                  disableUnderline: true,
+                                }}
+                              />
+                            )}
+                          />
+                          <ErrorMessage
+                            name="birthdate"
+                            component="div"
+                            style={{ color: "red" }}
+                          />
+                          <Typographys>Gender</Typographys>
+                          <Box sx={{ "& > :not(style)": { m: 1 } }}>
+                            {genderArray_Mobile.map((gender, index) => (
+                              <Field
+                                key={index}
+                                name="gender"
+                                gender={gender}
+                                selectedGender={values.gender}
+                                component={MobileGenderButton}
+                              />
+                            ))}
+                          </Box>
+                          <ErrorMessage
+                            name="gender"
+                            component="div"
+                            style={{ color: "red" }}
+                          />
+                          <Typographys>Grade</Typographys>
+                          <GradeButtonContainer aria-label="Basic button group">
+                            {gradeArray_Mobile.map((grade, index) => (
+                              <Field
+                                key={index}
+                                name="grade"
+                                grade={grade}
+                                selectedGrade={values.grade}
+                                component={MobileGradeButton}
+                              />
+                            ))}
+                          </GradeButtonContainer>
+                          <ErrorMessage
+                            name="grade"
+                            component="div"
+                            style={{ color: "red" }}
+                          />
+                          <ProgramSiteContainer>
+                            <Typographys>Region*</Typographys>
+                            <Field
+                              as={InputTextField}
+                              name="region"
+                              select
+                              hiddenLabel
+                              fullWidth
+                              variant="filled"
+                              size="small"
+                              value={values.region}
+                              onChange={async (e) => {
+                                handleChange(e);
+                                const { name, value } = e.target;
+                                if (name === "region") {
+                                  await getSchoolData(value).then((data) => {
+                                    setSchoolData(data);
+                                  });
+                                }
+                              }}
+                              SelectProps={{
+                                displayEmpty: true,
+                                renderValue: (selected) => {
+                                  if (selected === "") {
+                                    return (
+                                      <span style={{ opacity: 0.5 }}>
+                                        Select a Region
+                                      </span>
+                                    );
+                                  }
+                                  return regionData.find(
+                                    (option) => option.value === selected
+                                  )?.label;
+                                },
+                              }}
+                            >
+                              {regionData && regionData.length > 0 ? (
+                                regionData.map((option) => (
+                                  <MenuItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </MenuItem>
+                                ))
+                              ) : (
+                                <MenuItem value="" disabled>
+                                  Loading...
+                                </MenuItem>
+                              )}
+                            </Field>
+                            <ErrorMessage
+                              name="region"
+                              component="div"
+                              style={{ color: "red" }}
+                            />
+
+                            <Typographys>School or Facility Name*</Typographys>
+                            <Field
+                              as={InputTextField}
+                              name="schoolName.schoolFacility"
+                              select
+                              hiddenLabel
+                              fullWidth
+                              variant="filled"
+                              size="small"
+                              value={values.schoolName.schoolFacility}
+                              onChange={async (e) => {
+                                handleChange(e);
+                                const { name, value } = e.target;
+
+                                if (name === "schoolName.schoolFacility") {
+                                  const matchedSchool = schoolData.find(
+                                    (school) => school.value === value
+                                  );
+
+                                  if (matchedSchool) {
+                                    setFieldValue(
+                                      "schoolName.id",
+                                      matchedSchool.id
+                                    );
+                                  }
+                                }
+                              }}
+                              SelectProps={{
+                                displayEmpty: true,
+                                renderValue: (selected) => {
+                                  if (selected === "") {
+                                    return (
+                                      <span style={{ opacity: 0.5 }}>
+                                        Select a School
+                                      </span>
+                                    );
+                                  }
+                                  return schoolData.find(
+                                    (option) => option.value === selected
+                                  )?.label;
+                                },
+                              }}
+                            >
+                              {schoolData && schoolData.length > 0 ? (
+                                schoolData.map((option) => (
+                                  <MenuItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </MenuItem>
+                                ))
+                              ) : (
+                                <MenuItem value="" disabled>
+                                  Loading...
+                                </MenuItem>
+                              )}
+                            </Field>
+                            <ErrorMessage
+                              name="schoolName.schoolFacility"
+                              component="div"
+                              style={{ color: "red" }}
+                            />
+                          </ProgramSiteContainer>
+                          <SubTitle>
+                            Not sure What to Select? It’s OK to leave this page
+                            blank and let us figure it out.
+                          </SubTitle>
+                        </FormControlsMobile>
+                        <Box
+                          sx={{
+                            mt: 2,
+                            display: "flex",
+                            justifyContent: "center",
+                            width: "100%",
+                          }}
+                        >
+                          <CustomButton
+                            variant="contained"
+                            color="secondary"
+                            onClick={handleBack}
+                          >
+                            Back
+                          </CustomButton>
+                          <CustomButton
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                          >
+                            {loading ? (
+                              <CircularProgress size={24} color="warning" />
+                            ) : (
+                              "Continue"
+                            )}
+                          </CustomButton>
+                        </Box>
+                      </BoxContainer>
+                    </Box>
+                  </Col>
+                </Row>
+              </Box>
+            )}
+          </LocalizationProvider>
         </Form>
       )}
     </Formik>
