@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { makeStyles } from "@mui/styles";
 import { categoriesArray } from "./categoriesArray";
 import Button from "@mui/material/Button";
@@ -35,6 +35,24 @@ const useStyles = makeStyles(() => ({
 export default function RoleType(props) {
   const classes = useStyles();
   const [selected, setSelected] = useState();
+
+  const setRType = useCallback(
+    (role, contactId) => {
+      setSelected(role);
+      if (role === "Parent") {
+        ls.set("Parent_ContactId", contactId, { encrypt: true });
+      }
+      setTimeout(() => {
+        firebase.analytics().logEvent("user_roleType", {
+          app: "web_registration",
+          role: role,
+        });
+        props.function("role_type", role);
+      }, 3000);
+    },
+    [props]
+  );
+
   useEffect(() => {
     let data = localStorage.getItem("phoneNumber");
     async function fetchData() {
@@ -53,20 +71,8 @@ export default function RoleType(props) {
       });
     }
     fetchData();
-  }, []);
-  const setRType = (role, contactId) => {
-    setSelected(role);
-    if (role === "Parent") {
-      ls.set("Parent_ContactId", contactId, { encrypt: true });
-    }
-    setTimeout(() => {
-      firebase.analytics().logEvent("user_roleType", {
-        app: "web_registration",
-        role: role,
-      });
-      props.function("role_type", role);
-    }, 3000);
-  };
+  }, [setRType]);
+
   const icons = (name) => {
     if (name === selected) {
       switch (name) {

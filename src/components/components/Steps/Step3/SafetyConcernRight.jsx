@@ -40,34 +40,6 @@ const ImageContainer = styled("div")({
     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" /* Shadow for tape */,
     zIndex: "1",
   },
-
-  /* Top right corner */
-  "&::before": {
-    content: '""',
-    position: "absolute",
-    top: "-10px",
-    right: "-10px",
-    width: "40px",
-    height: "40px",
-    background: "rgba(200, 200, 200, 0.8)" /* Grey color for tape */,
-    transform: "rotate(45deg)",
-    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" /* Shadow for tape */,
-    zIndex: "1",
-  },
-
-  /* Bottom right corner */
-  "&::after": {
-    content: '""',
-    position: "absolute",
-    bottom: "-10px",
-    right: "-10px",
-    width: "40px",
-    height: "40px",
-    background: "rgba(200, 200, 200, 0.8)" /* Grey color for tape */,
-    transform: "rotate(-45deg)",
-    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" /* Shadow for tape */,
-    zIndex: "1",
-  },
 });
 const SafetyConcernRight = memo(() => {
   return (

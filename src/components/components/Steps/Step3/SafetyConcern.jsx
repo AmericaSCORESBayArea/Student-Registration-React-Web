@@ -55,7 +55,7 @@ const SafetyConcern = ({ handleNext, handleBack, contactId }) => {
     parentGuardianLastName: "",
     parentGuardianEmail: "",
     relationshipToChild: "",
-    parentGuardianPhone1: phoneNumber ?? "",
+    parentGuardianPhone1: phoneNumber,
     parentGuardianPhone2: "",
   };
 
@@ -121,7 +121,7 @@ const SafetyConcern = ({ handleNext, handleBack, contactId }) => {
   }
   const onSumbitHandler = async (data) => {
     if (data.parentGuardianFirstName && data.parentGuardianLastName) {
-      postDataHandler(data).then((data) => {
+      postDataHandler(data).then(() => {
         handleNext();
       });
     }
@@ -245,6 +245,7 @@ const SafetyConcern = ({ handleNext, handleBack, contactId }) => {
                       variant="filled"
                       size="small"
                       value={values.parentGuardianPhone1}
+                      disabled={values.parentGuardianPhone1 === phoneNumber}
                       onChange={handleChange}
                     />
                     <Typographys>Parent/Guardian Phone 2</Typographys>

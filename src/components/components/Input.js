@@ -1,4 +1,4 @@
-import { Box, IconButton, Modal } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { ErrorMessage, Field } from "formik";
 import InfoIcon from "@mui/icons-material/Info";
 import { InfoModal } from "../utils/Modal";

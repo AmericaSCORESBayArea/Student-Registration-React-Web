@@ -1,39 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@mui/styles";
 import IconButton from "@mui/material/IconButton";
 import PersonIcon from "@mui/icons-material/Person";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Button from "@mui/material/Button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-const useStyles = makeStyles(() => ({
-  homeScreenContainer: {
-    backgroundColor: "#FFFFFF",
-  },
-  carousel: {
-    marginTop: "30px",
-  },
-  CategorySelected: {
-    borderColor: "#6BAFFF",
-    backgroundColor: "#6BAFFF",
-  },
-  textCategory: {
-    color: "#1976d2",
-    textAlign: "center",
-  },
-  textCategorySelected: {
-    color: "#1976d2",
-    textAlign: "center",
-  },
-  search: {
-    width: "80%",
-    height: "40px",
-    borderRadius: 10,
-  },
-}));
 export default function StudentsListTable(props) {
-  var w = window.innerWidth;
-  const classes = useStyles();
   const [width, setWidth] = useState(window.innerWidth);
   const updateDimensions = () => {
     setWidth(window.innerWidth);

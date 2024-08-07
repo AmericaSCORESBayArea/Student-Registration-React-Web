@@ -259,15 +259,14 @@ const ConnectYourStudent = ({
         data: {
           FirstName: data.firstName,
           LastName: data.lastName,
-          Gender__c: data.gender,
-          Grade__c: data.grade,
+          Gender: data.gender,
+          Grade: data.grade,
           Birthdate: data.birthdate,
-          Region__c: data.region,
-          School_Attending__c: data.schoolName.schoolFacility,
+          Region: data.region,
+          SchoolName: data.schoolName.schoolFacility,
           SchoolSiteId: data.schoolName.id,
         },
       });
-
       handleContact(response.data.ContactId);
       handleRegion(data.region);
       return response;
