@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useStore from "../../store/useStore";
 
+const DefaultRows = 5;
+
 const QuickRegisteration = () => {
   const navigate = useNavigate();
   const { addStudents } = useStore();
@@ -31,7 +33,7 @@ const QuickRegisteration = () => {
   const [isNewContact, setIsNewContact] = useState(false);
 
   const [rows, setRows] = useState(
-    Array(5).fill({
+    Array(DefaultRows).fill({
       firstName: "",
       lastName: "",
       schoolSite: { id: "", label: "" },
@@ -40,8 +42,13 @@ const QuickRegisteration = () => {
     })
   );
 
+  const { pastedData, clearPastedData } = useStore((state) => ({
+    pastedData: state.pastedData,
+    clearPastedData: state.clearPastedData,
+  }));
+
   const [errors, setErrors] = useState(
-    Array(5).fill({
+    Array(DefaultRows).fill({
       firstNameError: "",
       lastNameError: "",
       schoolSiteError: "",
@@ -74,7 +81,7 @@ const QuickRegisteration = () => {
               setErrorAlert({ show: false, message: "" });
               setFormSubmitted(false);
               setRows(
-                Array(5).fill({
+                Array(DefaultRows).fill({
                   firstName: "",
                   lastName: "",
                   schoolSite: { id: "", label: "" },
@@ -83,7 +90,7 @@ const QuickRegisteration = () => {
                 })
               );
               setErrors(
-                Array(5).fill({
+                Array(DefaultRows).fill({
                   firstNameError: "",
                   lastNameError: "",
                   schoolSiteError: "",
@@ -154,7 +161,6 @@ const QuickRegisteration = () => {
       },
     ]);
   }, [rows, errors]);
-
   const handleReset = useCallback(
     (showConfirmation = true) => {
       if (userHasInteracted && showConfirmation) {
@@ -329,7 +335,7 @@ const QuickRegisteration = () => {
 
   const resetForm = () => {
     setRows(
-      Array(5).fill({
+      Array(DefaultRows).fill({
         firstName: "",
         lastName: "",
         schoolSite: { id: "", label: "" },
@@ -338,7 +344,7 @@ const QuickRegisteration = () => {
       })
     );
     setErrors(
-      Array(5).fill({
+      Array(DefaultRows).fill({
         firstNameError: "",
         lastNameError: "",
         schoolSiteError: "",
@@ -376,6 +382,49 @@ const QuickRegisteration = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [handleBeforeUnload]);
+
+  useEffect(() => {
+    if (pastedData.length > 0) {
+      setUserHasInteracted(true);
+
+      let pastedIndex = 0;
+
+      const newRows = rows.map((row) => {
+        if (row.firstName && row.lastName) {
+          return row;
+        }
+
+        if (pastedIndex < pastedData.length) {
+          const updatedRow = {
+            ...row,
+            ...pastedData[pastedIndex],
+          };
+          pastedIndex += 1;
+          return updatedRow;
+        }
+
+        return row;
+      });
+
+      const additionalRows = [];
+      while (pastedIndex < pastedData.length) {
+        additionalRows.push({
+          ...pastedData[pastedIndex],
+          schoolSite: { id: "", label: "" },
+          teamSeason: { id: "", label: "" },
+          contactId: "",
+        });
+        pastedIndex += 1;
+      }
+
+      const newRowsPasted = [...newRows, ...additionalRows];
+
+      setRows(newRowsPasted);
+      setErrors(newRowsPasted);
+
+      clearPastedData();
+    }
+  }, [pastedData, rows]);
 
   if (loadingRegions || loadingTeamSeasons) return <Loader />;
 

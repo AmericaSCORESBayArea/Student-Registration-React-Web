@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -15,6 +15,7 @@ import DataRow from "./DataRow";
 import { ExpandMore } from "@mui/icons-material";
 import EnrollmentDetailsAccordion from "./EnrollmentDetailsAccordion";
 import useStore from "../../store/useStore";
+import PasteModal from "./PasteModal";
 
 const baseTextFieldStyle = (customStyles) => ({
   backgroundColor: "transparent",
@@ -148,6 +149,7 @@ const RegisterUI = React.memo(
               backgroundColor: "#f8f5f4",
             }}
           >
+            <PasteModal />
             <Box sx={{ width: "100%", marginY: 2 }}>
               <Accordion defaultExpanded>
                 <AccordionSummary
@@ -187,12 +189,7 @@ const RegisterUI = React.memo(
                       <Button
                         onClick={onSubmit}
                         variant="contained"
-                        disabled={
-                          !userHasInteracted ||
-                          errors.some((error) =>
-                            Object.values(error).some((e) => e !== "")
-                          )
-                        }
+                        disabled={!userHasInteracted}
                       >
                         {loadingSubmit ? "Submitting..." : "Assign"}
                       </Button>
@@ -224,19 +221,21 @@ const RegisterUI = React.memo(
                       </Typography>
                     </Grid>
                   </Grid>
-                  {rows.map((row, index) => (
-                    <DataRow
-                      key={index}
-                      index={index}
-                      rowData={row}
-                      setRowData={onInputChange}
-                      region={region}
-                      schoolSitesData={schoolSitesData}
-                      teamSeasons={teamSeasons}
-                      errors={errors}
-                      handleFieldChange={handleFieldChange}
-                    />
-                  ))}
+                  {rows.map((row, index) => {
+                    return (
+                      <DataRow
+                        key={index}
+                        index={index}
+                        rowData={row ? { ...row } : ""}
+                        setRowData={onInputChange}
+                        region={region}
+                        schoolSitesData={schoolSitesData}
+                        teamSeasons={teamSeasons}
+                        errors={errors}
+                        handleFieldChange={handleFieldChange}
+                      />
+                    );
+                  })}
                   <Grid container item>
                     <Button
                       onClick={onAddRow}
