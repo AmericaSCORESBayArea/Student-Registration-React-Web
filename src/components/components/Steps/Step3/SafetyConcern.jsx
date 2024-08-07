@@ -60,12 +60,12 @@ const SafetyConcern = ({ handleNext, handleBack, contactId }) => {
   };
 
   const validationSchema = Yup.object({
-    parentGuardianFirstName: Yup.string()
-      .matches(/^[A-Za-z]+$/, "First Name must contain only letters")
-      .required("Parent/Guardian First Name is required"),
-    parentGuardianLastName: Yup.string()
-      .matches(/^[A-Za-z]+$/, "Last Name must contain only letters")
-      .required("Parent/Guardian Last Name is required"),
+    parentGuardianFirstName: Yup.string().required(
+      "Parent/Guardian First Name is required"
+    ),
+    parentGuardianLastName: Yup.string().required(
+      "Parent/Guardian Last Name is required"
+    ),
     parentGuardianEmail: Yup.string().matches(
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       "Email is invalid"

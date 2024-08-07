@@ -16,6 +16,7 @@ import Loading from "../components/Loading";
 import { toast } from "react-toastify";
 import { ErrorModal } from "../utils/Modal";
 import { useNavigate } from "react-router-dom";
+import debounce from "lodash/debounce";
 
 const useStyles = makeStyles(() => ({
   homeScreenContainer: {
@@ -37,41 +38,35 @@ const useStyles = makeStyles(() => ({
     textAlign: "center",
   },
 }));
+
 export default function Registration_Status(props) {
   const navigate = useNavigate();
   const [selected, setSelected] = useState(props.registration_status);
   const [width, setWidth] = useState(window.innerWidth);
   const [studentsList, setStudentsList] = useState();
   const [showSearch, setShowSearch] = useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
   const [showParentStudents, setShowParentStudents] = useState(false);
+  const [modalShown, setModalShown] = useState(false);
   const toastId = React.useRef(null);
   const classes = useStyles();
-  const updateDimensions = () => {
+
+  const updateDimensions = debounce(() => {
     setWidth(window.innerWidth);
-  };
+  }, 200);
 
   const showModal = useCallback(() => {
-    ErrorModal(props.modalOptions, "info");
-  }, [props]);
+    if (!modalShown) {
+      ErrorModal(props.modalOptions, "info");
+      setModalShown(true);
+    }
+  }, [modalShown, props.modalOptions]);
 
   useEffect(() => {
     props.studentProps(null);
-    async function fetchData() {
-      let data = localStorage.getItem("phoneNumber");
-      await getStudentsByPhoneNumber(data).then((result) => {
-        if (result.length !== 0) {
-          setStudentsList(result);
-          setShowSearch(true);
-          setShowParentStudents(true);
-          showModal();
-        }
-      });
-    }
-    fetchData();
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
-  }, [props, showModal]);
+  }, [props, showModal, updateDimensions]);
 
   const goBack = () => {
     setShowSearch(false);
@@ -89,7 +84,7 @@ export default function Registration_Status(props) {
     if (categoryName === "Quick Registration" && props.roleType === "Coach") {
       navigate("/QuickRegistration");
     }
-    if (categoryName === "New Layout") {
+    if (categoryName === "New Layout" && props.roleType === "Parent") {
       navigate("/AddStudents");
     }
   };
@@ -97,7 +92,7 @@ export default function Registration_Status(props) {
   const showToast = (message) => {
     setLoading(false);
     toast.error(message, {
-      toastId: toastId,
+      toastId: toastId.current,
       position: "bottom-center",
       autoClose: false,
       hideProgressBar: false,
@@ -111,19 +106,20 @@ export default function Registration_Status(props) {
       selectingCategory("New");
     }, 4000);
   };
+
   async function fetchData(data) {
-    await getStudentsByPhoneNumber(data).then((result) => {
-      if (result.length === 0) {
-        showToast(props.error_students);
-      } else {
-        showModal();
-        setStudentsList(result);
-        setShowSearch(true);
-        setShowParentStudents(true);
-        setLoading(false);
-      }
-    });
+    const result = await getStudentsByPhoneNumber(data);
+    if (result.length === 0) {
+      showToast(props.error_students);
+    } else {
+      showModal();
+      setStudentsList(result);
+      setShowSearch(true);
+      setShowParentStudents(true);
+      setLoading(false);
+    }
   }
+
   const formRedirect = (category) => {
     dismiss();
     if (category === "Existing" && props.roleType === "Parent") {
@@ -133,18 +129,14 @@ export default function Registration_Status(props) {
         setLoading(true);
         fetchData(data);
       } else {
-        if (contactId === null) {
-          fetchData(data);
-        } else {
-          selectingCategory(category);
-          props.function("registration_status", category);
-        }
+        fetchData(data);
       }
     } else {
       selectingCategory(category);
       props.function("registration_status", category);
     }
   };
+
   const icons = (name) => {
     const color = selected === name ? "#F0F8FF" : "#808080";
     const iconProps = { sx: { fontSize: 100, color } };
@@ -164,9 +156,89 @@ export default function Registration_Status(props) {
     }
   };
 
-  const buttonDisabled = (categoryName) => {
-    return categoryName === "Enroll";
-  };
+  const buttonDisabled = (categoryName) => categoryName === "Enroll";
+
+  const filteredStatusArray = statusArray.filter((category) => {
+    if (props.roleType === "Parent") {
+      return category.name !== "Quick Registration";
+    }
+    if (props.roleType === "Coach") {
+      return category.name !== "New Layout";
+    }
+    return true;
+  });
+
+  const renderCategoryButtons = () => (
+    <Grid
+      container
+      direction="row"
+      justifyContent="center"
+      alignItems="center"
+      spacing={{ xs: 0, sm: 0, md: 0, lg: 0 }}
+    >
+      {filteredStatusArray.map((category, index) => (
+        <Grid
+          key={index}
+          item
+          sm={12}
+          xs={12}
+          md={6}
+          lg={6}
+          align="center"
+          justify="center"
+          alignItems="center"
+        >
+          <Button
+            variant="outlined"
+            disabled={buttonDisabled(category.name)}
+            style={{
+              borderRadius: 15,
+              width: "200px",
+              height: "200px",
+              borderWidth: 3,
+              borderColor: buttonDisabled(category.name)
+                ? "#D3D3D3"
+                : "#1976d2",
+              backgroundColor: buttonDisabled(category.name)
+                ? "#D3D3D3"
+                : selected === category.name
+                ? "#1976d2"
+                : "transparent",
+              color: buttonDisabled(category.name)
+                ? "#D3D3D3"
+                : selected === category.name
+                ? "#FFFFFF"
+                : "#1976d2",
+              cursor: buttonDisabled(category.name) ? "not-allowed" : "pointer",
+            }}
+            onClick={() => {
+              if (!buttonDisabled(category.name)) {
+                setSelected(category.name);
+              }
+              if (category.name === "Existing" && props.roleType === "Coach") {
+                setShowSearch(true);
+                selectingCategory(category.name);
+              } else {
+                formRedirect(category.name);
+              }
+            }}
+          >
+            {icons(category.name)}
+          </Button>
+          <h3
+            className={
+              selected === category.name
+                ? classes.textCategorySelected
+                : classes.textCategory
+            }
+          >
+            {category.name}
+          </h3>
+        </Grid>
+      ))}
+    </Grid>
+  );
+
   return (
     <div
       style={{
@@ -200,79 +272,7 @@ export default function Registration_Status(props) {
           >
             <h5>{props.props}</h5>
           </div>
-          <Grid
-            container
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            spacing={{ xs: 0, sm: 0, md: 0, lg: 0 }}
-          >
-            {statusArray.map((category, index) => (
-              <Grid
-                key={index}
-                item
-                sm={12}
-                xs={12}
-                md={6}
-                lg={6}
-                align="center"
-                justify="center"
-                alignItems="center"
-              >
-                <Button
-                  variant="outlined"
-                  disabled={buttonDisabled(category.name)}
-                  style={{
-                    borderRadius: 15,
-                    width: "200px",
-                    height: "200px",
-                    borderWidth: 3,
-                    borderColor: buttonDisabled(category.name)
-                      ? "#D3D3D3"
-                      : "#1976d2",
-                    backgroundColor: buttonDisabled(category.name)
-                      ? "#D3D3D3"
-                      : selected === category.name
-                      ? "#1976d2"
-                      : "transparent",
-                    color: buttonDisabled(category.name)
-                      ? "#D3D3D3"
-                      : selected === category.name
-                      ? "#FFFFFF"
-                      : "#1976d2",
-                    cursor: buttonDisabled(category.name)
-                      ? "not-allowed"
-                      : "pointer",
-                  }}
-                  onClick={() => {
-                    if (!buttonDisabled(category.name)) {
-                      setSelected(category.name);
-                    }
-                    if (
-                      category.name === "Existing" &&
-                      props.roleType === "Coach"
-                    ) {
-                      setShowSearch(true);
-                      selectingCategory(category.name);
-                    } else {
-                      formRedirect(category.name);
-                    }
-                  }}
-                >
-                  {icons(category.name)}
-                </Button>
-                <h3
-                  className={
-                    selected === category.name
-                      ? classes.textCategorySelected
-                      : classes.textCategory
-                  }
-                >
-                  {category.name}
-                </h3>
-              </Grid>
-            ))}
-          </Grid>
+          {renderCategoryButtons()}
           <div
             style={{
               display: "flex",

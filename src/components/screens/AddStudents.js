@@ -19,7 +19,7 @@ import AllDone from "../components/Steps/Step6/AllDone";
 import OhNoSorry from "../components/Steps/Step7/OhNoSorry";
 import logo from "../../assets/SCORESLogo.png";
 import { Container } from "react-bootstrap";
-import { getStudentsByPhoneNumberComplete } from "../controller/api";
+import { getStudentsByPhoneNumber } from "../controller/api";
 
 const AddStudents = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -59,24 +59,23 @@ const AddStudents = () => {
 
   const allStepsCompleted = () => completedSteps() === totalSteps();
 
-  const getStudentsByPhoneNumber = useCallback(async () => {
-    let data = localStorage.getItem("phoneNumber");
-    data = data.slice(2);
-
+  const getAllStudentsByPhoneNumber = useCallback(async () => {
+    let phoneNumber = localStorage.getItem("phoneNumber");
     try {
-      await getStudentsByPhoneNumberComplete(data).then((result) => {
+      await getStudentsByPhoneNumber(phoneNumber).then((result) => {
         if (result.length !== 0) {
           setShowParentStudents(true);
           setStudentsList(result);
         }
+        console.log("result", result);
       });
     } catch (err) {
       console.log(err);
     }
   }, []);
   useEffect(() => {
-    getStudentsByPhoneNumber();
-  }, [getStudentsByPhoneNumber]);
+    getAllStudentsByPhoneNumber();
+  }, [getAllStudentsByPhoneNumber]);
 
   const handleNext = () => {
     const newActiveStep =
