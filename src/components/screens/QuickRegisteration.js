@@ -140,38 +140,7 @@ const QuickRegisteration = () => {
     setIsNewContact(true);
   };
 
-  // const handleAddRow = useCallback(() => {
-  //   console.log("❤️");
-
-  //   setRows((prevRows) => {
-  //     const newRows = [
-  //       ...prevRows,
-  //       {
-  //         firstName: "",
-  //         lastName: "",
-  //         schoolSite: { id: "", label: "" },
-  //         teamSeason: { id: "", label: "" },
-  //         contactId: "",
-  //       },
-  //     ];
-  //     console.log("❤️❤️ : ", newRows);
-  //     return newRows;
-  //   });
-  //   console.log("❤️:❤️ : ", rows);
-
-  //   setErrors((prevErrors) => [
-  //     ...prevErrors,
-  //     {
-  //       firstNameError: "",
-  //       lastNameError: "",
-  //       schoolSiteError: "",
-  //       teamSeasonError: "",
-  //     },
-  //   ]);
-  // }, [rows, errors]);
   const handleAddRow = useCallback(() => {
-    // console.log("❤️");
-
     setRows([
       ...rows,
       {
@@ -191,7 +160,6 @@ const QuickRegisteration = () => {
         teamSeasonError: "",
       },
     ]);
-    // console.log("❤️❤️ : ", rows);
   }, [rows, errors]);
   const handleReset = useCallback(
     (showConfirmation = true) => {
@@ -415,35 +383,10 @@ const QuickRegisteration = () => {
     };
   }, [handleBeforeUnload]);
 
-  // useEffect(() => {
-  //   if (pastedData && pastedData.length > rows.length) {
-  //     const additionalRowsNeeded = pastedData.length - rows.length;
-
-  //     for (let i = 0; i < additionalRowsNeeded; i++) {
-  //       handleAddRow();
-  //     }
-  //   }
-  // }, [pastedData, rows.length]);
-
-  // useEffect(() => {
-  //   console.log("pastedData:", pastedData);
-
-  //   if (pastedData.length > 0) {
-  //     const newRows = rows.map((row, index) => ({
-  //       ...row,
-  //       ...pastedData[index],
-  //     }));
-
-  //     console.log("newrows::::", newRows);
-
-  //     // setRows([...newRows]);
-  //     setRows(JSON.parse(JSON.stringify(newRows)));
-  //     clearPastedData();
-  //   }
-  // }, [pastedData, rows]);
-
   useEffect(() => {
     if (pastedData.length > 0) {
+      setUserHasInteracted(true);
+
       let pastedIndex = 0;
 
       const newRows = rows.map((row) => {
@@ -463,7 +406,6 @@ const QuickRegisteration = () => {
         return row;
       });
 
-      console.log("newRows:", newRows);
       const additionalRows = [];
       while (pastedIndex < pastedData.length) {
         additionalRows.push({
@@ -476,7 +418,6 @@ const QuickRegisteration = () => {
       }
 
       const newRowsPasted = [...newRows, ...additionalRows];
-      console.log("newRows again:", newRowsPasted);
 
       setRows(newRowsPasted);
       setErrors(newRowsPasted);
@@ -484,9 +425,6 @@ const QuickRegisteration = () => {
       clearPastedData();
     }
   }, [pastedData, rows]);
-  useEffect(() => {
-    console.log("ROWS quickRegistration : ", rows);
-  }, [rows]);
 
   if (loadingRegions || loadingTeamSeasons) return <Loader />;
 

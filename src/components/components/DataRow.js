@@ -36,14 +36,6 @@ const DataRow = React.memo(
 
     const defaultFilterOptions = createFilterOptions();
 
-    const { pastedData, clearPastedData } = useStore((state) => ({
-      pastedData: state.pastedData,
-      clearPastedData: state.clearPastedData,
-    }));
-    // useEffect(() => {
-    //   console.log("Index: ", index);
-    //   console.log("Row Data 😊: ", rowData);
-    // }, [index, rowData]);
     const fetchData = useCallback(
       async (input, type) => {
         const setLoading =
@@ -200,39 +192,14 @@ const DataRow = React.memo(
         contactId: "",
       });
     }, [region, index, setRowData]);
-    // UseEffect to populate inputs based on pastedData or initial rowData
+
     useEffect(() => {
-      console.log("ROW DATA : ", rowData);
       if (rowData) {
         const { firstName, lastName } = rowData;
         setFirstNameInput(firstName || "");
         setLastNameInput(lastName || "");
-        // setRowData(index, "firstName", firstName || "", "");
-        // setRowData(index, "lastName", lastName || "", "");
       }
     }, [rowData]);
-
-    // useEffect(() => {
-    //   console.log("ROW DATA : ", rowData);
-    // }, [rowData]);
-
-    // Debounced fetch for first name data
-    useEffect(() => {
-      if (firstNameInput.trim().length >= 2) {
-        debouncedFetchFirstNameData(firstNameInput);
-      } else {
-        setFirstNameOptions([]);
-      }
-    }, [firstNameInput, debouncedFetchFirstNameData]);
-
-    // Debounced fetch for last name data
-    useEffect(() => {
-      if (lastNameInput.trim().length >= 2) {
-        debouncedFetchLastNameData(lastNameInput);
-      } else {
-        setLastNameOptions([]);
-      }
-    }, [lastNameInput, debouncedFetchLastNameData]);
 
     // Handle input changes
     const handleBlur = (index, newValue, inputValue, type) => {
