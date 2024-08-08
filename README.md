@@ -123,3 +123,5 @@ Additional information can be found here: [https://facebook.github.io/create-rea
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
+## Testing New Features
+We expect deployments to always undergo regression testing in Sandbox before promotion. New features need an acceptance test as well. These criteria, once passed as part of a smoke test (looking for regressions as well as creative testing of the new functionality) should be added to the routine regression test plan.
