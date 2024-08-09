@@ -22,15 +22,21 @@ export const enLanguages = {
     modal_close_button: "OK",
     add_student_button: "Add New Student",
   },
+  tool_tip_array: [
+    "Create a new record for a student who has never participated in SCORES",
+    "Search and update a record for a current or returning student who has already participated in SCORES",
+    "Add a new student by name and enroll them with a team when you have limited information and are ready to start tracking attendance. If there is an existing record, the form will help you Search for them",
+    "Search for a student who is already in the SCORES system and quickly enroll them on a team"
+  ],
   returning_option: "Existing",
   new_returning_option: "Are you registering a new or existing student?",
   new_returning_title:
     "Select whether you are starting a new student registration or updating a returning student registration.",
   new_returning_sub_heading:
     "NOTE: Please allow a few minutes before you attempt to view or edit a new record.",
-  steps_1: "Verify your role",
-  steps_2: "Select new or existing",
-  steps_3: "Complete form",
+  steps_1: "Login",
+  steps_2: "Coach Tools",
+  steps_3: "Submit Updates to SCORES",
   button_continue: "CONTINUE",
   button_back: "BACK",
   button_submit: "SUBMIT",
@@ -94,6 +100,7 @@ export const enLanguages = {
     required_fields: "Field is required (*)",
     invalid_phone_number: "Phone number is not valid",
     required_waiver: "You need to review and accept waiver (*)",
+    required_paper_form: "You need to review and accept paper form (*)",
     invalid_email: "Email is not valid",
     firstName_field: "First Name*",
     firstName_field_placeholder: "Enter first name",
@@ -178,7 +185,9 @@ export const enLanguages = {
     second_Emergency_Contact_Phone2_field_placeholder:
       "Enter secondary emergency contact phone 2",
     waiver_field: "Waiver*",
+    paper_form_feild: "Paper form*",
     waiver_field_button: "Accept waiver",
+    paper_form_field_button: "Receive paper form",
     formTitle1: "Students details",
     formTitle2: "Parent/Guardian Information",
     formTitle3: "Emergency Contact (Other than Parent/Guardian)",
@@ -379,9 +388,14 @@ export const enLanguages = {
     },
     modal_info_parent_email: {
       modal_title: "Parent email",
-      modal_text: `<div class="align-left">Providing SCORES with a parent email will help us keep you informed of your student's participation and upcoming events.</div>`,
+      modal_text: `<div class="align-left">This wil enable SCORES to email updated to parents and support engagement with families</div>`,
       modal_close_button: "Close",
     },
+    modal_info_parent_phone:{
+      modal_title: "Parent phone number",
+      modal_text: `<div class="align-left">These numbers will allow the parent/guardian access to their students' records to accept waivers, make updates, etc. This information is very valuable for supporting engagement and keeping families connected</div>`,
+      modal_close_button: "Close",
+    }
   },
   searchStudent: {
     title_parents: "Select a student to edit their information.",

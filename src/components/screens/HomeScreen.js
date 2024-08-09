@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-//import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -13,7 +12,6 @@ export default function HomeScreen(props) {
     props.translations.steps_2,
     props.translations.steps_3,
   ];
-  //const history = useNavigate();
   const [student, setStudent] = useState("");
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
@@ -91,7 +89,7 @@ export default function HomeScreen(props) {
             newOption={props.translations.new_option}
             modalOptions={props.translations.returningModal}
             returningOption={props.translations.returning_option}
-            title={props.translations.new_returning_title}
+            title={props.translations.tool_tip_array}
             sub_title={props.translations.new_returning_sub_heading}
             continueButton={props.translations.button_continue}
             backButton={props.translations.button_back}

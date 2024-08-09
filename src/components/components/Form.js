@@ -80,6 +80,7 @@ export default function Form(props) {
   const [myvalue, setMyValue] = useState(true);
   const [schoolsArray, setSchoolsArray] = useState("");
   const [isWaiverAccepted, setIsWaiverAccepted] = useState(false);
+  const [isPaperFormRecieved, setIsPaperFormRecieved] = useState(false);
   const [waiverInfo, setWaiverInfo] = useState({
     name: "",
     waiverResponse: "",
@@ -198,7 +199,7 @@ export default function Form(props) {
     }
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
-  }, []);
+  }, [props.studentProps]);
 
   async function getSchoolSiteId(schoolName) {
     const results = schoolsArray.find(
@@ -471,6 +472,7 @@ export default function Form(props) {
                   ? props.studentProps.Second_Emergency_Contact_Phone2
                   : "",
               waiver: isWaiverAccepted,
+              paperForm: isPaperFormRecieved,
             }}
             validationSchema={Yup.object().shape({
               firstName: Yup.string().required(
@@ -591,6 +593,10 @@ export default function Form(props) {
                 [true],
                 props.formTranslations.required_waiver
               ),
+              paperForm: Yup.bool().oneOf(
+                [true],
+                props.formTranslations.required_paper_form
+              )
             })}
             onSubmit={async (data) => {
               setLoading(true);
@@ -1166,6 +1172,10 @@ export default function Form(props) {
                       errors={errors.parentPhone1}
                       touched={touched.parentPhone1}
                       labelStyle={classes.inputLabel}
+                      showInfoButton={true}
+                      infoModalTexts={
+                        props.formTranslations.modal_info_parent_phone
+                      }
                     />
                     <Input
                       fieldName={"parentPhone2"}
@@ -1177,6 +1187,10 @@ export default function Form(props) {
                       errors={errors.parentPhone2}
                       touched={touched.parentPhone2}
                       labelStyle={classes.inputLabel}
+                      showInfoButton={true}
+                      infoModalTexts={
+                        props.formTranslations.modal_info_parent_phone
+                      }
                     />
                     <Input
                       fieldName={"mailingStreet"}
@@ -1547,6 +1561,48 @@ export default function Form(props) {
                         />
                         <Button size={"small"} onClick={() => setShow(true)}>
                           {props.formTranslations.waiver_field_button}
+                        </Button>
+                      </label>
+                      {(errors.waiver && touched.waiver) ||
+                      (show && values.schoolName.region.length < 1) ? (
+                        <div
+                          style={{
+                            textAlign: "center",
+                            color: "#dc3545",
+                            fontSize: ".875em",
+                            marginTop: ".25rem",
+                          }}
+                        >
+                          {show
+                            ? props.formTranslations.waiverModal_region
+                            : errors.waiver}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div
+                      className="form-group"
+                      style={{ marginBottom: "40px" }}
+                    >
+                      <div className={classes.label}>
+                        <label htmlFor="paperForm">
+                          {props.formTranslations.paper_form_feild}
+                        </label>
+                      </div>
+                      <label
+                        style={{
+                          textAlign: "left",
+                          display: "flex",
+                          justifyContent: "flex-start",
+                        }}
+                      >
+                        <Field
+                          type="checkbox"
+                          name="paperForm"
+                          id="cb1"
+                          disabled={values.paperForm === false ? true : false}
+                        />
+                        <Button size={"small"} onClick={() => setShow(true)}>
+                          {props.formTranslations.paper_form_field_button}
                         </Button>
                       </label>
                       {(errors.waiver && touched.waiver) ||
