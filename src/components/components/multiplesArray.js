@@ -487,6 +487,20 @@ export const relationshipArray = [
     value: "Sibling/Other relative",
   },
 ];
+export const TeamArray = [
+  {
+    label: "Team1",
+    value: "Team1",
+  },
+  {
+    label: "Team2",
+    value: "Team2",
+  },
+  {
+    label: "Team3",
+    value: "Team3",
+  },
+];
 export const parent_Home_Lang_Array = [
   {
     label: "Arabic",
@@ -589,3 +603,7 @@ export const parent_Home_Lang_Array = [
     value: "Other",
   },
 ];
+
+export const genderArray_Mobile = ["Boy", "Non-Declared", "Girl"];
+
+export const gradeArray_Mobile = ["3", "4", "5", "6", "7", "8"];

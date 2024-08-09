@@ -13,9 +13,13 @@ import { ModalwithConfirmation } from "../utils/Modal";
 import { enLanguages } from "../translations/en";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import useStore from "../../store/useStore";
+
+const DefaultRows = 5;
 
 const QuickRegisteration = () => {
   const navigate = useNavigate();
+  const { addStudents } = useStore();
   const [loadingRegions, setLoadingRegions] = useState(true);
   const [loadingTeamSeasons, setLoadingTeamSeasons] = useState(true);
   const [regionsData, setRegionsData] = useState([]);
@@ -25,12 +29,11 @@ const QuickRegisteration = () => {
   const [userHasInteracted, setUserHasInteracted] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
-  const [enrollmentResults, setEnrollmentResults] = useState([]);
   const [errorAlert, setErrorAlert] = useState({ show: false, message: "" });
   const [isNewContact, setIsNewContact] = useState(false);
 
   const [rows, setRows] = useState(
-    Array(5).fill({
+    Array(DefaultRows).fill({
       firstName: "",
       lastName: "",
       schoolSite: { id: "", label: "" },
@@ -39,8 +42,13 @@ const QuickRegisteration = () => {
     })
   );
 
+  const { pastedData, clearPastedData } = useStore((state) => ({
+    pastedData: state.pastedData,
+    clearPastedData: state.clearPastedData,
+  }));
+
   const [errors, setErrors] = useState(
-    Array(5).fill({
+    Array(DefaultRows).fill({
       firstNameError: "",
       lastNameError: "",
       schoolSiteError: "",
@@ -73,7 +81,7 @@ const QuickRegisteration = () => {
               setErrorAlert({ show: false, message: "" });
               setFormSubmitted(false);
               setRows(
-                Array(5).fill({
+                Array(DefaultRows).fill({
                   firstName: "",
                   lastName: "",
                   schoolSite: { id: "", label: "" },
@@ -82,7 +90,7 @@ const QuickRegisteration = () => {
                 })
               );
               setErrors(
-                Array(5).fill({
+                Array(DefaultRows).fill({
                   firstNameError: "",
                   lastNameError: "",
                   schoolSiteError: "",
@@ -153,7 +161,6 @@ const QuickRegisteration = () => {
       },
     ]);
   }, [rows, errors]);
-
   const handleReset = useCallback(
     (showConfirmation = true) => {
       if (userHasInteracted && showConfirmation) {
@@ -246,8 +253,6 @@ const QuickRegisteration = () => {
         const enrollmentResponse = await postEnrollment({
           TeamSeasonId: row.teamSeason.id,
           StudentId: row.contactId,
-          StartDate: "2023-08-06",
-          EndDate: "2024-06-06",
         });
         if (enrollmentResponse.error) {
           throw new Error(enrollmentResponse.message);
@@ -280,7 +285,7 @@ const QuickRegisteration = () => {
           });
         } else {
           const enrolledDetails = results.map((result) => result.value);
-          setEnrollmentResults(enrolledDetails);
+          addStudents(region, enrolledDetails);
           setFormSubmitted(true);
           handleReset(false);
         }
@@ -296,7 +301,7 @@ const QuickRegisteration = () => {
       });
 
     setUserHasInteracted(false);
-  }, [rows, isNewContact, region, handleReset]);
+  }, [rows, isNewContact, region, addStudents, handleReset]);
 
   useEffect(() => {
     if (errorAlert.show || formSubmitted) {
@@ -330,7 +335,7 @@ const QuickRegisteration = () => {
 
   const resetForm = () => {
     setRows(
-      Array(5).fill({
+      Array(DefaultRows).fill({
         firstName: "",
         lastName: "",
         schoolSite: { id: "", label: "" },
@@ -339,7 +344,7 @@ const QuickRegisteration = () => {
       })
     );
     setErrors(
-      Array(5).fill({
+      Array(DefaultRows).fill({
         firstNameError: "",
         lastNameError: "",
         schoolSiteError: "",
@@ -378,6 +383,49 @@ const QuickRegisteration = () => {
     };
   }, [handleBeforeUnload]);
 
+  useEffect(() => {
+    if (pastedData.length > 0) {
+      setUserHasInteracted(true);
+
+      let pastedIndex = 0;
+
+      const newRows = rows.map((row) => {
+        if (row.firstName && row.lastName) {
+          return row;
+        }
+
+        if (pastedIndex < pastedData.length) {
+          const updatedRow = {
+            ...row,
+            ...pastedData[pastedIndex],
+          };
+          pastedIndex += 1;
+          return updatedRow;
+        }
+
+        return row;
+      });
+
+      const additionalRows = [];
+      while (pastedIndex < pastedData.length) {
+        additionalRows.push({
+          ...pastedData[pastedIndex],
+          schoolSite: { id: "", label: "" },
+          teamSeason: { id: "", label: "" },
+          contactId: "",
+        });
+        pastedIndex += 1;
+      }
+
+      const newRowsPasted = [...newRows, ...additionalRows];
+
+      setRows(newRowsPasted);
+      setErrors(newRowsPasted);
+
+      clearPastedData();
+    }
+  }, [pastedData, rows]);
+
   if (loadingRegions || loadingTeamSeasons) return <Loader />;
 
   return (
@@ -394,6 +442,7 @@ const QuickRegisteration = () => {
         xs={12}
         md={12}
         sm={12}
+        display="flex"
         justifyContent="space-between"
         alignItems="center"
       >
@@ -408,6 +457,17 @@ const QuickRegisteration = () => {
         </Grid>
         <Grid item xs={12} md={6} sm={12} sx={{ textAlign: "center" }}>
           <Typography variant="h3">Enroll Students</Typography>
+          <Typography
+            variant="body1"
+            sx={{ marginTop: 1 }}
+            fontSize={"default"}
+            fontWeight={"light"}
+            fontStyle={"italic"}
+          >
+            New student names added here will be marked as{" "}
+            <span style={{ color: "red" }}>*</span>
+            Incomplete Records in the SCORES student database.
+          </Typography>
         </Grid>
         <Grid item xs={12} md={3} sm={12} />
       </Grid>
@@ -438,7 +498,6 @@ const QuickRegisteration = () => {
         errors={errors}
         loadingSubmit={loadingSubmit}
         userHasInteracted={userHasInteracted}
-        enrollmentResults={enrollmentResults}
         handleFieldChange={handleFieldChange}
       />
     </Box>

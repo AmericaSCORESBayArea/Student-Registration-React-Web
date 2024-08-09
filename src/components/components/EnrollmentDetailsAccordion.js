@@ -9,11 +9,15 @@ import {
 } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
 import { CustomTextField } from "./RegisterUI";
+import useStore from "../../store/useStore";
 
-const EnrollmentDetailsAccordion = ({ enrollmentResults }) => {
-  if (enrollmentResults.length === 0) {
+const EnrollmentDetailsAccordion = () => {
+  const { enrolledStudents } = useStore();
+
+  if (Object.keys(enrolledStudents).length === 0) {
     return null;
   }
+
   return (
     <Box
       sx={{
@@ -31,88 +35,89 @@ const EnrollmentDetailsAccordion = ({ enrollmentResults }) => {
           backgroundColor: "#f8f5f4",
         }}
       >
-        <Accordion defaultExpanded sx={{ width: "100%" }}>
-          <AccordionSummary expandIcon={<ExpandMore />}>
-            <Typography variant="h5">
-              Enrolled Students for region{" "}
-              {enrollmentResults.length > 0
-                ? enrollmentResults[0].region
-                : "N/A"}
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={3}>
-                <Typography variant="subtitle1">First Name</Typography>
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <Typography variant="subtitle1">Last Name</Typography>
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <Typography variant="subtitle1">School/Site</Typography>
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <Typography variant="subtitle1">Team-Season</Typography>
-              </Grid>
-            </Grid>
-            {enrollmentResults.map((result, index) => (
-              <Grid container spacing={2} key={index} sx={{ marginBottom: 2 }}>
+        {Object.entries(enrolledStudents).map(([region, students]) => (
+          <Accordion key={region} sx={{ width: "100%", marginBottom: 2 }}>
+            <AccordionSummary expandIcon={<ExpandMore />}>
+              <Typography variant="h5">
+                Enrolled Students for {region}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={2}>
                 <Grid item xs={12} sm={3}>
-                  <CustomTextField
-                    fullWidth
-                    variant="filled"
-                    hiddenLabel
-                    size="small"
-                    value={result.firstName}
-                    InputLabelProps={{
-                      readOnly: true,
-                    }}
-                    disabled={true}
-                  />
+                  <Typography variant="subtitle1">First Name</Typography>
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <CustomTextField
-                    fullWidth
-                    variant="filled"
-                    hiddenLabel
-                    size="small"
-                    value={result.lastName}
-                    InputLabelProps={{
-                      readOnly: true,
-                    }}
-                    disabled={true}
-                  />
+                  <Typography variant="subtitle1">Last Name</Typography>
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <CustomTextField
-                    fullWidth
-                    variant="filled"
-                    hiddenLabel
-                    size="small"
-                    value={result.teamSeasonLabel}
-                    InputLabelProps={{
-                      readOnly: true,
-                    }}
-                    disabled={true}
-                  />
+                  <Typography variant="subtitle1">School/Site</Typography>
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <CustomTextField
-                    fullWidth
-                    variant="filled"
-                    hiddenLabel
-                    size="small"
-                    value={result.teamSeasonLabel}
-                    InputLabelProps={{
-                      readOnly: true,
-                    }}
-                    disabled={true}
-                  />
+                  <Typography variant="subtitle1">Team-Season</Typography>
                 </Grid>
               </Grid>
-            ))}
-          </AccordionDetails>
-        </Accordion>
+              {students.map((student, index) => (
+                <React.Fragment key={index}>
+                  <Grid container spacing={2} sx={{ marginBottom: 2 }}>
+                    <Grid item xs={12} sm={3}>
+                      <CustomTextField
+                        fullWidth
+                        variant="filled"
+                        hiddenLabel
+                        size="small"
+                        value={student.firstName}
+                        InputLabelProps={{
+                          readOnly: true,
+                        }}
+                        disabled={true}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                      <CustomTextField
+                        fullWidth
+                        variant="filled"
+                        hiddenLabel
+                        size="small"
+                        value={student.lastName}
+                        InputLabelProps={{
+                          readOnly: true,
+                        }}
+                        disabled={true}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                      <CustomTextField
+                        fullWidth
+                        variant="filled"
+                        hiddenLabel
+                        size="small"
+                        value={student.schoolSiteLabel}
+                        InputLabelProps={{
+                          readOnly: true,
+                        }}
+                        disabled={true}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                      <CustomTextField
+                        fullWidth
+                        variant="filled"
+                        hiddenLabel
+                        size="small"
+                        value={student.teamSeasonLabel}
+                        InputLabelProps={{
+                          readOnly: true,
+                        }}
+                        disabled={true}
+                      />
+                    </Grid>
+                  </Grid>
+                </React.Fragment>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+        ))}
       </Box>
     </Box>
   );

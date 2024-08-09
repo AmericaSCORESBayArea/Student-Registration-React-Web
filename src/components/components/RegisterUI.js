@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -14,6 +14,8 @@ import {
 import DataRow from "./DataRow";
 import { ExpandMore } from "@mui/icons-material";
 import EnrollmentDetailsAccordion from "./EnrollmentDetailsAccordion";
+import useStore from "../../store/useStore";
+import PasteModal from "./PasteModal";
 
 const baseTextFieldStyle = (customStyles) => ({
   backgroundColor: "transparent",
@@ -57,7 +59,7 @@ const baseTextFieldStyle = (customStyles) => ({
 
 export const CustomTextField = styled(TextField)(
   baseTextFieldStyle({
-    padding: "6px 10px !important",
+    padding: "4px 10px !important",
   })
 );
 
@@ -82,9 +84,11 @@ const RegisterUI = React.memo(
     errors,
     loadingSubmit,
     userHasInteracted,
-    enrollmentResults,
     handleFieldChange,
   }) => {
+    const { enrolledStudents } = useStore();
+    const hasEnrollments = Object.keys(enrolledStudents).length > 0;
+
     return (
       <Box
         sx={{
@@ -92,13 +96,11 @@ const RegisterUI = React.memo(
           flexDirection: "column",
           alignItems: "center",
           width: "100%",
-          padding: 3,
+          paddingY: 2,
           borderRadius: 2,
         }}
       >
-        {enrollmentResults.length > 0 && (
-          <EnrollmentDetailsAccordion enrollmentResults={enrollmentResults} />
-        )}
+        {hasEnrollments && <EnrollmentDetailsAccordion />}
         <Grid container item alignItems="center" sx={{ marginBlock: 2 }}>
           <Grid item xs={12} md={2} sm={12} />
           <Grid item xs={12} md={3} sm={12}>
@@ -147,6 +149,7 @@ const RegisterUI = React.memo(
               backgroundColor: "#f8f5f4",
             }}
           >
+            <PasteModal />
             <Box sx={{ width: "100%", marginY: 2 }}>
               <Accordion defaultExpanded>
                 <AccordionSummary
@@ -186,12 +189,7 @@ const RegisterUI = React.memo(
                       <Button
                         onClick={onSubmit}
                         variant="contained"
-                        disabled={
-                          !userHasInteracted ||
-                          errors.some((error) =>
-                            Object.values(error).some((e) => e !== "")
-                          )
-                        }
+                        disabled={!userHasInteracted}
                       >
                         {loadingSubmit ? "Submitting..." : "Assign"}
                       </Button>
@@ -223,19 +221,21 @@ const RegisterUI = React.memo(
                       </Typography>
                     </Grid>
                   </Grid>
-                  {rows.map((row, index) => (
-                    <DataRow
-                      key={index}
-                      index={index}
-                      rowData={row}
-                      setRowData={onInputChange}
-                      region={region}
-                      schoolSitesData={schoolSitesData}
-                      teamSeasons={teamSeasons}
-                      errors={errors}
-                      handleFieldChange={handleFieldChange}
-                    />
-                  ))}
+                  {rows.map((row, index) => {
+                    return (
+                      <DataRow
+                        key={index}
+                        index={index}
+                        rowData={row ? { ...row } : ""}
+                        setRowData={onInputChange}
+                        region={region}
+                        schoolSitesData={schoolSitesData}
+                        teamSeasons={teamSeasons}
+                        errors={errors}
+                        handleFieldChange={handleFieldChange}
+                      />
+                    );
+                  })}
                   <Grid container item>
                     <Button
                       onClick={onAddRow}

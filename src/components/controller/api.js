@@ -131,7 +131,6 @@ export async function submitForm(
       }
     });
   } else if (response.status === 500) {
-    console.log("response", response.status.code);
     await firebase.analytics().logEvent("form_complete", {
       app: "web_registration",
       completed: "false",
