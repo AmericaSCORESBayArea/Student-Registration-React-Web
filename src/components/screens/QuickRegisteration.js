@@ -7,7 +7,15 @@ import {
   postContact,
   postEnrollment,
 } from "../controller/api";
-import { Alert, Box, Button, Grid, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Grid,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import Loader from "../utils/Loader";
 import { ModalwithConfirmation } from "../utils/Modal";
 import { enLanguages } from "../translations/en";
@@ -15,10 +23,10 @@ import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useStore from "../../store/useStore";
 
-const DefaultRows = 5;
-
 const QuickRegisteration = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
+
   const { addStudents } = useStore();
   const [loadingRegions, setLoadingRegions] = useState(true);
   const [loadingTeamSeasons, setLoadingTeamSeasons] = useState(true);
@@ -31,6 +39,9 @@ const QuickRegisteration = () => {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [errorAlert, setErrorAlert] = useState({ show: false, message: "" });
   const [isNewContact, setIsNewContact] = useState(false);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const DefaultRows = isMobile ? 1 : 5;
 
   const [rows, setRows] = useState(
     Array(DefaultRows).fill({
@@ -67,6 +78,28 @@ const QuickRegisteration = () => {
     },
     [userHasInteracted]
   );
+
+  const resetForm = useCallback(() => {
+    setRows(
+      Array(DefaultRows).fill({
+        firstName: "",
+        lastName: "",
+        schoolSite: { id: "", label: "" },
+        teamSeason: { id: "", label: "" },
+        contactId: "",
+      })
+    );
+    setErrors(
+      Array(DefaultRows).fill({
+        firstNameError: "",
+        lastNameError: "",
+        schoolSiteError: "",
+        teamSeasonError: "",
+      })
+    );
+    setRegion("");
+    setUserHasInteracted(false);
+  }, [DefaultRows]);
 
   const handleRegionChange = useCallback(
     (event) => {
@@ -117,7 +150,7 @@ const QuickRegisteration = () => {
           });
       }
     },
-    [userHasInteracted]
+    [DefaultRows, userHasInteracted]
   );
 
   const handleInputChange = useCallback((index, field, value) => {
@@ -176,7 +209,7 @@ const QuickRegisteration = () => {
         resetForm();
       }
     },
-    [userHasInteracted]
+    [resetForm, userHasInteracted]
   );
 
   const handleSubmit = useCallback(() => {
@@ -333,28 +366,6 @@ const QuickRegisteration = () => {
     [userHasInteracted, navigate]
   );
 
-  const resetForm = () => {
-    setRows(
-      Array(DefaultRows).fill({
-        firstName: "",
-        lastName: "",
-        schoolSite: { id: "", label: "" },
-        teamSeason: { id: "", label: "" },
-        contactId: "",
-      })
-    );
-    setErrors(
-      Array(DefaultRows).fill({
-        firstNameError: "",
-        lastNameError: "",
-        schoolSiteError: "",
-        teamSeasonError: "",
-      })
-    );
-    setRegion("");
-    setUserHasInteracted(false);
-  };
-
   useEffect(() => {
     getRegionsData()
       .then(async (response) => {
@@ -424,13 +435,13 @@ const QuickRegisteration = () => {
 
       clearPastedData();
     }
-  }, [pastedData, rows]);
+  }, [clearPastedData, pastedData, rows]);
 
   if (loadingRegions || loadingTeamSeasons) return <Loader />;
 
   return (
     <Box
-      container
+      container="true"
       width={"100%"}
       marginX={"auto"}
       paddingX={"30px"}
@@ -443,34 +454,51 @@ const QuickRegisteration = () => {
         md={12}
         sm={12}
         display="flex"
-        justifyContent="space-between"
-        alignItems="center"
+        justifyContent={isMobile ? "center" : "space-between"}
+        flexDirection={isMobile ? "column" : "row"}
+        alignItems={isMobile ? "flex-start" : "center"}
       >
         <Grid item xs={12} md={2} sm={12}>
           <Button
             variant="outlined"
             startIcon={<ArrowBackIcon />}
             onClick={(e) => handleGoBack(e)}
+            sx={{ marginBlock: 1 }}
           >
             Go Back
           </Button>
         </Grid>
         <Grid item xs={12} md={6} sm={12} sx={{ textAlign: "center" }}>
           <Typography variant="h3">Enroll Students</Typography>
-          <Typography
-            variant="body1"
-            sx={{ marginTop: 1 }}
-            fontSize={"default"}
-            fontWeight={"light"}
-            fontStyle={"italic"}
-          >
-            New student names added here will be marked as{" "}
-            <span style={{ color: "red" }}>*</span>
-            Incomplete Records in the SCORES student database.
-          </Typography>
+          {!isMobile && (
+            <Typography
+              variant="body1"
+              sx={{ marginTop: 1 }}
+              fontSize={"default"}
+              fontWeight={"light"}
+              fontStyle={"italic"}
+            >
+              New student names added here will be marked as{" "}
+              <span style={{ color: "red" }}>*</span>
+              Incomplete Records in the SCORES student database.
+            </Typography>
+          )}
         </Grid>
         <Grid item xs={12} md={3} sm={12} />
       </Grid>
+      {isMobile && (
+        <Typography
+          variant="body1"
+          sx={{ marginTop: 1 }}
+          fontSize={"default"}
+          fontWeight={"light"}
+          fontStyle={"italic"}
+        >
+          New student names added here will be marked as{" "}
+          <span style={{ color: "red" }}>*</span>
+          Incomplete Records in the SCORES student database.
+        </Typography>
+      )}
 
       {errorAlert.show && <Alert severity="error">{errorAlert.message}</Alert>}
       {formSubmitted && (

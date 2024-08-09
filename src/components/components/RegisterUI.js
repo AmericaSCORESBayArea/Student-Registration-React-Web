@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -10,6 +10,8 @@ import {
   TextField,
   Typography,
   styled,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import DataRow from "./DataRow";
 import { ExpandMore } from "@mui/icons-material";
@@ -86,9 +88,10 @@ const RegisterUI = React.memo(
     userHasInteracted,
     handleFieldChange,
   }) => {
+    const theme = useTheme();
     const { enrolledStudents } = useStore();
     const hasEnrollments = Object.keys(enrolledStudents).length > 0;
-
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     return (
       <Box
         sx={{
@@ -195,32 +198,40 @@ const RegisterUI = React.memo(
                       </Button>
                     </Grid>
                   </Grid>
-                  <Grid container>
-                    <Grid item xs={12} sm={3}>
-                      <Typography variant="subtitle1">
-                        First Name
-                        <span style={{ color: "red" }}>*</span>
-                      </Typography>
+                  {!isMobile && (
+                    <Grid
+                      container
+                      spacing={2}
+                      sx={{
+                        textAlign: "left",
+                      }}
+                    >
+                      <Grid item xs={12} sm={3}>
+                        <Typography variant="subtitle1">
+                          First Name
+                          <span style={{ color: "red" }}>*</span>
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={3}>
+                        <Typography variant="subtitle1">
+                          Last Name
+                          <span style={{ color: "red" }}>*</span>
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={3}>
+                        <Typography variant="subtitle1">
+                          School/Site
+                          <span style={{ color: "red" }}>*</span>
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={3}>
+                        <Typography variant="subtitle1">
+                          Team-Season
+                          <span style={{ color: "red" }}>*</span>
+                        </Typography>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={3}>
-                      <Typography variant="subtitle1">
-                        Last Name
-                        <span style={{ color: "red" }}>*</span>
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={3}>
-                      <Typography variant="subtitle1">
-                        School/Site
-                        <span style={{ color: "red" }}>*</span>
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={3}>
-                      <Typography variant="subtitle1">
-                        Team-Season
-                        <span style={{ color: "red" }}>*</span>
-                      </Typography>
-                    </Grid>
-                  </Grid>
+                  )}
                   {rows.map((row, index) => {
                     return (
                       <DataRow

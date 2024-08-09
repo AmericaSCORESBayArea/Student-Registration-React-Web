@@ -1,10 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Autocomplete, CircularProgress, Grid, MenuItem } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  CircularProgress,
+  Grid,
+  MenuItem,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { getStudents } from "../controller/api";
 import debounce from "lodash/debounce";
 import { createFilterOptions } from "@mui/material/Autocomplete";
 import { CustomTextField, DropdownTextField } from "./RegisterUI";
-import useStore from "../../store/useStore";
 
 const DataRow = React.memo(
   ({
@@ -35,6 +43,9 @@ const DataRow = React.memo(
     const [shouldCreateNewContact, setShouldCreateNewContact] = useState(false);
 
     const defaultFilterOptions = createFilterOptions();
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const fetchData = useCallback(
       async (input, type) => {
@@ -218,6 +229,14 @@ const DataRow = React.memo(
     return (
       <Grid container spacing={2} sx={{ marginBottom: 2 }}>
         <Grid item xs={12} sm={3}>
+          {isMobile && (
+            <Grid item xs={12} sm={3} sx={{ textAlign: "left" }}>
+              <Typography variant="subtitle1">
+                First Name
+                <span style={{ color: "red" }}>*</span>
+              </Typography>
+            </Grid>
+          )}
           <Autocomplete
             id={`first-name-autocomplete-${index}`}
             open={openFirstName}
@@ -275,6 +294,14 @@ const DataRow = React.memo(
         </Grid>
 
         <Grid item xs={12} sm={3}>
+          {isMobile && (
+            <Grid item xs={12} sm={3} sx={{ textAlign: "left" }}>
+              <Typography variant="subtitle1">
+                Last Name
+                <span style={{ color: "red" }}>*</span>
+              </Typography>
+            </Grid>
+          )}
           <Autocomplete
             id={`last-name-autocomplete-${index}`}
             open={openLastName}
@@ -332,6 +359,14 @@ const DataRow = React.memo(
         </Grid>
 
         <Grid item xs={12} sm={3}>
+          {isMobile && (
+            <Grid item xs={12} sm={3} sx={{ textAlign: "left" }}>
+              <Typography variant="subtitle1">
+                School/Site
+                <span style={{ color: "red" }}>*</span>
+              </Typography>
+            </Grid>
+          )}
           <DropdownTextField
             error={!!errors[index].schoolSiteError}
             helperText={errors[index].schoolSiteError}
@@ -383,6 +418,14 @@ const DataRow = React.memo(
           </DropdownTextField>
         </Grid>
         <Grid item xs={12} sm={3}>
+          {isMobile && (
+            <Grid item xs={12} sm={3} sx={{ textAlign: "left" }}>
+              <Typography variant="subtitle1">
+                Team-Season
+                <span style={{ color: "red" }}>*</span>
+              </Typography>
+            </Grid>
+          )}
           <DropdownTextField
             error={!!errors[index].teamSeasonError}
             helperText={errors[index].teamSeasonError}
@@ -418,6 +461,15 @@ const DataRow = React.memo(
               </MenuItem>
             ))}
           </DropdownTextField>
+          {isMobile && (
+            <Box
+              sx={{
+                width: "100%",
+                marginY: 2,
+                borderBottom: "2px solid #ccc",
+              }}
+            />
+          )}
         </Grid>
       </Grid>
     );
